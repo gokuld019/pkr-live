@@ -85,10 +85,7 @@ export default function VisionMission() {
       <div className="relative z-10 mx-auto grid min-h-[700px] max-w-[1700px] grid-cols-1 px-6 py-16 sm:px-10 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)_minmax(0,0.5fr)] lg:py-0">
         {/* Left copy */}
         <div className="relative z-20 flex flex-col justify-center py-6 lg:py-24">
-          <span
-            className="gs-rule mb-7 block h-[3px] w-16 rounded-full"
-            style={{ backgroundColor: GOLD }}
-          />
+         
 
           <h2 className="text-3xl font-bold uppercase leading-[1.15] tracking-tight text-black sm:text-4xl xl:text-[2.75rem]">
             {["Driven", "by", "Purpose,"].map((w, i) => (

@@ -208,20 +208,14 @@ export default function OurProjects() {
         {/* Section Heading */}
         <div className="gs-head mb-14 text-center">
           <div className="flex items-center justify-center gap-3">
-            <span
-              className="gs-eyebrow-line h-[2px] w-12 rounded-full"
-              style={{ backgroundColor: GOLD }}
-            />
+           
             <span
               className="gs-eyebrow-text text-xs font-semibold tracking-[0.28em]"
               style={{ color: GOLD_DEEP }}
             >
               EXPLORE
             </span>
-            <span
-              className="gs-eyebrow-line h-[2px] w-12 rounded-full"
-              style={{ backgroundColor: GOLD }}
-            />
+           
           </div>
 
           <h2 className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 sm:text-6xl lg:text-7xl">

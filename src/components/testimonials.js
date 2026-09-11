@@ -212,29 +212,18 @@ export default function ClientReviews() {
       className={`${figtree.className} relative w-full overflow-hidden bg-white py-16 sm:py-20`}
     >
       <div className="relative mx-auto max-w-[1800px] px-6 lg:px-10">
-        {/* Vertical side label */}
        
-
-        {/* Cursive tagline top-right */}
-       
-
         {/* Header */}
         <div className="gs-head mx-auto max-w-2xl text-center">
           <div className="flex items-center justify-center gap-3">
-            <span
-              className="gs-eyebrow-line h-px w-10"
-              style={{ backgroundColor: GOLD }}
-            />
+           
             <span
               className="gs-eyebrow text-xs font-semibold tracking-[0.3em]"
               style={{ color: GOLD_DEEP }}
             >
               REAL FAMILIES. REAL HOMES.
             </span>
-            <span
-              className="gs-eyebrow-line h-px w-10"
-              style={{ backgroundColor: GOLD }}
-            />
+           
           </div>
 
           <h2 className="mt-3 text-5xl font-bold text-neutral-900 sm:text-6xl">

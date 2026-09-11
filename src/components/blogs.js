@@ -165,7 +165,7 @@ export default function OurBlogs() {
     <section
       ref={root}
       className={`${figtree.className} relative w-full overflow-hidden py-16 sm:py-20`}
-      style={{ backgroundColor: CREAM }}
+      
     >
       {/* Decorative line art bottom-left */}
       <div className="pointer-events-none absolute -bottom-6 left-0 h-40 w-40 opacity-20">
@@ -184,10 +184,7 @@ export default function OurBlogs() {
                 >
                   OUR BLOGS
                 </span>
-                <span
-                  className="gs-eyebrow-line h-px w-10"
-                  style={{ backgroundColor: GOLD }}
-                />
+               
               </div>
               <h2 className="mt-2 text-5xl font-bold leading-tight text-neutral-900 sm:text-6xl">
                 {["Insights", "for"].map((w, i) => (
@@ -362,7 +359,7 @@ export default function OurBlogs() {
             ))}
           </div>
 
-          <div className="hidden items-center gap-3 sm:flex">
+          {/* <div className="hidden items-center gap-3 sm:flex">
             <span className="h-px w-8" style={{ backgroundColor: GOLD }} />
             <span
               className="text-xs font-semibold tracking-[0.2em]"
@@ -370,7 +367,7 @@ export default function OurBlogs() {
             >
               KNOWLEDGE BUILDS BETTER HOMES
             </span>
-          </div>
+          </div> */}
 
           <div className="flex items-center gap-3">
             <button

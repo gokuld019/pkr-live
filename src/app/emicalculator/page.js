@@ -25,11 +25,15 @@ const figtree = Figtree({
   variable: "--font-figtree",
 });
 
-const CREAM = "#FBF8F2";
+const CREAM = "#FBF6EE";
 const GOLD = "#B08D3F";
 const GOLD_DEEP = "#8A6B2E";
-const NAVY = "#0F1C2E";
-const LINE = "#E8DFCB";
+const GOLD_LIGHT = "#D8B968";
+const INK = "#1E1B16";
+const SUB = "#8A8375";
+const LINE = "#ECE3D2";
+const CHIP_BG = "#F3EADA";
+const TRACK = "#E6D8B8";
 
 function formatINR(num) {
   return "₹" + Math.round(num).toLocaleString("en-IN");
@@ -57,6 +61,7 @@ export default function EmiCalculatorPage() {
   const [interestRate, setInterestRate] = useState(8.5);
   const [tenureYears, setTenureYears] = useState(20);
   const [compareTab, setCompareTab] = useState("rate");
+  const [hoveredBar, setHoveredBar] = useState(null);
 
   const downPayment = useMemo(
     () => Math.round((propertyValue * downPaymentPct) / 100),
@@ -141,15 +146,15 @@ export default function EmiCalculatorPage() {
             <div className="flex items-start gap-4 mb-8">
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                style={{ backgroundColor: "#F3ECDA" }}
+                style={{ backgroundColor: CHIP_BG }}
               >
                 <Home className="w-6 h-6" style={{ color: GOLD_DEEP }} strokeWidth={1.75} />
               </div>
               <div>
-                <h2 className="text-xl md:text-2xl font-bold" style={{ color: NAVY }}>
+                <h2 className="text-xl md:text-2xl font-bold" style={{ color: INK }}>
                   Calculate Your EMI
                 </h2>
-                <p className="text-sm text-neutral-500 mt-1">
+                <p className="text-sm mt-1" style={{ color: SUB }}>
                   Adjust the values to see your estimated monthly EMI.
                 </p>
               </div>
@@ -183,18 +188,18 @@ export default function EmiCalculatorPage() {
               />
 
               {/* Loan Amount - readonly */}
-              <div className="flex items-center gap-4 rounded-xl px-4 py-4" style={{ backgroundColor: "#F7F4EC" }}>
+              <div className="flex items-center gap-4 rounded-xl px-4 py-4" style={{ backgroundColor: CHIP_BG }}>
                 <div
                   className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: "#EFE7D3" }}
+                  style={{ backgroundColor: "#EADFC4" }}
                 >
                   <Wallet className="w-5 h-5" style={{ color: GOLD_DEEP }} strokeWidth={1.75} />
                 </div>
                 <div className="flex-1">
-                  <div className="text-sm font-medium text-neutral-700">Loan Amount</div>
-                  <div className="text-[11px] text-neutral-400">(Auto calculated)</div>
+                  <div className="text-sm font-medium" style={{ color: INK }}>Loan Amount</div>
+                  <div className="text-[11px]" style={{ color: SUB }}>(Auto calculated)</div>
                 </div>
-                <div className="text-lg font-bold" style={{ color: NAVY }}>
+                <div className="text-lg font-bold" style={{ color: INK }}>
                   {formatINR(loanAmount)}
                 </div>
               </div>
@@ -203,13 +208,13 @@ export default function EmiCalculatorPage() {
                 icon={Percent}
                 label="Interest Rate (p.a.)"
                 value={`${interestRate}%`}
-                min={6}
-                max={12}
+                min={5}
+                max={15}
                 step={0.1}
                 current={interestRate}
                 onChange={setInterestRate}
-                minLabel="6%"
-                maxLabel="12%"
+                minLabel="5%"
+                maxLabel="15%"
               />
 
               <SliderField
@@ -229,7 +234,8 @@ export default function EmiCalculatorPage() {
             <div className="flex items-center justify-between mt-8 pt-6 border-t" style={{ borderColor: LINE }}>
               <button
                 onClick={reset}
-                className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-500 hover:text-neutral-700 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-semibold transition-colors"
+                style={{ color: SUB }}
               >
                 <RotateCcw className="w-4 h-4" />
                 Reset
@@ -237,7 +243,7 @@ export default function EmiCalculatorPage() {
 
               <button
                 className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
-                style={{ backgroundColor: GOLD_DEEP }}
+                style={{ backgroundColor: GOLD }}
               >
                 View Amortization Schedule
                 <ArrowRight className="w-4 h-4" />
@@ -246,20 +252,20 @@ export default function EmiCalculatorPage() {
           </div>
 
           {/* Right: Results card */}
-          <div className="rounded-2xl p-6 md:p-8 text-white h-full flex flex-col" style={{ backgroundColor: NAVY }}>
+          <div className="rounded-2xl p-6 md:p-8 h-full flex flex-col" style={{ backgroundColor: CHIP_BG }}>
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 bg-white/10">
-                <PiggyBank className="w-6 h-6" style={{ color: GOLD }} strokeWidth={1.75} />
+              <div className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: "#EADFC4" }}>
+                <PiggyBank className="w-6 h-6" style={{ color: GOLD_DEEP }} strokeWidth={1.75} />
               </div>
               <div>
-                <div className="text-sm text-white/70">Your Estimated Monthly EMI</div>
-                <div className="text-3xl md:text-4xl font-bold mt-1" style={{ color: GOLD }}>
+                <div className="text-sm" style={{ color: SUB }}>Your Estimated Monthly EMI</div>
+                <div className="text-3xl md:text-4xl font-bold mt-1" style={{ color: GOLD_DEEP }}>
                   {formatINR(emi)}
                 </div>
               </div>
             </div>
 
-            <div className="h-px w-full bg-white/10 mb-6" />
+            <div className="h-px w-full mb-6" style={{ backgroundColor: LINE }} />
 
             <div className="grid grid-cols-3 gap-4 mb-8">
               <StatBlock label="Loan Amount" value={formatINR(loanAmount)} />
@@ -271,7 +277,7 @@ export default function EmiCalculatorPage() {
               {/* Donut chart */}
               <div className="relative shrink-0 w-[200px] h-[200px] mx-auto sm:mx-0">
                 <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90">
-                  <circle cx="100" cy="100" r={radius} fill="none" stroke="#2E5AAC" strokeWidth="24" />
+                  <circle cx="100" cy="100" r={radius} fill="none" stroke={TRACK} strokeWidth="24" />
                   <circle
                     cx="100"
                     cy="100"
@@ -285,8 +291,8 @@ export default function EmiCalculatorPage() {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <div className="text-xl font-bold">{formatINRShort(totalPayment)}</div>
-                  <div className="text-[11px] text-white/60 mt-0.5">Total Payment</div>
+                  <div className="text-xl font-bold" style={{ color: INK }}>{formatINRShort(totalPayment)}</div>
+                  <div className="text-[11px] mt-0.5" style={{ color: SUB }}>Total Payment</div>
                 </div>
               </div>
 
@@ -295,17 +301,17 @@ export default function EmiCalculatorPage() {
                 <div className="flex items-start gap-3">
                   <span className="w-3 h-3 rounded-full mt-1 shrink-0" style={{ backgroundColor: GOLD }} />
                   <div>
-                    <div className="text-sm font-semibold">Principal Amount</div>
-                    <div className="text-sm text-white/70">
+                    <div className="text-sm font-semibold" style={{ color: INK }}>Principal Amount</div>
+                    <div className="text-sm" style={{ color: SUB }}>
                       {formatINR(loanAmount)} ({principalPct}%)
                     </div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <span className="w-3 h-3 rounded-full mt-1 shrink-0" style={{ backgroundColor: "#2E5AAC" }} />
+                  <span className="w-3 h-3 rounded-full mt-1 shrink-0" style={{ backgroundColor: TRACK }} />
                   <div>
-                    <div className="text-sm font-semibold">Total Interest</div>
-                    <div className="text-sm text-white/70">
+                    <div className="text-sm font-semibold" style={{ color: INK }}>Total Interest</div>
+                    <div className="text-sm" style={{ color: SUB }}>
                       {formatINR(totalInterest)} ({interestPct}%)
                     </div>
                   </div>
@@ -314,9 +320,9 @@ export default function EmiCalculatorPage() {
             </div>
 
             {/* Tip callout */}
-            <div className="flex items-start gap-3 rounded-xl p-4" style={{ backgroundColor: "#EFE7D3" }}>
+            <div className="flex items-start gap-3 rounded-xl p-4" style={{ backgroundColor: "#F3EADA" }}>
               <Lightbulb className="w-5 h-5 shrink-0 mt-0.5" style={{ color: GOLD_DEEP }} />
-              <p className="text-sm" style={{ color: NAVY }}>
+              <p className="text-sm" style={{ color: INK }}>
                 A lower interest rate can save you up to{" "}
                 <span className="font-bold" style={{ color: GOLD_DEEP }}>
                   {formatINRShort(potentialSavings)}
@@ -334,35 +340,35 @@ export default function EmiCalculatorPage() {
           {/* Top: Comparison chart + Living room image */}
           <div
             className="rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]"
-            style={{ backgroundColor: "#F7F4EC" }}
+            style={{ backgroundColor: CHIP_BG }}
           >
             {/* Left: chart */}
             <div className="p-6 md:p-8 flex flex-col">
-              <h3 className="text-xl md:text-2xl font-bold" style={{ color: NAVY }}>
+              <h3 className="text-xl md:text-2xl font-bold" style={{ color: INK }}>
                 See How Small Changes Make a Big Difference
               </h3>
-              <p className="text-sm text-neutral-500 mt-2 mb-6">
+              <p className="text-sm mt-2 mb-6" style={{ color: SUB }}>
                 Compare EMIs for different interest rates and loan tenures.
               </p>
 
               {/* Tabs */}
-              <div className="flex items-center gap-1 mb-8 rounded-full p-1 w-fit" style={{ backgroundColor: "#EFE7D3" }}>
+              <div className="flex items-center gap-1 mb-10 w-fit">
                 <button
                   onClick={() => setCompareTab("rate")}
-                  className="text-sm font-semibold px-4 py-2 rounded-full transition-colors"
+                  className="text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300"
                   style={{
-                    color: compareTab === "rate" ? "#fff" : NAVY,
-                    backgroundColor: compareTab === "rate" ? GOLD_DEEP : "transparent",
+                    color: compareTab === "rate" ? "#fff" : INK,
+                    backgroundColor: compareTab === "rate" ? GOLD : "transparent",
                   }}
                 >
                   By Interest Rate
                 </button>
                 <button
                   onClick={() => setCompareTab("tenure")}
-                  className="text-sm font-semibold px-4 py-2 rounded-full transition-colors"
+                  className="text-sm font-semibold px-4 py-2 rounded-full transition-all duration-300"
                   style={{
-                    color: compareTab === "tenure" ? "#fff" : NAVY,
-                    backgroundColor: compareTab === "tenure" ? GOLD_DEEP : "transparent",
+                    color: compareTab === "tenure" ? "#fff" : INK,
+                    backgroundColor: compareTab === "tenure" ? GOLD : "transparent",
                   }}
                 >
                   By Loan Tenure
@@ -370,37 +376,56 @@ export default function EmiCalculatorPage() {
               </div>
 
               {/* Bar chart */}
-              <div className="flex items-end justify-between gap-4 md:gap-6 h-[200px] flex-1">
-                {compareData.map((item) => {
-                  const heightPct = Math.max((item.emi / maxCompareEmi) * 100, 8);
-                  const isActive = item.active;
-                  return (
-                    <div key={item.label} className="flex flex-col items-center justify-end flex-1 h-full group">
-                      <span
-                        className="text-sm font-bold mb-2 transition-transform group-hover:-translate-y-0.5"
-                        style={{ color: isActive ? GOLD_DEEP : NAVY }}
-                      >
-                        {formatINR(item.emi)}
-                      </span>
+              <div className="relative flex-1 min-h-[220px]">
+                <div className="relative flex items-end justify-between gap-3 md:gap-5 h-full pb-9">
+                  {compareData.map((item) => {
+                    const heightPct = Math.max((item.emi / maxCompareEmi) * 100, 10);
+                    const isActive = item.active;
+                    const isHovered = hoveredBar === item.label;
+                    const emphasize = isActive || isHovered;
+
+                    return (
                       <div
-                        className="w-full max-w-[64px] rounded-t-xl transition-all duration-500 ease-out shadow-sm group-hover:opacity-90"
-                        style={{
-                          height: `${heightPct}%`,
-                          background: isActive
-                            ? `linear-gradient(180deg, ${GOLD} 0%, ${GOLD_DEEP} 100%)`
-                            : "linear-gradient(180deg, #D5DEEA 0%, #C7D2E0 100%)",
-                        }}
-                      />
-                      <div className="w-full max-w-[64px] h-[3px] rounded-full mt-0" style={{ backgroundColor: isActive ? GOLD_DEEP : "#B9C3D1" }} />
-                      <span
-                        className="text-xs mt-3"
-                        style={{ color: isActive ? NAVY : "#9CA3AF", fontWeight: isActive ? 700 : 500 }}
+                        key={item.label}
+                        className="relative flex flex-col items-center justify-end flex-1 h-full cursor-pointer"
+                        onMouseEnter={() => setHoveredBar(item.label)}
+                        onMouseLeave={() => setHoveredBar(null)}
                       >
-                        {item.label}
-                      </span>
-                    </div>
-                  );
-                })}
+                        {/* Value badge */}
+                        <div
+                          className="absolute left-1/2 -translate-x-1/2 rounded-lg px-2.5 py-1 text-xs font-bold whitespace-nowrap transition-all duration-300"
+                          style={{
+                            bottom: `calc(${heightPct}% + 12px)`,
+                            backgroundColor: emphasize ? GOLD : "transparent",
+                            color: emphasize ? "#fff" : INK,
+                          }}
+                        >
+                          {formatINR(item.emi)}
+                        </div>
+
+                        {/* Bar */}
+                        <div
+                          className="relative w-full max-w-[48px] rounded-t-[10px] overflow-hidden transition-all duration-500 ease-out"
+                          style={{
+                            height: `${heightPct}%`,
+                            backgroundColor: emphasize ? GOLD : TRACK,
+                          }}
+                        />
+
+                        {/* Label */}
+                        <span
+                          className="absolute -bottom-7 text-xs transition-all duration-300"
+                          style={{
+                            color: emphasize ? INK : SUB,
+                            fontWeight: emphasize ? 700 : 500,
+                          }}
+                        >
+                          {item.label}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -415,12 +440,15 @@ export default function EmiCalculatorPage() {
                 className="absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(90deg, rgba(247,244,236,0.95) 0%, rgba(247,244,236,0.5) 35%, transparent 60%)",
+                    "linear-gradient(90deg, rgba(30,27,22,0.85) 0%, rgba(30,27,22,0.4) 40%, transparent 65%)",
                 }}
               />
               <div className="relative z-10 h-full flex flex-col justify-center px-6 md:px-8 max-w-[260px]">
-                <p className="text-lg md:text-xl leading-snug italic" style={{ color: NAVY }}>
-                  &ldquo;Invest in a home that grows with your aspirations.&rdquo;
+                <p className="text-lg md:text-xl leading-snug italic text-white">
+                  &ldquo;A small change today, a bigger tomorrow.&rdquo;
+                </p>
+                <p className="text-sm text-white/70 mt-3">
+                  Plan wisely. Invest in a home that grows with your aspirations.
                 </p>
                 <span className="block h-px w-8 mt-4" style={{ backgroundColor: GOLD }} />
               </div>
@@ -431,7 +459,7 @@ export default function EmiCalculatorPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
             {/* Home Loan Benefits */}
             <div className="rounded-2xl border bg-white p-6 md:p-8 h-full" style={{ borderColor: LINE }}>
-              <h3 className="text-lg md:text-xl font-bold mb-6" style={{ color: NAVY }}>
+              <h3 className="text-lg md:text-xl font-bold mb-6" style={{ color: INK }}>
                 Home Loan Benefits
               </h3>
               <div className="grid grid-cols-2 gap-6">
@@ -446,14 +474,14 @@ export default function EmiCalculatorPage() {
                     <div key={i} className="flex items-start gap-3">
                       <div
                         className="w-10 h-10 rounded-full flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: "#F3ECDA" }}
+                        style={{ backgroundColor: CHIP_BG }}
                       >
                         <Icon className="w-5 h-5" style={{ color: GOLD_DEEP }} strokeWidth={1.75} />
                       </div>
-                      <p className="text-sm leading-snug" style={{ color: NAVY }}>
+                      <p className="text-sm leading-snug" style={{ color: INK }}>
                         <span className="font-semibold">{item.text[0]}</span>
                         <br />
-                        <span className="text-neutral-500">{item.text[1]}</span>
+                        <span style={{ color: SUB }}>{item.text[1]}</span>
                       </p>
                     </div>
                   );
@@ -463,25 +491,19 @@ export default function EmiCalculatorPage() {
 
             {/* Banking Partners */}
             <div className="rounded-2xl border bg-white p-6 md:p-8 h-full flex flex-col" style={{ borderColor: LINE }}>
-              <h3 className="text-lg md:text-xl font-bold" style={{ color: NAVY }}>
+              <h3 className="text-lg md:text-xl font-bold" style={{ color: INK }}>
                 Our Banking Partners
               </h3>
-              <p className="text-sm text-neutral-500 mt-1 mb-6">
+              <p className="text-sm mt-1 mb-6" style={{ color: SUB }}>
                 We work with leading banks to help you get the best home loan offers.
               </p>
 
-              {/* Badge-chip style partner strip.
-                  No official npm/Next.js package ships real bank logos (they're
-                  trademarked assets). Drop official files in /public/banks/ and
-                  swap each chip below for:
-                  <Image src="/banks/sbi.png" alt="SBI" width={72} height={24} />
-              */}
               <div className="flex flex-wrap items-center gap-3 mt-auto">
                 {["SBI", "HDFC Bank", "ICICI Bank", "Axis Bank", "Kotak"].map((bank) => (
                   <span
                     key={bank}
-                    className="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold border transition-colors hover:bg-[#F7F4EC]"
-                    style={{ borderColor: LINE, color: NAVY }}
+                    className="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold border transition-colors"
+                    style={{ borderColor: LINE, color: INK }}
                   >
                     {bank}
                   </span>
@@ -502,14 +524,14 @@ function SliderField({ icon: Icon, label, value, min, max, step, current, onChan
     <div className="flex items-start gap-4">
       <div
         className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-        style={{ backgroundColor: "#F3ECDA" }}
+        style={{ backgroundColor: "#F3EADA" }}
       >
         <Icon className="w-5 h-5" style={{ color: GOLD_DEEP }} strokeWidth={1.75} />
       </div>
       <div className="flex-1">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-neutral-700">{label}</span>
-          <span className="text-sm font-bold" style={{ color: NAVY }}>
+          <span className="text-sm font-medium" style={{ color: INK }}>{label}</span>
+          <span className="text-sm font-bold" style={{ color: INK }}>
             {value}
           </span>
         </div>
@@ -517,7 +539,7 @@ function SliderField({ icon: Icon, label, value, min, max, step, current, onChan
         <div className="relative h-1.5 rounded-full" style={{ backgroundColor: LINE }}>
           <div
             className="absolute inset-y-0 left-0 rounded-full"
-            style={{ width: `${pct}%`, backgroundColor: GOLD_DEEP }}
+            style={{ width: `${pct}%`, backgroundColor: GOLD }}
           />
           <input
             type="range"
@@ -530,13 +552,13 @@ function SliderField({ icon: Icon, label, value, min, max, step, current, onChan
           />
           <div
             className="absolute top-1/2 w-4 h-4 rounded-full bg-white border-2 shadow -translate-y-1/2 -translate-x-1/2 pointer-events-none"
-            style={{ left: `${pct}%`, borderColor: GOLD_DEEP }}
+            style={{ left: `${pct}%`, borderColor: GOLD }}
           />
         </div>
 
         <div className="flex items-center justify-between mt-1.5">
-          <span className="text-[11px] text-neutral-400">{minLabel}</span>
-          <span className="text-[11px] text-neutral-400">{maxLabel}</span>
+          <span className="text-[11px]" style={{ color: SUB }}>{minLabel}</span>
+          <span className="text-[11px]" style={{ color: SUB }}>{maxLabel}</span>
         </div>
       </div>
     </div>
@@ -546,8 +568,8 @@ function SliderField({ icon: Icon, label, value, min, max, step, current, onChan
 function StatBlock({ label, value }) {
   return (
     <div>
-      <div className="text-[11px] text-white/60 mb-1">{label}</div>
-      <div className="text-sm md:text-base font-bold">{value}</div>
+      <div className="text-[11px] mb-1" style={{ color: "#8A8375" }}>{label}</div>
+      <div className="text-sm md:text-base font-bold" style={{ color: "#1E1B16" }}>{value}</div>
     </div>
   );
 }

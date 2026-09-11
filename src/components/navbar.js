@@ -24,6 +24,7 @@ const dropdownLinks = [
 
 const rightNavLinks = [
   { label: "EMI CALCULATOR", href: "/emicalculator" },
+  { label: "CHANNEL PARTNERS", href: "/channelpartners" },
   { label: "BLOGS", href: "/blogs" },
   { label: "CONTACT US", href: "/contactus" },
 ];

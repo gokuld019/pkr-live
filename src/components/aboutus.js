@@ -6,9 +6,9 @@ import { ChevronRight } from "lucide-react";
 import { EASE, useReveal, SplitReveal, WordReveal, FadeUp, CountUp } from "@/components/motion/reveal";
 
 const STATS = [
-  { value: "77+", label: ["YEARS OF", "ENGINEERING", "EXCELLENCE"], color: "#1B3B8C" },
-  { value: "7M+", label: ["SQ.FT. SPACE", "DELIVERED"], color: "#C1541C" },
-  { value: "44+", label: ["LANDMARK", "PROJECTS"], color: "#2E7D32" },
+  { value: "77+", label: ["YEARS OF", "EXCELLENCE"], color: "#1A1A1A" },
+  { value: "7M+", label: ["SQ.FT. SPACE", "DELIVERED"], color: "#1A1A1A" },
+  { value: "44+", label: ["LANDMARK", "PROJECTS"], color: "#1A1A1A" },
 ];
 
 const DESCRIPTION =

@@ -14,12 +14,19 @@ export const projects = [
     eyebrow: "MORE THAN JUST A HOME",
     heading: ["Designed for a", "Better Way of Life"],
     description:
-      "Gurudev is a Stilt + 5 floor residential development in Guduvancheri, Chennai, offering 90 thoughtfully designed apartments across 1BHK and 2BHK layouts. It promises comfortable, affordable urban living with easy access to key parts of Chennai and everyday conveniences close at hand.",
+      "Located in the Guduvancheri neighbourhood of the South-Eastern Suburbs of Chennai, Gurudev is a residential community consisting of 90 thoughtfully crafted apartments for a living experience that is a class apart. Gurudev offers a serene, high-quality lifestyle in perfect harmony with your preferences and expectations, with a choice of one and two bedroom homes.",
     ctaLabel: "OUR STORY",
     ctaHref: "#our-story",
 
     overlayWords: ["Live", "Connect", "Belong"],
     overlayAt: "Gurudev",
+
+    salientFeatures: [
+      "Elegantly crafted 90 apartments",
+      "Stilt + 5 floors design structure",
+      "100% vaastu compliant homes with zero dead space",
+      "Surrounded by prominent IT/ITES companies, schools, colleges and hospitals",
+    ],
 
     stats: [
       { id: "years", value: "77+", label: "YEARS OF TRUST" },
@@ -28,73 +35,148 @@ export const projects = [
       { id: "communities", value: "44+", label: "HAPPY COMMUNITIES" },
     ],
 
-    amenitiesHeading: ["Everyday", "Comforts,", "Exceptional Living"],
+    amenitiesHeading: ["An Uncompromising", "Life", "at Gurudev"],
     amenitiesDescription:
-      "Thoughtfully curated amenities for all age groups, bringing wellness, recreation and community together — because a better life is in the details.",
+      "Decked with the choicest and most enchanting of amenities, your home at Gurudev is a touch above the expected — a place where thoughtful features bring comfort and warmth to everyday living.",
     amenitiesCtaLabel: "VIEW ALL AMENITIES",
     amenitiesCtaHref: "#amenities",
     amenities: [
-      { id: "security", image: "/amenities/amenities.jpeg", title: "24/7 Security", tagline: "Safe & Secure" },
-      { id: "power", image: "/amenities/amenities3.jpeg", title: "Power Backup", tagline: "Uninterrupted Living" },
-      { id: "parking", image: "/amenities/amenities4.jpeg", title: "Covered Car Parking", tagline: "Convenience First" },
-      { id: "play", image: "/amenities/amenities5.jpeg", title: "Children's Play Area", tagline: "Play. Learn. Grow." },
-      { id: "garden", image: "/amenities/amenities6.jpeg", title: "Landscaped Garden", tagline: "Breathe. Relax. Reconnect." },
-      { id: "rainwater", image: "/amenities/amenities7.jpeg", title: "Rain Water Harvesting", tagline: "Sustainable Living" },
+      { id: "shops", image: "/amenities/amenities.jpeg", title: "Shops", tagline: "Everyday Convenience" },
+      { id: "security", image: "/amenities/amenities3.jpeg", title: "Security Cabin with CCTV", tagline: "Safe & Secure" },
+      { id: "play", image: "/amenities/amenities4.jpeg", title: "Children's Play Area", tagline: "Play. Learn. Grow." },
+      { id: "walking", image: "/amenities/amenities5.jpeg", title: "Walking Track", tagline: "Move. Breathe. Recharge." },
+      { id: "park", image: "/amenities/amenities6.jpeg", title: "Park", tagline: "Green & Relaxing" },
+      { id: "avenue", image: "/amenities/amenities7.jpeg", title: "Avenue Trees", tagline: "Shaded, Landscaped Paths" },
+      { id: "elevator", image: "/amenities/amenities.jpeg", title: "Elevator", tagline: "Effortless Access" },
+      { id: "stp", image: "/amenities/amenities3.jpeg", title: "Sewage Treatment Plant (STP)", tagline: "Sustainable Living" },
+      { id: "parking", image: "/amenities/amenities4.jpeg", title: "Car Parking", tagline: "Covered & Convenient" },
     ],
 
     floorPlansHeading: ["Homes Tailored", "to Your Needs"],
     floorPlansDescription:
-      "Smartly designed 1 & 2 BHK apartments with efficient layouts, abundant natural light and optimal space utilisation.",
+      "Smartly designed 1 & 2 BHK apartments with efficient layouts, abundant natural light and optimal space utilisation — available as both East and West facing units.",
     floorPlansCtaLabel: "VIEW ALL PLANS",
     floorPlansCtaHref: "/projects/gurudev/floor-plans",
     floorPlanTabs: ["1 BHK", "2 BHK"],
     floorPlans: [
       {
-        id: "1bhk-a",
+        id: "1bhk-flat3",
         image: "/floorplans/1bhk1.webp",
-        title: "1 BHK",
-        area: "391 Sq.Ft.",
-        href: "/floor-plans/gurudev/1bhk-a.pdf",
+        title: "1 BHK + 1T · West Facing",
+        area: "425 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-3.pdf",
         features: [
           { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Bathroom" },
-          { icon: "living", label: "Living & Dining" },
+          { icon: "bath", label: "1 Toilet" },
+          { icon: "living", label: "Living Room / Kitchen" },
         ],
       },
       {
-        id: "1bhk-b",
+        id: "1bhk-flat4",
         image: "/floorplans/1bhk2.webp",
-        title: "1 BHK",
-        area: "410 Sq.Ft.",
-        href: "/floor-plans/gurudev/1bhk-b.pdf",
+        title: "1 BHK + 1T · West Facing",
+        area: "419 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-4.pdf",
         features: [
           { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Bathroom" },
-          { icon: "living", label: "Living & Dining" },
+          { icon: "bath", label: "1 Toilet" },
+          { icon: "living", label: "Living Room / Kitchen" },
         ],
       },
       {
-        id: "1bhk-c",
+        id: "1bhk-flat5",
         image: "/floorplans/1bhk3.webp",
-        title: "1 BHK",
-        area: "460 Sq.Ft.",
-        href: "/floor-plans/gurudev/1bhk-c.pdf",
+        title: "1 BHK + 1T · West Facing",
+        area: "491 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-5.pdf",
         features: [
           { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Bathroom" },
-          { icon: "living", label: "Living & Dining" },
+          { icon: "bath", label: "1 Toilet" },
+          { icon: "living", label: "Living Room / Kitchen" },
         ],
       },
       {
-        id: "2bhk-a",
+        id: "1bhk-flat6",
+        image: "/floorplans/1bhk1.webp",
+        title: "1 BHK + 1T · West Facing",
+        area: "391 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-6.pdf",
+        features: [
+          { icon: "bed", label: "1 Bedroom" },
+          { icon: "bath", label: "1 Toilet" },
+          { icon: "living", label: "Living Room / Kitchen" },
+        ],
+      },
+      {
+        id: "1bhk-flat8",
+        image: "/floorplans/1bhk2.webp",
+        title: "1 BHK + 1T · East Facing",
+        area: "460 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-8.pdf",
+        features: [
+          { icon: "bed", label: "1 Bedroom" },
+          { icon: "bath", label: "1 Toilet" },
+          { icon: "living", label: "Living Room / Kitchen" },
+        ],
+      },
+      {
+        id: "1bhk-flat9",
+        image: "/floorplans/1bhk3.webp",
+        title: "1 BHK + 1T · East Facing",
+        area: "440 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-9.pdf",
+        features: [
+          { icon: "bed", label: "1 Bedroom" },
+          { icon: "bath", label: "1 Toilet" },
+          { icon: "living", label: "Living Room / Kitchen" },
+        ],
+      },
+      {
+        id: "2bhk-flat1",
         image: "/floorplans/2bhk-1.webp",
-        title: "2 BHK",
-        area: "730 - 732 Sq.Ft.",
-        href: "/floor-plans/gurudev/2bhk-a.pdf",
+        title: "2 BHK + 2T · East Facing",
+        area: "730 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-1.pdf",
         features: [
           { icon: "bed", label: "2 Bedrooms" },
-          { icon: "bath", label: "2 Bathrooms" },
-          { icon: "living", label: "Living & Dining" },
+          { icon: "bath", label: "2 Toilets" },
+          { icon: "living", label: "Living cum Dining" },
+        ],
+      },
+      {
+        id: "2bhk-flat2",
+        image: "/floorplans/2bhk-1.webp",
+        title: "2 BHK + 2T · East Facing",
+        area: "732 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-2.pdf",
+        features: [
+          { icon: "bed", label: "2 Bedrooms" },
+          { icon: "bath", label: "2 Toilets" },
+          { icon: "living", label: "Living cum Dining" },
+        ],
+      },
+      {
+        id: "2bhk-flat10",
+        image: "/floorplans/2bhk-1.webp",
+        title: "2 BHK + 2T · West Facing",
+        area: "730 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-10.pdf",
+        features: [
+          { icon: "bed", label: "2 Bedrooms" },
+          { icon: "bath", label: "2 Toilets" },
+          { icon: "living", label: "Living cum Dining" },
+        ],
+      },
+      {
+        id: "2bhk-flat11",
+        image: "/floorplans/2bhk-1.webp",
+        title: "2 BHK + 2T · West Facing",
+        area: "732 Sq.Ft.",
+        href: "/floor-plans/gurudev/flat-11.pdf",
+        features: [
+          { icon: "bed", label: "2 Bedrooms" },
+          { icon: "bath", label: "2 Toilets" },
+          { icon: "living", label: "Living cum Dining" },
         ],
       },
     ],
@@ -103,16 +185,12 @@ export const projects = [
     galleryCtaHref: "#gallery",
     galleryFilters: ["All", "Exteriors", "Interiors", "Amenities", "Lifestyle"],
     galleryImages: [
-      { id: "g1", image: "/gallery.jpeg", category: "Exteriors", size: "large" },
-      { id: "g2", image: "/gallery/gallery2.png", category: "Interiors", size: "small" },
+      { id: "g1", image: "/gallery.jpeg", title: "Aerial View", category: "Exteriors", size: "large" },
+      { id: "g2", image: "/gallery/gallery2.png", title: "Elevation View — Block A", category: "Exteriors", size: "small" },
       { id: "g3", image: "/gallery/gallery3.jpeg", category: "Amenities", size: "small" },
     ],
 
-    gallery: [
-      "/gallery.jpeg",
-      "/gallery/gallery2.png",
-      "/gallery/gallery3.jpeg",
-    ],
+    gallery: ["/gallery.jpeg", "/gallery/gallery2.png", "/gallery/gallery3.jpeg"],
     floors: "Stilt + 5",
     totalUnits: 90,
     unitTypes: [
@@ -133,18 +211,146 @@ export const projects = [
       { label: "Floors", value: "Stilt + 5" },
       { label: "Unit Size Range", value: "391 Sq.ft. - 732 Sq.ft." },
     ],
+
+    // --- Specifications (from brochure) ---
+    specifications: [
+      {
+        title: "Structure",
+        items: [
+          { label: "Structural system", value: "RCC Framed Structure designed for seismic compliance (Zone 3)" },
+          { label: "Masonry", value: "200 mm for external walls, 100 mm for internal walls" },
+          { label: "Floor-Floor height (incl. slab)", value: "3000 mm" },
+          { label: "ATT", value: "Anti-termite treatment will be done" },
+        ],
+      },
+      {
+        title: "Wall Finish",
+        items: [
+          { label: "Internal walls", value: "Living, Dining, Bedrooms, Kitchen, Utility & lobby finished with 2 coat putty, 1 coat primer, 2 coats emulsion paint" },
+          { label: "Exterior walls", value: "1 coat primer and 2 coats emulsion paint as per architect design" },
+          { label: "Bathroom", value: "Glazed ceramic tile up to false ceiling height (300 x 600 mm), above finished with primer" },
+          { label: "Kitchen", value: "Ceramic wall tile 300 x 600 mm for 600 mm above counter top" },
+          { label: "Toilet ceiling", value: "Grid type false ceiling" },
+        ],
+      },
+      {
+        title: "Floor Finish with Skirting",
+        items: [
+          { label: "Foyer, Living, Dining, Bedrooms & Kitchen", value: "Vitrified tiles 600 x 600 mm" },
+          { label: "Bathroom", value: "Anti-skid ceramic tiles 300 x 300 mm" },
+          { label: "Balcony", value: "Anti-skid ceramic tiles 300 x 300 mm" },
+        ],
+      },
+      {
+        title: "Kitchen & Dining",
+        items: [
+          { label: "Kitchen", value: "Granite slab platform, 600 mm wide, 800 mm from finished floor level" },
+          { label: "Electrical point", value: "For chimney & water purifier" },
+          { label: "CP Fitting", value: "Pull out tap of Indian Standard / Parryware or equivalent" },
+          { label: "Sink", value: "Quartz single bowl with drain board" },
+        ],
+      },
+      {
+        title: "Balcony",
+        items: [{ label: "Handrail", value: "MS handrail as per architect's design" }],
+      },
+      {
+        title: "Bathrooms",
+        items: [
+          { label: "Sanitary Fixture", value: "Indian Standard / Parryware or equivalent" },
+          { label: "CP fittings", value: "Indian Standard / Parryware or equivalent" },
+          { label: "Bathrooms", value: "Floor mounted WC with cistern, health faucet, single lever diverter" },
+        ],
+      },
+      {
+        title: "Joinery",
+        items: [
+          { label: "Main Door", value: "3'6\" x 7'0\" teak wood frame & laminated shutters with architrave, magnetic catcher, tower bolt" },
+          { label: "Bedroom doors", value: "Engineered door frame, double side laminated shutters (3'0\" x 7'0\"), Godrej/equivalent locks" },
+          { label: "Bathroom door", value: "Engineered door frame with WPC shutters (2'6\" x 7'0\"), thumb turn lock with tower bolt" },
+        ],
+      },
+      {
+        title: "Windows",
+        items: [
+          { label: "Windows", value: "Powder coated aluminum or UPVC, sliding shutter, plain glass, MS grills on inner side" },
+          { label: "French doors", value: "Powder coated aluminum frame with toughened glass, no grills" },
+          { label: "Ventilators", value: "Powder coated aluminum, fixed/adjustable louvered/openable shutter" },
+        ],
+      },
+      {
+        title: "Electrical Points",
+        items: [
+          { label: "Power Supply", value: "3 phase power supply connection" },
+          { label: "Safety Device", value: "MCB & ELCB (Earth Leakage Circuit Breaker)" },
+          { label: "Switches & Sockets", value: "Anchor Roma / Schneider / ABB or equivalent" },
+          { label: "Wires", value: "FRLS copper wire, KEI / Polycab or equivalent" },
+          { label: "TV & Telephone", value: "Point in living room" },
+          { label: "Mobile Charging Dock", value: "Provided in living room" },
+          { label: "Split A/C", value: "Point provided in living & all bedrooms" },
+        ],
+      },
+      {
+        title: "Common Features",
+        items: [
+          { label: "Lift", value: "6-passenger automatic elevator" },
+          { label: "Name board", value: "Apartment owner name provided in stilt" },
+          { label: "Lift Fascia & Lobby", value: "Detailed with tiles, Granite jambs, designer tile flooring in all floors" },
+          { label: "Lobby & Corridor", value: "Stilt floor granite flooring, typical floors with tiles" },
+          { label: "Staircase floor", value: "Stilt floor granite, typical floors Kota / Shahbadth / Tile" },
+          { label: "Staircase handrail", value: "MS handrail with enamel paint on all floors" },
+          { label: "Stilt Flooring", value: "Paver block flooring with car park numbers marked in paint" },
+          { label: "Terrace floor", value: "Cooling weathering tiles" },
+        ],
+      },
+      {
+        title: "Outdoor Features",
+        items: [
+          { label: "Water storage", value: "UG sump with WTP (as per water test report)" },
+          { label: "Rain water harvest", value: "Rain water harvesting site" },
+          { label: "STP", value: "Centralized Sewage Treatment plant" },
+          { label: "Safety", value: "CCTV surveillance at pivotal locations in stilt" },
+          { label: "Well defined driveway", value: "Interlocking paver block all-round with demarcated driveway" },
+          { label: "Security", value: "Security booth at the entrance" },
+          { label: "Compound wall", value: "Perimeter fenced, 1500 mm height, with entry gates" },
+          { label: "Landscape", value: "Suitable landscape at appropriate places" },
+          { label: "Driveway", value: "Convex mirror for safe turning in driveway" },
+        ],
+      },
+    ],
+
     locationHeading: ["Well Connected", "for a Brighter You"],
-    locationDescription: "Strategically located in Guduvancheri, Gurudev keeps you close to schools, workplaces, healthcare and everyday conveniences.",
+    locationDescription:
+      "Gurudev gives you the gift of time by offering apartments near Guduvancheri Railway Station, with superior connectivity. Living near MEPZ, Siruseri IT Park and Mahindra World City lets you strike the right work-life balance.",
     locationMapUrl: "https://maps.google.com/?q=Gurudev+Guduvancheri",
     locationMapImage: "",
-    locationMapEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.4277621863025!2d80.1935429!3d13.008409499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52674983f048c3%3A0xf9655e7ba417a69f!2sArchana%20Castle%2C%20Ramapuram%2C%20Parangi%20Malai%2C%20St.Thomas%20Mount%2C%20Tamil%20Nadu%20600016!5e0!3m2!1sen!2sin!4v1789026981810!5m2!1sen!2sin",
+    locationMapEmbed:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.4277621863025!2d80.1935429!3d13.008409499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52674983f048c3%3A0xf9655e7ba417a69f!2sArchana%20Castle%2C%20Ramapuram%2C%20Parangi%20Malai%2C%20St.Thomas%20Mount%2C%20Tamil%20Nadu%20600016!5e0!3m2!1sen!2sin!4v1789026981810!5m2!1sen!2sin",
     locationLandmarks: [
-      { label: "Schools", distance: "2 - 5 km" },
-      { label: "Hospitals", distance: "2 - 6 km" },
-      { label: "IT Corridors (OMR)", distance: "18 km" },
-      { label: "Railway Station", distance: "3 km" },
-      { label: "Bus Stand", distance: "3 km" },
-      { label: "Airport", distance: "18 km" },
+      { label: "Guduvancheri (GST Road)", distance: "5 mins" },
+      { label: "Urapakkam", distance: "10 mins" },
+      { label: "Vandalur", distance: "10 mins" },
+      { label: "Perungalathur", distance: "15 mins" },
+      { label: "OMR - Thiruporur", distance: "15 mins" },
+      { label: "Tambaram", distance: "20 mins" },
+    ],
+    nearbyColleges: [
+      { label: "Apollo Arts & Science College", distance: "8 mins" },
+      { label: "SRM University", distance: "8 mins" },
+      { label: "Shri Sathya Sai Medical College", distance: "10 mins" },
+      { label: "Crescent Engineering College", distance: "12 mins" },
+      { label: "Tagore Engineering College", distance: "14 mins" },
+      { label: "Peri Institute of Technology", distance: "15 mins" },
+      { label: "VIT University", distance: "20 mins" },
+    ],
+    nearbySchools: [
+      { label: "Velammal Vidhyashram CBSE", distance: "2 mins" },
+      { label: "Eden Kidspark", distance: "3 mins" },
+      { label: "SRI MA Vidyalaya CBSE", distance: "3 mins" },
+      { label: "SRM Public School CBSE", distance: "5 mins" },
+      { label: "Akshra Mandir Primary School", distance: "5 mins" },
+      { label: "St Johns Matric School", distance: "8 mins" },
+      { label: "PSBB Millennium School CBSE", distance: "10 mins" },
     ],
 
     // --- 360 Virtual Tour section data ---
@@ -156,6 +362,12 @@ export const projects = [
     tourImage: "/tour/gurudev-360-cover.jpg",
     tourUrl: "https://example.com/gurudev-360-tour",
     tourTagline: ["See it,", "Feel it,", "Live it."],
+
+    corporateOffice: {
+      lines: ["Flat A10, Archana Castle, 4/23 Patrick Church Road,", "St. Thomas Mount, Chennai 600016"],
+      phone: "95 43 63 33 33",
+      website: "www.pkrestates.com",
+    },
   },
   {
     slug: "privana",
@@ -172,6 +384,8 @@ export const projects = [
     ctaHref: "#our-story",
     overlayWords: ["Live", "Connect", "Belong"],
     overlayAt: "Privana",
+
+    salientFeatures: [],
 
     stats: [
       { id: "years", value: "77+", label: "YEARS OF TRUST" },
@@ -213,6 +427,10 @@ export const projects = [
       { label: "Unit Size Range", value: "TODO" },
     ],
 
+    specifications: [],
+    nearbyColleges: [],
+    nearbySchools: [],
+
     tourEyebrow: "",
     tourHeading: [],
     tourDescription: "",
@@ -220,6 +438,8 @@ export const projects = [
     tourImage: "",
     tourUrl: "",
     tourTagline: [],
+
+    corporateOffice: null,
   },
 ];
 
