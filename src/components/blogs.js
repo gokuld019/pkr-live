@@ -24,7 +24,7 @@ const FEATURED = {
   excerpt:
     "From infrastructure to lifestyle, explore what makes North Bangalore a preferred choice for homebuyers and investors.",
   readTime: "10 MIN READ",
-  image: "/blog-1.png",
+  image: "/Blog-1.png",
 };
 
 const POSTS = [
@@ -35,7 +35,7 @@ const POSTS = [
     title: "5 Essential Tips for First-Time Homebuyers",
     excerpt:
       "A complete guide to help you make confident and informed decisions on your first home purchase.",
-    image: "/blog-2.png",
+    image: "/Blog-2.png",
   },
   {
     id: 2,
@@ -44,7 +44,7 @@ const POSTS = [
     title: "Real Estate Investment Trends in 2025",
     excerpt:
       "Discover the key trends shaping the real estate market and where the best opportunities lie.",
-    image: "/blog-3.png",
+    image: "/Blog-3.png",
   },
 ];
 
