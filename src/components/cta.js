@@ -92,12 +92,10 @@ export default function PromiseHeroBanner() {
       className="relative w-full overflow-hidden bg-[#F4F2ED]"
       style={{
         fontFamily: "'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif",
-        height: "clamp(340px, 37vw, 660px)",
+        minHeight: "clamp(420px, 62vw, 660px)",
+        height: "clamp(420px, 62vw, 660px)",
       }}
     >
-      {/* Curtain reveal overlay */}
-     
-
       {/* Background texture */}
       <div className="absolute inset-0 z-0">
         <Image src={BG_IMAGE} alt="" fill priority sizes="100vw" className="object-cover" />
@@ -106,55 +104,62 @@ export default function PromiseHeroBanner() {
       {/* Model cutout */}
       <div
         ref={modelRef}
-        className="pointer-events-none absolute z-20 right-[6%] bottom-0"
-        style={{ height: "108%", width: "34%" }}
+        className="pointer-events-none absolute z-20 bottom-0 right-[2%] hidden sm:right-[4%] sm:block md:right-[6%]"
+        style={{ height: "100%", width: "42%", maxWidth: "420px" }}
       >
         <Image
           src={MODEL_IMAGE}
           alt="Happy resident"
           fill
           priority
-          sizes="34vw"
+          sizes="(max-width: 768px) 42vw, 34vw"
           className="object-contain object-bottom"
         />
       </div>
 
       {/* Copy block */}
-      <div className="absolute inset-0 z-30 flex items-end pb-[12%] sm:items-center sm:pb-0">
-        <div className="w-full px-6 sm:px-10 lg:px-16">
-          <div className="flex max-w-[560px] flex-wrap items-end gap-x-4">
+      <div className="absolute inset-0 z-30 flex items-center">
+        <div className="w-full px-6 sm:px-12 md:px-16 lg:px-24">
+          <div className="max-w-[600px]">
             <h1
-              className="leading-[0.92] tracking-[-0.01em]"
+              className="leading-[0.95] tracking-[-0.01em] sm:leading-[0.92]"
               style={{
-                fontSize: "clamp(2rem, 5.2vw, 4.2rem)",
+                fontSize: "clamp(2.2rem, 8vw, 4.4rem)",
                 color: INK,
                 fontWeight: 300,
               }}
             >
               {["Pride", "is Our", "Promise"].map((line) => (
-                <span key={line} className="block overflow-hidden" style={{ paddingBottom: "0.12em", marginBottom: "-0.12em" }}>
+                <span
+                  key={line}
+                  className="block overflow-hidden"
+                  style={{ paddingBottom: "0.12em", marginBottom: "-0.12em" }}
+                >
                   <span className="ph-word block will-change-transform">{line}</span>
                 </span>
               ))}
             </h1>
 
-          
-          </div>
+            <p
+              className="ph-subline mt-4 max-w-[420px] text-sm leading-relaxed sm:mt-5 sm:text-base"
+              style={{ color: INK, opacity: 0.9 }}
+            >
+              Quality homes built on trust, delivered with care — your dream address starts here.
+            </p>
 
-          <button
-            type="button"
-            onClick={() =>
-              document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" })
-            }
-            className="ph-cta mt-6 inline-flex cursor-pointer items-center bg-white px-8 py-3.5 text-xs font-bold tracking-[0.15em] shadow-md transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.98]"
-            style={{ color: INK }}
-          >
-            ENQUIRE NOW
-          </button>
+            <button
+              type="button"
+              onClick={() =>
+                document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" })
+              }
+              className="ph-cta mt-7 inline-flex cursor-pointer items-center bg-white px-7 py-3 text-[11px] font-bold tracking-[0.13em] shadow-md transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.98] sm:mt-8 sm:px-9 sm:py-3.5 sm:text-xs sm:tracking-[0.15em]"
+              style={{ color: INK }}
+            >
+              ENQUIRE NOW
+            </button>
+          </div>
         </div>
       </div>
-
-     
     </section>
   );
 }

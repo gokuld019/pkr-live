@@ -42,7 +42,6 @@ export default function ClientReviews() {
 
   useGSAP(
     () => {
-      // ---- Header ----
       const tl = gsap.timeline({
         defaults: { ease: "power3.out" },
         scrollTrigger: { trigger: ".gs-head", start: "top 85%", once: true },
@@ -86,7 +85,6 @@ export default function ClientReviews() {
           "-=0.5"
         );
 
-      // ---- Side + corner labels ----
       gsap.fromTo(
         ".gs-side-word",
         { x: -18, opacity: 0 },
@@ -114,7 +112,6 @@ export default function ClientReviews() {
         }
       );
 
-      // ---- Google bar ----
       const gtl = gsap.timeline({
         defaults: { ease: "power3.out" },
         scrollTrigger: { trigger: ".gs-google", start: "top 88%", once: true },
@@ -138,7 +135,6 @@ export default function ClientReviews() {
           "-=0.4"
         );
 
-      // Count-up rating scoped to root
       const rating = root.current?.querySelector(".gs-rating");
       if (rating) {
         const obj = { v: 0 };
@@ -156,7 +152,6 @@ export default function ClientReviews() {
         );
       }
 
-      // ---- Review cards ----
       gsap.utils.toArray(".gs-card").forEach((card) => {
         const ctl = gsap.timeline({
           defaults: { ease: "power3.out" },
@@ -188,7 +183,6 @@ export default function ClientReviews() {
           );
       });
 
-      // ---- Bottom bar ----
       gsap.fromTo(
         ".gs-bottom > *",
         { y: 18, opacity: 0 },
@@ -209,98 +203,107 @@ export default function ClientReviews() {
   return (
     <section
       ref={root}
-      className={`${figtree.className} relative w-full overflow-hidden bg-white py-16 sm:py-20`}
+      className={`${figtree.className} relative w-full overflow-hidden bg-white py-14 sm:py-16 md:py-20 lg:py-24`}
     >
-      <div className="relative mx-auto max-w-[1800px] px-6 lg:px-10">
-       
+      <div className="relative mx-auto w-full max-w-[1800px] px-5 sm:px-6 md:px-8 lg:px-10 xl:px-12">
         {/* Header */}
-        <div className="gs-head mx-auto max-w-2xl text-center">
+        <div className="gs-head mx-auto max-w-xl text-center sm:max-w-2xl">
           <div className="flex items-center justify-center gap-3">
-           
             <span
-              className="gs-eyebrow text-xs font-semibold tracking-[0.3em]"
+              className="gs-eyebrow text-[10px] font-semibold tracking-[0.25em] sm:text-xs sm:tracking-[0.3em]"
               style={{ color: GOLD_DEEP }}
             >
               REAL FAMILIES. REAL HOMES.
             </span>
-           
           </div>
 
-          <h2 className="mt-3 text-5xl font-bold text-neutral-900 sm:text-6xl">
+          <h2 className="mt-3 text-[clamp(2.25rem,7vw,3.75rem)] font-bold leading-[1.05] text-neutral-900">
             {["What", "Our", "Owners", "Say"].map((w, i) => (
-              <span key={i} className="inline-block overflow-hidden align-bottom" style={{ paddingBottom: "0.14em", marginBottom: "-0.14em" }}>
-                <span className="gs-title-word inline-block pr-[0.22em] will-change-transform">{w}</span>
+              <span
+                key={i}
+                className="inline-block overflow-hidden align-bottom"
+                style={{ paddingBottom: "0.14em", marginBottom: "-0.14em" }}
+              >
+                <span className="gs-title-word inline-block pr-[0.22em] will-change-transform">
+                  {w}
+                </span>
               </span>
             ))}
           </h2>
 
-          <p className="gs-sub mt-4 text-lg text-neutral-500">
+          <p className="gs-sub mt-4 text-[clamp(0.95rem,2vw,1.125rem)] text-neutral-500">
             Trusted by families across Chennai. Built for a brighter tomorrow.
           </p>
         </div>
 
         {/* Google reviews bar */}
         <div
-          className="gs-google mx-auto mt-10 flex max-w-4xl flex-col items-center justify-between gap-6 rounded-2xl px-8 py-6 sm:flex-row"
+          className="gs-google mx-auto mt-8 flex w-full max-w-4xl flex-col items-stretch gap-5 rounded-2xl px-5 py-6 sm:mt-10 sm:gap-6 sm:px-8 md:flex-row md:items-center md:justify-between"
           style={{ backgroundColor: CREAM, border: `1px solid ${LINE}` }}
         >
-          <div className="gs-google-item flex items-center gap-3">
-            <GoogleGIcon className="h-8 w-8" />
-            <span className="text-xl font-semibold text-neutral-800">Google Reviews</span>
-          </div>
-
-          <div className="hidden h-10 w-px sm:block" style={{ backgroundColor: LINE }} />
-
-          <div className="gs-google-item flex items-center gap-3">
-            <span
-              className="gs-rating text-4xl font-bold tabular-nums"
-              style={{ color: GOLD_DEEP }}
-            >
-              4.8
+          <div className="gs-google-item flex items-center justify-center gap-3 md:justify-start">
+            <GoogleGIcon className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
+            <span className="text-lg font-semibold text-neutral-800 sm:text-xl">
+              Google Reviews
             </span>
-            <span className="text-neutral-500">out of 5</span>
           </div>
 
-          <div className="hidden h-10 w-px sm:block" style={{ backgroundColor: LINE }} />
+          <div className="hidden h-10 w-px md:block" style={{ backgroundColor: LINE }} />
 
-          <div className="gs-google-item flex flex-col items-center gap-1">
-            <div className="flex items-center gap-0.5">
-              {[1, 2, 3, 4].map((i) => (
-                <Star
-                  key={i}
-                  className="gs-star-big h-5 w-5"
-                  style={{ fill: GOLD, color: GOLD }}
-                />
-              ))}
-              <Star className="gs-star-big h-5 w-5 fill-neutral-300 text-neutral-300" />
+          <div className="flex items-center justify-center gap-6 sm:gap-8 md:justify-start md:gap-3">
+            <div className="gs-google-item flex items-center gap-2 sm:gap-3">
+              <span
+                className="gs-rating text-3xl font-bold tabular-nums sm:text-4xl"
+                style={{ color: GOLD_DEEP }}
+              >
+                4.8
+              </span>
+              <span className="text-sm text-neutral-500 sm:text-base">out of 5</span>
             </div>
-            <span className="text-sm text-neutral-500">326 reviews</span>
+
+            <div className="hidden h-10 w-px sm:block md:hidden" style={{ backgroundColor: LINE }} />
+
+            <div className="gs-google-item flex flex-col items-center gap-1">
+              <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4].map((i) => (
+                  <Star
+                    key={i}
+                    className="gs-star-big h-4 w-4 sm:h-5 sm:w-5"
+                    style={{ fill: GOLD, color: GOLD }}
+                  />
+                ))}
+                <Star className="gs-star-big h-4 w-4 fill-neutral-300 text-neutral-300 sm:h-5 sm:w-5" />
+              </div>
+              <span className="text-xs text-neutral-500 sm:text-sm">326 reviews</span>
+            </div>
           </div>
+
+          <div className="hidden h-10 w-px md:block" style={{ backgroundColor: LINE }} />
 
           <button
-            className="gs-google-item group flex items-center gap-2 rounded-full border bg-white px-6 py-3 text-xs font-bold tracking-widest transition-all duration-300 hover:-translate-y-0.5"
+            className="gs-google-item group mx-auto flex w-full max-w-xs items-center justify-center gap-2 rounded-full border bg-white px-6 py-3 text-[11px] font-bold tracking-widest transition-all duration-300 hover:-translate-y-0.5 sm:text-xs md:mx-0 md:w-auto"
             style={{ borderColor: GOLD, color: GOLD_DEEP }}
           >
             WRITE A REVIEW
-            <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
+            <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>
 
         {/* Review cards */}
-        <div className="relative mt-14">
+        <div className="relative mt-10 sm:mt-12 lg:mt-14">
           <button
             aria-label="Previous"
-            className="absolute left-0 top-1/2 z-10 hidden h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] lg:flex"
+            className="absolute -left-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] xl:-left-5 xl:flex xl:h-12 xl:w-12"
             style={{ borderColor: LINE }}
           >
             <ArrowLeft className="h-5 w-5" style={{ color: GOLD_DEEP }} />
           </button>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
             {REVIEWS.map((review) => (
               <div
                 key={review.id}
-                className="gs-card relative rounded-2xl border bg-white p-8 shadow-sm"
+                className="gs-card relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm sm:p-7 lg:p-8"
                 style={{ borderColor: LINE }}
               >
                 <div className="flex items-start justify-between">
@@ -314,18 +317,18 @@ export default function ClientReviews() {
                     ))}
                   </div>
                   <Quote
-                    className="gs-quote h-8 w-8"
+                    className="gs-quote h-7 w-7 sm:h-8 sm:w-8"
                     fill="currentColor"
                     style={{ color: LINE }}
                   />
                 </div>
 
-                <p className="gs-line mt-5 text-[15px] leading-relaxed text-neutral-600">
+                <p className="gs-line mt-5 flex-1 text-[14.5px] leading-relaxed text-neutral-600 sm:text-[15px]">
                   &ldquo;{review.text}&rdquo;
                 </p>
 
                 <div className="gs-line mt-6 border-t pt-4" style={{ borderColor: LINE }}>
-                  <div className="text-base font-bold text-neutral-900">
+                  <div className="text-[15px] font-bold text-neutral-900 sm:text-base">
                     {review.name}
                   </div>
                   <div className="text-sm" style={{ color: GOLD_DEEP }}>
@@ -338,35 +341,44 @@ export default function ClientReviews() {
 
           <button
             aria-label="Next"
-            className="absolute right-0 top-1/2 z-10 hidden h-12 w-12 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full border bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] lg:flex"
+            className="absolute -right-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] xl:-right-5 xl:flex xl:h-12 xl:w-12"
             style={{ borderColor: LINE }}
           >
             <ArrowRight className="h-5 w-5" style={{ color: GOLD_DEEP }} />
           </button>
+
+          {/* Mobile nav controls (arrows hidden on small screens, so give a mobile-friendly pair) */}
+          <div className="mt-6 flex items-center justify-center gap-4 xl:hidden">
+            <button
+              aria-label="Previous"
+              className="flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-sm"
+              style={{ borderColor: LINE }}
+            >
+              <ArrowLeft className="h-4 w-4" style={{ color: GOLD_DEEP }} />
+            </button>
+            <button
+              aria-label="Next"
+              className="flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-sm"
+              style={{ borderColor: LINE }}
+            >
+              <ArrowRight className="h-4 w-4" style={{ color: GOLD_DEEP }} />
+            </button>
+          </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="gs-bottom mt-12 flex flex-col items-center justify-between gap-6 sm:flex-row">
+        <div className="gs-bottom mt-10 flex flex-col items-center justify-between gap-5 sm:mt-12 sm:gap-6 sm:flex-row">
           <div
-            className="text-center text-[11px] font-semibold tracking-[0.15em] sm:text-left"
+            className="text-center text-[10px] font-semibold leading-relaxed tracking-[0.12em] sm:text-left sm:text-[11px] sm:tracking-[0.15em]"
             style={{ color: GOLD_DEEP }}
           >
             HAPPY FAMILIES.<br />BRIGHTER TOMORROWS.
           </div>
 
           <div className="flex items-center gap-2">
-            <span
-              className="h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: LINE }}
-            />
-            <span
-              className="h-1.5 w-6 rounded-full"
-              style={{ backgroundColor: GOLD_DEEP }}
-            />
-            <span
-              className="h-1.5 w-1.5 rounded-full"
-              style={{ backgroundColor: LINE }}
-            />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: LINE }} />
+            <span className="h-1.5 w-6 rounded-full" style={{ backgroundColor: GOLD_DEEP }} />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: LINE }} />
           </div>
         </div>
       </div>

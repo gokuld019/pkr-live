@@ -698,7 +698,7 @@ export default function ProjectBanner({ project }) {
   return (
     <div className={figtree.className} style={{ fontFamily: FONT }}>
       {/* ================= Banner ================= */}
-      <section className="relative flex min-h-[750px] w-full bg-white" style={{ fontFamily: FONT }}>
+      <section className="relative flex min-h-[750px] w-full bg-white mt-10" style={{ fontFamily: FONT }}>
         <div
           className="relative flex flex-[1.6] items-center justify-center overflow-hidden bg-[#333] bg-cover bg-center"
           style={{ backgroundImage: `url(${project.heroImage})` }}
@@ -710,7 +710,7 @@ export default function ProjectBanner({ project }) {
         className="relative w-full overflow-hidden bg-white px-5 py-16 sm:px-8 md:px-10 lg:px-16 lg:py-24"
         style={{ fontFamily: FONT }}
       >
-        <div className="relative mx-auto grid max-w-[1500px] grid-cols-1 items-center gap-10 lg:grid-cols-[1fr_0.95fr_1.1fr] lg:gap-8">
+        <div className="relative mx-auto grid max-w-[1500px] grid-cols-1 items-stretch gap-10 lg:grid-cols-[1fr_0.95fr_1.1fr] lg:gap-8">
           <div>
             <FadeUp>
               <div className="mb-5 flex items-center gap-3">
@@ -786,16 +786,16 @@ export default function ProjectBanner({ project }) {
             </FadeUp>
           </div>
 
-          <FadeUp delay={0.15} className="relative">
+          <FadeUp delay={0.15} className="relative h-full">
             <img
               src={project.aboutImage}
               alt={project.name || 'Project'}
-              className="h-[440px] w-full rounded-[16px] object-cover shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] md:h-[560px] lg:h-[610px]"
+              className="h-[440px] w-full rounded-[16px] object-cover shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] md:h-[560px] lg:h-full"
             />
           </FadeUp>
 
-          <FadeUp delay={0.25}>
-            <div className="relative rounded-[22px] border border-[#ece6da] bg-white px-6 py-8 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.18)] md:px-7 md:py-10">
+          <FadeUp delay={0.25} className="h-full">
+            <div className="relative flex h-full flex-col justify-center rounded-[22px] border border-[#ece6da] bg-white px-6 py-8 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.18)] md:px-7 md:py-10">
               <div className="pointer-events-none absolute left-1/2 top-8 bottom-8 hidden w-px -translate-x-1/2 bg-[#efe9de] sm:block" />
 
               <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
@@ -1591,8 +1591,8 @@ export default function ProjectBanner({ project }) {
                       )
                     })}
 
-                    <a
-                      href={project.floorPlansCtaHref || '#'}
+                    
+                      <a href={project.floorPlansCtaHref || '#'}
                       className="flex min-h-[160px] flex-col items-center justify-center gap-3 rounded-[14px] border border-dashed border-[#ddd5c6] p-3 text-center no-underline transition-colors hover:bg-white"
                     >
                       <span
@@ -1890,8 +1890,8 @@ export default function ProjectBanner({ project }) {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
-              <a
-                href={project.tourUrl || '#'}
+              
+                <a href={project.tourUrl || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Start 360 virtual tour"

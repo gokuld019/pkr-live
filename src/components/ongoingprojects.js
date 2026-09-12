@@ -201,24 +201,22 @@ export default function OurProjects() {
     <section
       ref={root}
       id="projects"
-      className={`${figtree.className} relative w-full py-16 sm:py-20`}
+      className={`${figtree.className} relative w-full py-12 sm:py-16 md:py-20`}
       style={{ backgroundColor: CREAM }}
     >
-      <div className="relative mx-auto max-w-[1800px] px-6 lg:px-10">
+      <div className="relative mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-10">
         {/* Section Heading */}
-        <div className="gs-head mb-14 text-center">
+        <div className="gs-head mb-10 text-center sm:mb-14">
           <div className="flex items-center justify-center gap-3">
-           
             <span
-              className="gs-eyebrow-text text-xs font-semibold tracking-[0.28em]"
+              className="gs-eyebrow-text text-[11px] font-semibold tracking-[0.2em] sm:text-xs sm:tracking-[0.28em]"
               style={{ color: GOLD_DEEP }}
             >
               EXPLORE
             </span>
-           
           </div>
 
-          <h2 className="mt-4 text-4xl font-bold tracking-tight text-neutral-900 sm:text-6xl lg:text-7xl">
+          <h2 className="mt-3 text-[32px] font-bold tracking-tight text-neutral-900 sm:mt-4 sm:text-5xl md:text-6xl lg:text-7xl">
             {["Our", "Projects"].map((word) => (
               <span key={word} className="inline-block overflow-hidden align-bottom" style={{ paddingBottom: "0.14em", marginBottom: "-0.14em" }}>
                 <span className="gs-title-word inline-block pr-[0.22em] will-change-transform">{word}</span>
@@ -226,13 +224,13 @@ export default function OurProjects() {
             ))}
           </h2>
 
-          <p className="gs-sub mx-auto mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg">
+          <p className="gs-sub mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-neutral-600 sm:mt-5 sm:text-lg">
             Two ongoing residential communities in Chennai South — thoughtfully
             designed, transparently priced.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-7 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:gap-7 lg:grid-cols-2">
           {PROJECTS.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
@@ -252,7 +250,7 @@ function ProjectCard({ project }) {
     >
       <div className="grid grid-cols-1 sm:grid-cols-2">
         {/* Image */}
-        <div className="relative h-60 overflow-hidden sm:h-full sm:min-h-[360px]">
+        <div className="relative h-52 overflow-hidden sm:h-full sm:min-h-[320px] md:min-h-[360px]">
           <Image
             src={project.image}
             alt={project.name}
@@ -260,7 +258,7 @@ function ProjectCard({ project }) {
             className="gs-img object-cover"
           />
           <span
-            className="gs-badge absolute right-0 top-5 rounded-l-md px-4 py-1.5 text-xs font-semibold tracking-wide text-white"
+            className="gs-badge absolute right-0 top-4 rounded-l-md px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white sm:top-5 sm:px-4 sm:text-xs"
             style={{ backgroundColor: GOLD_DEEP }}
           >
             {project.status}
@@ -268,16 +266,16 @@ function ProjectCard({ project }) {
         </div>
 
         {/* Details */}
-        <div className="flex flex-col justify-center px-6 py-7 sm:px-8">
+        <div className="flex flex-col justify-center px-5 py-6 sm:px-6 sm:py-7 md:px-8">
           <div className="flex items-start justify-between gap-4">
-            <div>
+            <div className="min-w-0">
               <span
-                className="gs-line text-[11px] font-semibold tracking-[0.22em]"
+                className="gs-line text-[10.5px] font-semibold tracking-[0.18em] sm:text-[11px] sm:tracking-[0.22em]"
                 style={{ color: GOLD_DEEP }}
               >
                 {project.category}
               </span>
-              <h3 className="gs-line mt-1 text-2xl font-semibold tracking-tight text-neutral-900">
+              <h3 className="gs-line mt-1 text-xl font-semibold tracking-tight text-neutral-900 sm:text-2xl">
                 {project.name}
               </h3>
             </div>
@@ -285,7 +283,7 @@ function ProjectCard({ project }) {
             <button
               type="button"
               aria-label={`Call about ${project.name}`}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-all duration-300 hover:-translate-y-0.5"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 hover:-translate-y-0.5 sm:h-10 sm:w-10"
               style={{ borderColor: LINE, backgroundColor: CREAM, color: GOLD_DEEP }}
             >
               <Phone className="h-4 w-4" />
@@ -293,19 +291,19 @@ function ProjectCard({ project }) {
           </div>
 
           <span
-            className="gs-card-rule mt-4 block h-[3px] w-12 rounded-full"
+            className="gs-card-rule mt-3.5 block h-[3px] w-12 rounded-full sm:mt-4"
             style={{ backgroundColor: GOLD }}
           />
 
-          <p className="gs-line mt-4 text-[14px] leading-relaxed text-neutral-500">
+          <p className="gs-line mt-3.5 text-[13.5px] leading-relaxed text-neutral-500 sm:mt-4 sm:text-[14px]">
             {project.address}
           </p>
 
-          <div className="gs-line mt-6 text-xs font-medium tracking-wide text-neutral-500">
+          <div className="gs-line mt-5 text-xs font-medium tracking-wide text-neutral-500 sm:mt-6">
             Starting from
           </div>
           <div
-            className="gs-line mt-1 text-2xl font-bold tracking-tight sm:text-3xl"
+            className="gs-line mt-1 text-xl font-bold tracking-tight sm:text-2xl md:text-3xl"
             style={{ color: GOLD_DEEP }}
           >
             {project.price}
@@ -314,8 +312,8 @@ function ProjectCard({ project }) {
       </div>
 
       {/* Specs */}
-      <div className="border-t px-6 py-6 sm:px-8" style={{ borderColor: "#EFE7D6" }}>
-        <div className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-4">
+      <div className="border-t px-5 py-5 sm:px-6 sm:py-6 md:px-8" style={{ borderColor: "#EFE7D6" }}>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-6 sm:gap-y-5 md:grid-cols-4">
           {[
             { icon: Building2, label: "TYPE", value: project.type },
             { icon: Ruler, label: "SIZE", value: project.size },
@@ -328,11 +326,11 @@ function ProjectCard({ project }) {
                 strokeWidth={1.5}
                 style={{ color: GOLD }}
               />
-              <div>
+              <div className="min-w-0">
                 <div className="text-[10px] font-semibold tracking-[0.14em] text-neutral-400">
                   {label}
                 </div>
-                <div className="mt-0.5 text-sm font-bold leading-snug text-neutral-900">
+                <div className="mt-0.5 text-[13px] font-bold leading-snug text-neutral-900 sm:text-sm">
                   {value}
                 </div>
               </div>
@@ -342,11 +340,11 @@ function ProjectCard({ project }) {
 
         {/* Countdown */}
         <div
-          className="mt-7 border-t pt-6"
+          className="mt-6 border-t pt-5 sm:mt-7 sm:pt-6"
           style={{ borderColor: "#EFE7D6" }}
         >
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold tracking-[0.16em] text-neutral-400">
+          <div className="flex flex-col gap-1.5 xs:flex-row xs:items-center xs:justify-between sm:flex-row sm:items-center sm:justify-between">
+            <span className="text-[10px] font-semibold tracking-[0.14em] text-neutral-400 sm:tracking-[0.16em]">
               TIME LEFT FOR PROJECT COMPLETION
             </span>
             <span
@@ -358,7 +356,7 @@ function ProjectCard({ project }) {
           </div>
 
           <div
-            className="gs-countdown-box mt-4 grid grid-cols-4 divide-x overflow-hidden rounded-xl border"
+            className="gs-countdown-box mt-3.5 grid grid-cols-4 divide-x overflow-hidden rounded-xl border sm:mt-4"
             style={{ borderColor: LINE, backgroundColor: CREAM }}
           >
             {[
@@ -369,13 +367,13 @@ function ProjectCard({ project }) {
             ].map(({ v, l }) => (
               <div
                 key={l}
-                className="gs-count flex flex-col items-center py-4"
+                className="gs-count flex flex-col items-center py-3 sm:py-4"
                 style={{ borderColor: LINE }}
               >
-                <span className="text-xl font-bold tabular-nums text-neutral-900 sm:text-2xl">
+                <span className="text-lg font-bold tabular-nums text-neutral-900 sm:text-xl md:text-2xl">
                   {v}
                 </span>
-                <span className="mt-1 text-[10px] font-semibold tracking-[0.14em] text-neutral-400">
+                <span className="mt-1 text-[9px] font-semibold tracking-[0.1em] text-neutral-400 sm:text-[10px] sm:tracking-[0.14em]">
                   {l}
                 </span>
               </div>
@@ -385,10 +383,10 @@ function ProjectCard({ project }) {
 
         {/* Actions */}
         <div
-          className="gs-actions mt-6 flex flex-col gap-5 rounded-xl border px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
+          className="gs-actions mt-5 flex flex-col gap-5 rounded-xl border px-4 py-4 sm:mt-6 sm:px-5 md:flex-row md:items-center md:justify-between"
           style={{ borderColor: "#EFE7D6", backgroundColor: CREAM }}
         >
-          <div className="flex flex-wrap items-center gap-5">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start sm:gap-5">
             <ActionIcon icon={Video} label="Walk Through" />
             <ActionIcon icon={Orbit} label="Aerial View" />
             <ActionIcon icon={Building2} label="Home Tour" />
@@ -397,11 +395,11 @@ function ProjectCard({ project }) {
 
           <button
             type="button"
-            className="group inline-flex items-center justify-center gap-3 rounded-full px-6 py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 hover:-translate-y-0.5"
+            className="group inline-flex w-full items-center justify-center gap-3 rounded-full px-6 py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 hover:-translate-y-0.5 md:w-auto"
             style={{ backgroundColor: GOLD_DEEP }}
           >
             KNOW MORE
-            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
           </button>
         </div>
       </div>

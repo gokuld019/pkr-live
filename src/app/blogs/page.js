@@ -177,23 +177,25 @@ export default function BlogsPage() {
   }, [activeCategory, searchQuery]);
 
   return (
-    <main
-      ref={root}
-     
-    >
+    <main ref={root} className={figtree.className}>
       {/* Hero Section */}
-     <section className="relative h-[320px] mt-10 w-full md:h-[420px] lg:h-[680px]">
-  <img
-    src="/gurudevg.jpeg"
-    alt="PKR Estates"
-    className="absolute inset-0 h-full w-full object-cover"
-  />
-</section>
+      <section className="w-full">
+        <div className="relative w-full h-[220px] sm:h-[300px]  md:h-[420px] lg:h-[780px] flex overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl mx-3 mt-3 sm:mx-4 sm:mt-4 md:mx-8 md:mt-8">
+          <div
+            className="hero-img flex-[1.7] relative bg-cover bg-center mr-10"
+            style={{ backgroundImage: `url(/blogs.png)` }}
+          >
+          </div>
+        </div>
+      </section>
 
       {/* Filter + Search Bar */}
-      <section className="w-full px-4 md:px-8 lg:px-16 mt-10">
-        <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-6 overflow-x-auto pb-1 md:pb-0">
+      <section className="w-full px-4 mt-8 sm:px-6 sm:mt-10 md:px-8 lg:px-16">
+        <div className="max-w-[1400px] mx-auto flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div
+            className="flex items-center gap-4 overflow-x-auto pb-2 -mx-4 px-4 sm:gap-6 sm:-mx-0 sm:px-0 sm:pb-1 lg:pb-0"
+            style={{ scrollbarWidth: "none" }}
+          >
             {CATEGORIES.map((cat) => {
               const Icon = cat.icon;
               const isActive = activeCategory === cat.key;
@@ -204,10 +206,10 @@ export default function BlogsPage() {
                     setActiveCategory(cat.key);
                     setCurrentPage(1);
                   }}
-                  className="flex items-center gap-2 text-sm font-medium whitespace-nowrap pb-2 relative shrink-0 transition-colors"
+                  className="flex items-center gap-1.5 text-[13px] font-medium whitespace-nowrap pb-2 relative shrink-0 transition-colors sm:gap-2 sm:text-sm"
                   style={{ color: isActive ? GOLD_DEEP : "#6B7280" }}
                 >
-                  <Icon className="w-4 h-4" strokeWidth={1.75} />
+                  <Icon className="w-4 h-4 shrink-0" strokeWidth={1.75} />
                   {cat.label}
                   {isActive && (
                     <span
@@ -221,7 +223,7 @@ export default function BlogsPage() {
           </div>
 
           <div
-            className="flex items-center gap-3 rounded-full border bg-white px-5 py-3 w-full md:w-[320px] shrink-0"
+            className="flex items-center gap-3 rounded-full border bg-white px-4 py-2.5 w-full shrink-0 sm:px-5 sm:py-3 lg:w-[320px]"
             style={{ borderColor: LINE }}
           >
             <Search className="w-4 h-4 text-neutral-400 shrink-0" />
@@ -230,7 +232,7 @@ export default function BlogsPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search articles, topics..."
-              className="text-sm bg-transparent outline-none w-full placeholder:text-neutral-400"
+              className="text-sm bg-transparent outline-none w-full min-w-0 placeholder:text-neutral-400"
               style={{ color: NAVY }}
             />
           </div>
@@ -238,11 +240,11 @@ export default function BlogsPage() {
       </section>
 
       {/* Main content: Grid + Sidebar */}
-      <section className="w-full px-4 md:px-8 lg:px-16 mt-8 pb-16">
-        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
+      <section className="w-full px-4 mt-8 pb-12 sm:px-6 md:px-8 lg:px-16 lg:pb-16">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 gap-8 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_360px]">
           {/* Blog Grid */}
-          <div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="min-w-0">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 xl:grid-cols-3">
               {filteredPosts.map((post) => (
                 <BlogCard key={post.id} post={post} />
               ))}
@@ -255,11 +257,11 @@ export default function BlogsPage() {
             )}
 
             {/* Pagination */}
-            <div className="flex items-center justify-between mt-10 flex-wrap gap-4">
-              <div className="flex items-center gap-2">
+            <div className="flex flex-col items-center gap-4 mt-10 sm:flex-row sm:justify-between sm:flex-wrap">
+              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-full">
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="w-9 h-9 rounded-full border flex items-center justify-center hover:bg-neutral-50 transition-colors"
+                  className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-neutral-50 transition-colors shrink-0 sm:w-9 sm:h-9"
                   style={{ borderColor: LINE }}
                   aria-label="Previous page"
                 >
@@ -270,7 +272,7 @@ export default function BlogsPage() {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold transition-colors"
+                    className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold transition-colors shrink-0 sm:w-9 sm:h-9"
                     style={{
                       backgroundColor: currentPage === page ? GOLD_DEEP : "transparent",
                       color: currentPage === page ? "#fff" : NAVY,
@@ -283,7 +285,7 @@ export default function BlogsPage() {
 
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(5, p + 1))}
-                  className="w-9 h-9 rounded-full border flex items-center justify-center hover:bg-neutral-50 transition-colors"
+                  className="w-8 h-8 rounded-full border flex items-center justify-center hover:bg-neutral-50 transition-colors shrink-0 sm:w-9 sm:h-9"
                   style={{ borderColor: LINE }}
                   aria-label="Next page"
                 >
@@ -303,7 +305,7 @@ export default function BlogsPage() {
                 Featured Post
               </h3>
               <div className="rounded-2xl border bg-white overflow-hidden" style={{ borderColor: LINE }}>
-                <div className="relative h-[160px]">
+                <div className="relative h-[180px] sm:h-[160px]">
                   <img
                     src={FEATURED_POST.image}
                     alt={FEATURED_POST.title}
@@ -323,8 +325,8 @@ export default function BlogsPage() {
                   <p className="text-sm text-neutral-500 leading-relaxed mb-4">
                     {FEATURED_POST.excerpt}
                   </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-xs text-neutral-400">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-3 text-xs text-neutral-400 flex-wrap">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3.5 h-3.5" />
                         {FEATURED_POST.date}
@@ -360,7 +362,7 @@ export default function BlogsPage() {
                         className="w-full h-full object-cover transition-transform group-hover:scale-105"
                       />
                     </div>
-                    <div>
+                    <div className="min-w-0">
                       <h5
                         className="text-sm font-semibold leading-snug group-hover:underline"
                         style={{ color: NAVY }}
@@ -417,14 +419,14 @@ function BlogCard({ post }) {
       className="rounded-2xl border bg-white overflow-hidden flex flex-col group cursor-pointer transition-shadow hover:shadow-md"
       style={{ borderColor: LINE }}
     >
-      <div className="relative h-[190px] overflow-hidden">
+      <div className="relative h-[200px] overflow-hidden sm:h-[180px] xl:h-[190px]">
         <img
           src={post.image}
           alt={post.title}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
-      <div className="p-5 flex flex-col flex-1">
+      <div className="p-4 flex flex-col flex-1 sm:p-5">
         <span
           className="inline-block text-[11px] font-semibold uppercase tracking-wide rounded-full px-3 py-1 mb-3 w-fit"
           style={{ backgroundColor: "#F3ECDA", color: GOLD_DEEP }}
@@ -437,8 +439,8 @@ function BlogCard({ post }) {
         <p className="text-sm text-neutral-500 leading-relaxed mb-4 flex-1">
           {post.excerpt}
         </p>
-        <div className="flex items-center justify-between mt-auto pt-3 border-t" style={{ borderColor: LINE }}>
-          <div className="flex items-center gap-3 text-xs text-neutral-400">
+        <div className="flex items-center justify-between gap-2 mt-auto pt-3 border-t flex-wrap" style={{ borderColor: LINE }}>
+          <div className="flex items-center gap-3 text-xs text-neutral-400 flex-wrap">
             <span className="flex items-center gap-1">
               <Calendar className="w-3.5 h-3.5" />
               {post.date}

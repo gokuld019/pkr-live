@@ -40,8 +40,6 @@ export default function HeroBanner() {
     setProgressKey((k) => k + 1);
   }, []);
 
-  /* Pause autoplay + Ken Burns when hero is scrolled out of view
-     (saves CPU so reveals in sections below stay smooth) */
   useEffect(() => {
     if (!root.current) return;
     const io = new IntersectionObserver(
@@ -52,14 +50,12 @@ export default function HeroBanner() {
     return () => io.disconnect();
   }, []);
 
-  /* Autoplay */
   useEffect(() => {
     if (isPaused || !isVisible || SLIDES.length < 2) return;
     timerRef.current = setTimeout(next, AUTO_SCROLL_MS);
     return () => clearTimeout(timerRef.current);
   }, [active, isPaused, isVisible, next]);
 
-  /* Pause / resume the slow zoom with visibility */
   useEffect(() => {
     const tween = zoomTweenRef.current;
     if (!tween) return;
@@ -67,7 +63,6 @@ export default function HeroBanner() {
     else tween.pause();
   }, [isVisible]);
 
-  /* Slide + text entrance animation */
   useEffect(() => {
     if (!root.current) return;
 
@@ -84,7 +79,6 @@ export default function HeroBanner() {
         );
       }
 
-      // Selectors scoped to root; toArray avoids GSAP warnings when elements don't exist
       const q = gsap.utils.selector(root);
       const eyebrowText = q(".hb-eyebrow-text");
       const eyebrowLine = q(".hb-eyebrow-line");
@@ -155,7 +149,7 @@ export default function HeroBanner() {
   return (
     <section
       ref={root}
-      className="relative isolate h-[80svh] min-h-[560px] w-full overflow-hidden bg-[#1a1a1a] sm:h-[90svh] lg:h-[100svh]"
+      className="relative isolate h-[100svh] min-h-[480px] w-full overflow-hidden bg-[#1a1a1a] sm:min-h-[560px] md:h-[90svh] lg:h-[100svh]"
       style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', system-ui, sans-serif" }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -186,25 +180,26 @@ export default function HeroBanner() {
         </div>
       ))}
 
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/45 via-black/10 to-transparent sm:hidden" />
 
       <button
         type="button"
         onClick={prev}
         aria-label="Previous slide"
-        className="group absolute left-3 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/25 bg-white/10 p-2.5 backdrop-blur-md transition-all hover:scale-105 hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white sm:left-6 sm:p-3.5"
+        className="group absolute left-2.5 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/25 bg-white/10 p-2 backdrop-blur-md transition-all hover:scale-105 hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white sm:left-4 sm:p-3 md:left-6 md:p-3.5"
       >
-        <ChevronLeft className="h-5 w-5 text-white transition-transform group-hover:-translate-x-0.5" />
+        <ChevronLeft className="h-4 w-4 text-white transition-transform group-hover:-translate-x-0.5 sm:h-5 sm:w-5" />
       </button>
       <button
         type="button"
         onClick={next}
         aria-label="Next slide"
-        className="group absolute right-3 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/25 bg-white/10 p-2.5 backdrop-blur-md transition-all hover:scale-105 hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white sm:right-6 sm:p-3.5"
+        className="group absolute right-2.5 top-1/2 z-30 -translate-y-1/2 rounded-full border border-white/25 bg-white/10 p-2 backdrop-blur-md transition-all hover:scale-105 hover:bg-white/25 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white sm:right-4 sm:p-3 md:right-6 md:p-3.5"
       >
-        <ChevronRight className="h-5 w-5 text-white transition-transform group-hover:translate-x-0.5" />
+        <ChevronRight className="h-4 w-4 text-white transition-transform group-hover:translate-x-0.5 sm:h-5 sm:w-5" />
       </button>
 
-      <div className="absolute bottom-8 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3">
+      <div className="absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2.5 sm:bottom-8 sm:gap-3">
         {SLIDES.map((_, i) => (
           <button
             key={i}
@@ -213,7 +208,7 @@ export default function HeroBanner() {
             aria-label={`Go to slide ${i + 1}`}
             aria-current={i === active}
             className="relative h-1.5 overflow-hidden rounded-full bg-white/30 transition-all duration-300"
-            style={{ width: i === active ? "44px" : "18px" }}
+            style={{ width: i === active ? "36px" : "14px" }}
           >
             {i === active && (
               <span
@@ -238,6 +233,11 @@ export default function HeroBanner() {
           }
           to {
             width: 100%;
+          }
+        }
+        @media (min-width: 640px) {
+          .hb-dot-active {
+            width: 44px !important;
           }
         }
       `}</style>

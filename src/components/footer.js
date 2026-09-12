@@ -81,35 +81,34 @@ export default function Footer() {
 
   return (
     <footer ref={root} className={`${figtree.className} relative w-full overflow-hidden bg-white`}>
-      <div className="relative mx-auto max-w-[1800px] px-6 pt-14 lg:px-10">
+      <div className="relative mx-auto max-w-[1800px] px-5 pt-12 sm:px-6 md:px-8 lg:px-10 lg:pt-14">
         {/* Newsletter row */}
-        <div className="ft-newsletter flex flex-col gap-8 border-b border-neutral-200 pb-10 lg:flex-row lg:items-center lg:justify-between">
+        <div className="ft-newsletter flex flex-col gap-7 border-b border-neutral-200 pb-9 sm:gap-8 sm:pb-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="lg:max-w-md">
             <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold tracking-[0.25em] text-neutral-500">
+              <span className="text-[11px] font-semibold tracking-[0.2em] text-neutral-500 sm:text-xs sm:tracking-[0.25em]">
                 STAY AHEAD
               </span>
               <span className="h-px w-10 bg-neutral-400" />
             </div>
-            <h3 className="mt-2 text-2xl font-semibold leading-snug text-neutral-900 sm:text-3xl">
+            <h3 className="mt-2 text-xl font-semibold leading-snug text-neutral-900 sm:text-2xl lg:text-3xl">
               Get the latest updates
               <br />
-              on our{" "}
-              
-                projects, offers &amp; insights.
-              
+              on our projects, offers &amp; insights.
             </h3>
           </div>
 
           <div className="lg:max-w-sm">
-            <div className="flex items-center gap-3 rounded-full border border-neutral-300 px-4 py-2.5">
-              <Mail className="h-4 w-4 flex-shrink-0 text-neutral-400" />
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="w-full bg-transparent text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none"
-              />
-              <button className="flex flex-shrink-0 items-center gap-1.5 rounded-full bg-[#8a6d1f] px-5 py-2 text-sm font-semibold text-white hover:bg-[#75592a]">
+            <div className="flex flex-col gap-3 rounded-2xl border border-neutral-300 p-2 sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:px-4 sm:py-2.5">
+              <div className="flex items-center gap-3 px-2 sm:px-0">
+                <Mail className="h-4 w-4 flex-shrink-0 text-neutral-400" />
+                <input
+                  type="email"
+                  placeholder="Enter your email address"
+                  className="w-full bg-transparent text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none"
+                />
+              </div>
+              <button className="flex flex-shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#8a6d1f] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#75592a] sm:py-2">
                 Subscribe
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
@@ -117,7 +116,7 @@ export default function Footer() {
             <p className="mt-2 text-xs text-neutral-500">Be the first to know. No spam, ever.</p>
           </div>
 
-          <div className="flex items-center gap-6">
+          <div className="grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-6">
             <FooterBadge icon={FileText} label={"New\nProjects"} />
             <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
             <FooterBadge icon={Percent} label={"Exclusive\nOffers"} />
@@ -127,24 +126,24 @@ export default function Footer() {
         </div>
 
         {/* Main footer grid */}
-        <div className="ft-grid grid grid-cols-1 gap-10 py-12 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="ft-grid grid grid-cols-1 gap-10 py-10 sm:grid-cols-2 sm:py-12 lg:grid-cols-5">
           {/* Brand */}
-        <div className="flex flex-col items-start">
-  <Image
-    src="/pkr-logo.png"
-    alt="PKR Estates"
-    width={180}
-    height={70}
-    priority
-    style={{ width: "auto", height: "auto" }}
-    className="h-auto w-[160px] object-contain"
-  />
+          <div className="flex flex-col items-start sm:col-span-2 lg:col-span-1">
+            <Image
+              src="/pkr-logo.png"
+              alt="PKR Estates"
+              width={180}
+              height={70}
+              priority
+              style={{ width: "auto", height: "auto" }}
+              className="h-auto w-[140px] object-contain sm:w-[160px]"
+            />
 
-  <div className="mt-4 text-xs font-bold tracking-[0.15em] text-[#8a6d1f]">
-    SPACES FOR A
-    <br />
-    BRIGHTER TOMORROW
-  </div>
+            <div className="mt-4 text-xs font-bold tracking-[0.15em] text-[#8a6d1f]">
+              SPACES FOR A
+              <br />
+              BRIGHTER TOMORROW
+            </div>
 
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-neutral-500">
               Creating thoughtfully designed homes and communities that enrich lives,
@@ -211,7 +210,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
-                <span className="text-sm text-neutral-600">enquiry@tvshomes.com</span>
+                <span className="break-all text-sm text-neutral-600">enquiry@tvshomes.com</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
@@ -220,8 +219,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Let's build - with decorative leaf */}
-          <div className="relative">
+          {/* Let's build */}
+          <div className="relative sm:col-span-2 lg:col-span-1">
             <h4 className="text-xs font-bold leading-relaxed tracking-[0.2em] text-neutral-900">
               LET&apos;S BUILD
               <br />A BRIGHTER
@@ -230,7 +229,7 @@ export default function Footer() {
             </h4>
             <span className="mt-2 block h-px w-6 bg-[#8a6d1f]" />
 
-            <p className="mt-4 text-sm leading-relaxed text-neutral-500">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-neutral-500">
               Have a question or want to know more? We&apos;re here to help.
             </p>
 
@@ -238,15 +237,12 @@ export default function Footer() {
               Get in Touch
               <ArrowRight className="h-4 w-4" />
             </button>
-
-            {/* Decorative leaf outline + vertical words */}
-           
           </div>
         </div>
 
         {/* Stats row */}
         <div className="ft-stats flex flex-col gap-8 border-t border-neutral-200 py-8 sm:flex-row sm:items-center sm:justify-between">
-          <div className="grid grid-cols-2 gap-8 sm:flex sm:items-center sm:gap-10">
+          <div className="grid grid-cols-2 gap-6 sm:flex sm:flex-wrap sm:items-center sm:gap-8 lg:gap-10">
             <StatItem icon={Users} value="10,000+" label="HAPPY FAMILIES" />
             <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
             <StatItem icon={Sprout} value="25+" label="YEARS OF TRUST" />
@@ -258,10 +254,7 @@ export default function Footer() {
 
           <div className="flex items-center gap-4">
             <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
-            <div
-              className="text-2xl italic text-[#8a6d1f]"
-              style={{ fontFamily: "cursive" }}
-            >
+            <div className="text-xl italic leading-tight text-[#8a6d1f] sm:text-2xl" style={{ fontFamily: "cursive" }}>
               More
               <br />
               Than a Home
@@ -273,9 +266,9 @@ export default function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-3 px-6 py-5 text-sm text-neutral-500 sm:flex-row lg:px-10">
+        <div className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-3 px-5 py-5 text-center text-xs text-neutral-500 sm:px-6 sm:text-sm sm:flex-row sm:text-left lg:px-10">
           <span>© 2026 PKR ESTATES. All rights reserved.</span>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
             <a href="#" className="hover:text-neutral-800">
               Terms &amp; Conditions
             </a>
@@ -292,7 +285,6 @@ export default function Footer() {
               Sitemap
             </a>
           </div>
-          
         </div>
       </div>
     </footer>
@@ -302,10 +294,10 @@ export default function Footer() {
 function FooterBadge({ icon: Icon, label }) {
   return (
     <div className="flex flex-col items-center gap-2 text-center">
-      <span className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-300 text-[#8a6d1f]">
+      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 text-[#8a6d1f] sm:h-11 sm:w-11">
         <Icon className="h-4 w-4" />
       </span>
-      <span className="whitespace-pre-line text-xs font-semibold leading-tight text-neutral-700">
+      <span className="whitespace-pre-line text-[11px] font-semibold leading-tight text-neutral-700 sm:text-xs">
         {label}
       </span>
     </div>
@@ -346,10 +338,10 @@ function FooterColumn({ title, links }) {
 function StatItem({ icon: Icon, value, label }) {
   return (
     <div className="flex items-center gap-3">
-      <Icon className="h-7 w-7 text-[#8a6d1f]" strokeWidth={1.5} />
+      <Icon className="h-6 w-6 shrink-0 text-[#8a6d1f] sm:h-7 sm:w-7" strokeWidth={1.5} />
       <div>
-        <div className="text-xl font-bold text-neutral-900">{value}</div>
-        <div className="text-[10px] font-medium tracking-wide text-neutral-500">{label}</div>
+        <div className="text-lg font-bold text-neutral-900 sm:text-xl">{value}</div>
+        <div className="text-[9.5px] font-medium tracking-wide text-neutral-500 sm:text-[10px]">{label}</div>
       </div>
     </div>
   );

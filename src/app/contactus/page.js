@@ -94,7 +94,7 @@ const MAP_SRC =
   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.4277621863025!2d80.1935429!3d13.008409499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52674983f048c3%3A0xf9655e7ba417a69f!2sArchana%20Castle%2C%20Ramapuram%2C%20Parangi%20Malai%2C%20St.Thomas%20Mount%2C%20Tamil%20Nadu%20600016!5e0!3m2!1sen!2sin!4v1789040406224!5m2!1sen!2sin";
 
 const CARD =
-  "h-full rounded-[14px] border border-[#e8e1d3] bg-white shadow-[0_20px_40px_rgba(20,25,35,0.06)]";
+  "h-full rounded-2xl border border-[#e8e1d3] bg-white shadow-[0_20px_40px_rgba(20,25,35,0.06)]";
 
 /* ---------------------------------------------------------
    Page
@@ -116,22 +116,28 @@ export default function ContactPage() {
   return (
     <div className={`${figtree.className} bg-white text-[#16233b]`}>
       {/* ---------------- HERO ---------------- */}
-      <section className="relative mt-10 h-[320px] w-full md:h-[420px] lg:h-[680px]">
-        <img src="/gurudevg.jpeg" alt="PKR Estates" className="absolute inset-0 h-full w-full object-cover" />
+      <section className="w-full">
+        <div className="relative w-full h-[220px] sm:h-[300px] md:h-[420px] lg:h-[780px] flex overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl mx-3 mt-3 sm:mx-4 sm:mt-4 md:mx-8 md:mt-8">
+          <div
+            className="hero-img flex-[1.7] relative bg-cover bg-center mr-10"
+            style={{ backgroundImage: `url(/contactus.png)` }}
+          >
+          </div>
+        </div>
       </section>
 
       {/* ---------------- GET IN TOUCH ---------------- */}
       <section
         id="get-in-touch"
-        className="relative z-[5] mx-auto mt-20 grid max-w-[1240px] grid-cols-1 items-stretch gap-[22px] px-6 pb-[60px] md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr]"
+        className="relative z-[5] mx-auto mt-8 grid max-w-[1240px] grid-cols-1 items-stretch gap-4 px-4 pb-10 sm:mt-12 sm:gap-5 sm:px-6 sm:pb-14 lg:mt-16 lg:grid-cols-[1.3fr_1fr_1fr] lg:gap-[22px] lg:pb-[60px]"
       >
         {/* Form card */}
-        <div className={`${CARD} flex flex-col p-8 md:col-span-2 lg:col-span-1`}>
-          <h2 className="mb-1.5 text-2xl font-semibold text-[#16233b]">Get in Touch</h2>
-          <p className="mb-6 text-sm text-[#6f7580]">Fill out the form and our team will get back to you shortly.</p>
+        <div className={`${CARD} flex flex-col p-5 sm:p-7 lg:col-span-1 lg:p-8`}>
+          <h2 className="mb-1.5 text-xl font-semibold text-[#16233b] sm:text-2xl">Get in Touch</h2>
+          <p className="mb-5 text-sm text-[#6f7580] sm:mb-6">Fill out the form and our team will get back to you shortly.</p>
 
           <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-            <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <label htmlFor="name" className="text-[13px] font-semibold text-[#16233b]">Full Name *</label>
                 <input
@@ -162,7 +168,7 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-2">
                 <label htmlFor="email" className="text-[13px] font-semibold text-[#16233b]">Email Address *</label>
                 <input
@@ -210,7 +216,7 @@ export default function ContactPage() {
 
             <button
               type="submit"
-              className="mt-1.5 inline-flex w-full items-center justify-center gap-2 rounded-md border-none bg-[#bd8a4d] px-6 py-[13px] text-sm font-semibold text-white hover:bg-[#a97b42]"
+              className="mt-1.5 inline-flex w-full items-center justify-center gap-2 rounded-md border-none bg-[#bd8a4d] px-6 py-[13px] text-sm font-semibold text-white transition-colors hover:bg-[#a97b42]"
             >
               {submitted ? "Message Sent!" : "Send Message"} {!submitted && <Icon.Arrow />}
             </button>
@@ -221,15 +227,15 @@ export default function ContactPage() {
         </div>
 
         {/* Info card */}
-        <div className={`${CARD} flex flex-col justify-between p-8`}>
+        <div className={`${CARD} flex flex-col p-5 sm:p-7 lg:p-8`}>
           <InfoRow icon="Pin" title="Visit Our Office">
-            No. 123, Mount Road,<br />Guindy, Chennai &ndash; 600 032,<br />Tamil Nadu, India
+            Flat A10, Archana Castle, 4/23 Patrick Church Road, St. Thomas Mount, Chennai&nbsp;&ndash;&nbsp;600&nbsp;016, Tamil Nadu, India
           </InfoRow>
           <InfoRow icon="Phone" title="Call Us">
-            +91 44 1234 5678<br />+91 98765 43210
+            +91 95436 33333
           </InfoRow>
           <InfoRow icon="Mail" title="Email Us">
-            enquiry@pkrestates.com<br />sales@pkrestates.com
+            pkr@pkrestates.com
           </InfoRow>
           <InfoRow icon="Clock" title="Working Hours" last>
             Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM<br />Sunday: By Appointment
@@ -237,8 +243,8 @@ export default function ContactPage() {
         </div>
 
         {/* Map card: map stretches to fill full height */}
-        <div className={`${CARD} flex flex-col gap-3 p-3`}>
-          <div className="relative min-h-[260px] flex-1 overflow-hidden rounded-[10px] bg-[#e9e8e3]">
+        <div className={`${CARD} flex flex-col gap-3 p-3 md:col-span-2 lg:col-span-1`}>
+          <div className="relative min-h-[220px] flex-1 overflow-hidden rounded-[10px] bg-[#e9e8e3] sm:min-h-[260px]">
             <iframe
               src={MAP_SRC}
               style={{ border: 0 }}
@@ -250,7 +256,7 @@ export default function ContactPage() {
             />
           </div>
           <a
-            href="https://maps.google.com/?q=Archana+Castle,+Ramapuram,+Chennai+600016"
+            href="https://maps.google.com/?q=Archana+Castle,+4/23+Patrick+Church+Road,+St.Thomas+Mount,+Chennai+600016"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 rounded-lg bg-[#f3ece0] p-3 text-[13px] font-semibold text-[#a97b42] transition-colors hover:bg-[#eadfcb]"
@@ -261,15 +267,15 @@ export default function ContactPage() {
       </section>
 
       {/* ---------------- OTHER WAYS ---------------- */}
-      <section className="mx-auto max-w-[1240px] px-6 pb-[60px] pt-10">
-        <h2 className="mb-[22px] text-2xl font-semibold text-[#16233b]">Other Ways to Reach Us</h2>
-        <div className="grid grid-cols-1 items-stretch gap-[18px] md:grid-cols-2 lg:grid-cols-4">
+      <section className="mx-auto max-w-[1240px] px-4 pb-10 pt-6 sm:px-6 sm:pb-14 sm:pt-8 lg:pb-[60px] lg:pt-10">
+        <h2 className="mb-4 text-xl font-semibold text-[#16233b] sm:mb-5 sm:text-2xl lg:mb-[22px]">Other Ways to Reach Us</h2>
+        <div className="grid grid-cols-1 items-stretch gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-[18px]">
           {OTHER_WAYS.map((w) => {
             const Ico = Icon[w.icon];
             return (
               <a
                 href="#"
-                className="flex h-full items-center gap-3.5 rounded-xl border border-[#e8e1d3] bg-white p-5"
+                className="flex h-full items-center gap-3.5 rounded-xl border border-[#e8e1d3] bg-white p-4 transition-colors hover:border-[#bd8a4d] sm:p-5"
                 key={w.title}
               >
                 <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#f3ece0] text-[#a97b42]">
@@ -287,20 +293,20 @@ export default function ContactPage() {
       </section>
 
       {/* ---------------- FAQ ---------------- */}
-      <section className="mx-auto grid max-w-[1240px] grid-cols-1 items-start gap-10 px-6 py-[60px] md:grid-cols-[0.9fr_1.4fr]">
+      <section className="mx-auto grid max-w-[1240px] grid-cols-1 items-start gap-8 px-4 py-10 sm:gap-10 sm:px-6 sm:py-14 md:grid-cols-[0.9fr_1.4fr] lg:py-[60px]">
         <div>
           <p className="mb-3.5 flex items-center gap-2.5 text-[12px] font-semibold tracking-[2px] text-[#a97b42]">
             <span className="inline-block h-px w-6 bg-[#bd8a4d]" /> QUICK ANSWERS
           </p>
-          <h2 className="mb-2.5 text-[28px] font-semibold text-[#16233b]">Have a Question?</h2>
+          <h2 className="mb-2.5 text-2xl font-semibold text-[#16233b] sm:text-[28px]">Have a Question?</h2>
           <p className="text-[#6f7580]">Find quick answers in our FAQs.</p>
         </div>
 
-        <div className="grid grid-cols-1 gap-3.5 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
           {FAQS.map((f, i) => (
             <div
-              className={`rounded-[10px] border border-[#e8e1d3] bg-white px-[18px] py-4 ${
-                openFaq === i ? "md:col-span-2" : ""
+              className={`rounded-[10px] border border-[#e8e1d3] bg-white px-4 py-4 sm:px-[18px] ${
+                openFaq === i ? "sm:col-span-2" : ""
               }`}
               key={f.q}
             >
@@ -320,7 +326,7 @@ export default function ContactPage() {
 
           <a
             href="#"
-            className="flex items-center justify-end gap-2 text-sm font-semibold text-[#a97b42] md:col-start-2 md:justify-self-end"
+            className="flex items-center justify-end gap-2 text-sm font-semibold text-[#a97b42] sm:col-start-2 sm:justify-self-end"
           >
             View All FAQs <Icon.Arrow />
           </a>
@@ -334,13 +340,17 @@ export default function ContactPage() {
 function InfoRow({ icon, title, children, last }) {
   const Ico = Icon[icon];
   return (
-    <div className={`flex items-start gap-4 ${last ? "" : "border-b border-[#e8e1d3] pb-[22px]"}`}>
-      <span className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#f3ece0] text-[#a97b42]">
-        <Ico size={22} />
+    <div
+      className={`flex items-start gap-3.5 py-4 first:pt-0 sm:gap-4 ${
+        last ? "" : "border-b border-[#e8e1d3]"
+      }`}
+    >
+      <span className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#f3ece0] text-[#a97b42] sm:h-14 sm:w-14">
+        <Ico size={20} />
       </span>
-      <div>
+      <div className="min-w-0 flex-1">
         <h4 className="mb-1 text-[15px] font-semibold text-[#16233b]">{title}</h4>
-        <p className="m-0 text-[13.5px] leading-[1.6] text-[#6f7580]">{children}</p>
+        <p className="m-0 break-words text-[13.5px] leading-[1.65] text-[#6f7580]">{children}</p>
       </div>
     </div>
   );
