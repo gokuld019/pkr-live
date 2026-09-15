@@ -10,6 +10,30 @@ const figtree = Figtree({
   display: "swap",
 });
 
+/* ------------------------------------------------------------------ */
+/*  API CONFIG                                                         */
+/* ------------------------------------------------------------------ */
+const CHANNEL_PARTNER_API =
+  "https://api.crazystory.in/api/channel-partner/register";
+
+const PROFESSIONS = [
+  "Broker",
+  "Agent",
+  "Consultant",
+  "Real Estate Agent",
+  "Property Dealer",
+  "Other",
+];
+
+const INITIAL_FORM = {
+  full_name: "",
+  phone: "",
+  email: "",
+  profession: "",
+  city: "",
+  about: "",
+};
+
 function Reveal({ children, delay = 0, className = "", as: Tag = "div" }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
@@ -68,6 +92,129 @@ export default function ChannelPartnersHero() {
     { icon: "gift", title: "Incentives & Rewards" },
     { icon: "person", title: "Relationship Management" },
   ];
+
+  /* ------------------------------------------------------------------ */
+  /*  FORM STATE                                                         */
+  /* ------------------------------------------------------------------ */
+  const [form, setForm] = useState(INITIAL_FORM);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const handleChange = (field) => (e) => {
+    const value = e.target.value;
+    setForm((f) => ({ ...f, [field]: value }));
+    setFieldErrors((errs) => {
+      if (!errs[field]) return errs;
+      const next = { ...errs };
+      delete next[field];
+      return next;
+    });
+    if (errorMessage) setErrorMessage("");
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.full_name.trim()) errs.full_name = "Full name is required";
+    if (!form.phone.trim()) errs.phone = "Phone number is required";
+    else if (!/^[\d\s+\-()]{7,}$/.test(form.phone.trim()))
+      errs.phone = "Enter a valid phone number";
+    if (!form.email.trim()) errs.email = "Email is required";
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim()))
+      errs.email = "Enter a valid email address";
+    if (!form.profession.trim()) errs.profession = "Please select your profession";
+    return errs;
+  };
+
+  const resetForm = () => {
+    setForm(INITIAL_FORM);
+    setSubmitted(false);
+    setSubmitting(false);
+    setSuccessMessage("");
+    setErrorMessage("");
+    setFieldErrors({});
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+
+    setErrorMessage("");
+    const errs = validate();
+    if (Object.keys(errs).length) {
+      setFieldErrors(errs);
+      return;
+    }
+
+    setSubmitting(true);
+    setFieldErrors({});
+
+    const payload = {
+      full_name: form.full_name.trim(),
+      phone: form.phone.trim(),
+      email: form.email.trim(),
+      profession: form.profession.trim(),
+      city: form.city.trim(),
+      about: form.about.trim(),
+    };
+
+    try {
+      const res = await fetch(CHANNEL_PARTNER_API, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      let data = null;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
+      }
+
+      if (!res.ok || !data || data.status !== true) {
+        // Map Laravel-style validation errors if present
+        if (data?.errors && typeof data.errors === "object") {
+          const mapped = {};
+          Object.entries(data.errors).forEach(([key, val]) => {
+            mapped[key] = Array.isArray(val) ? val[0] : String(val);
+          });
+          setFieldErrors(mapped);
+        }
+        setErrorMessage(
+          data?.message ||
+            "Something went wrong while submitting your registration. Please try again."
+        );
+        setSubmitting(false);
+        return;
+      }
+
+      setSuccessMessage(
+        data.message ||
+          "Thank you for registering as a channel partner. Our team will contact you soon."
+      );
+      setSubmitting(false);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Channel partner submit failed:", err);
+      setErrorMessage(
+        "We couldn't reach the server. Please check your connection and try again."
+      );
+      setSubmitting(false);
+    }
+  };
+
+  const inputWrapperClass = (field) =>
+    `flex items-center gap-3 rounded-xl border bg-gray-50 px-4 py-3 transition-colors duration-300 sm:py-3.5 ${
+      fieldErrors[field]
+        ? "border-red-400 focus-within:border-red-500"
+        : "border-gray-200 focus-within:border-[#a67c2e]/60"
+    }`;
 
   const icons = {
     diamond: (
@@ -179,6 +326,17 @@ export default function ChannelPartnersHero() {
         <path d="M12 2l7 3v6c0 5-3.5 8.5-7 11-3.5-2.5-7-6-7-11V5l7-3Z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
       </svg>
     ),
+    check: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#a67c2e]" strokeWidth="2.5">
+        <path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+    alert: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0">
+        <path d="M12 3l9 16H3l9-16Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M12 10v4M12 17v.01" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+      </svg>
+    ),
   };
 
   return (
@@ -190,7 +348,7 @@ export default function ChannelPartnersHero() {
           alt="PKR Estates — An Affordable Home Company"
           width={1920}
           height={800}
-          className="h-auto w-full mr-10"
+          className="h-auto w-full mr-23"
           priority
         />
       </div>
@@ -221,7 +379,7 @@ export default function ChannelPartnersHero() {
             </Reveal>
             <Reveal delay={240}>
               <a
-                href="#"
+                href="#partner-form"
                 className="group inline-flex items-center gap-2 rounded-full bg-[#a67c2e] px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#8f6a26] hover:shadow-lg hover:shadow-[#a67c2e]/30 sm:px-6"
               >
                 Partner With a Leading Brand
@@ -347,7 +505,10 @@ export default function ChannelPartnersHero() {
       </div>
 
       {/* Let's Grow Together — Enquiry Section */}
-      <div className="relative w-full overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-16 md:px-10 md:py-20 lg:px-16">
+      <div
+        id="partner-form"
+        className="relative w-full overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-16 md:px-10 md:py-20 lg:px-16"
+      >
         {/* Subtle decorative glow */}
         <div className="pointer-events-none absolute -left-32 -top-32 h-72 w-72 rounded-full bg-[#a67c2e]/10 blur-3xl sm:h-96 sm:w-96" />
         <div className="pointer-events-none absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-[#a67c2e]/5 blur-3xl sm:h-96 sm:w-96" />
@@ -383,71 +544,171 @@ export default function ChannelPartnersHero() {
             delay={160}
             className="w-full rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl transition-shadow duration-300 hover:shadow-[0_20px_60px_-15px_rgba(166,124,46,0.25)] sm:p-6 md:p-8 lg:max-w-2xl"
           >
-            <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
-              <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors duration-300 focus-within:border-[#a67c2e]/60 sm:py-3.5">
-                {icons.user}
-                <input
-                  type="text"
-                  placeholder="Full Name *"
-                  className="w-full min-w-0 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-                />
+            {submitted ? (
+              /* ---------------- SUCCESS STATE ---------------- */
+              <div className="flex flex-col items-center gap-4 px-2 py-10 text-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#f6efe2]">
+                  {icons.check}
+                </div>
+                <h3 className="m-0 text-xl font-semibold text-gray-900">
+                  Thank You!
+                </h3>
+                <p className="m-0 max-w-md text-sm leading-relaxed text-gray-500">
+                  {successMessage}
+                </p>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="mt-3 rounded-xl border border-[#a67c2e]/40 bg-white px-6 py-3 text-sm font-semibold text-[#a67c2e] transition-all hover:bg-[#f6efe2]"
+                >
+                  Register Another Partner
+                </button>
               </div>
-              <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors duration-300 focus-within:border-[#a67c2e]/60 sm:py-3.5">
-                {icons.phone}
-                <input
-                  type="tel"
-                  placeholder="Phone Number *"
-                  className="w-full min-w-0 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-                />
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors duration-300 focus-within:border-[#a67c2e]/60 sm:py-3.5">
-                {icons.mail}
-                <input
-                  type="email"
-                  placeholder="Email Address *"
-                  className="w-full min-w-0 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-                />
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors duration-300 focus-within:border-[#a67c2e]/60 sm:py-3.5">
-                {icons.briefcase}
-                <select className="w-full min-w-0 appearance-none bg-transparent text-sm text-gray-500 outline-none">
-                  <option>Select Your Profession</option>
-                  <option>Broker</option>
-                  <option>Agent</option>
-                  <option>Consultant</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors duration-300 focus-within:border-[#a67c2e]/60 sm:col-span-2 sm:py-3.5">
-                {icons.pin}
-                <input
-                  type="text"
-                  placeholder="Select City"
-                  className="w-full min-w-0 bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-                />
-              </div>
-              <div className="flex items-start gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 transition-colors duration-300 focus-within:border-[#a67c2e]/60 sm:col-span-2 sm:py-3.5">
-                <div className="mt-0.5">{icons.note}</div>
-                <textarea
-                  placeholder="Tell us about yourself (Optional)"
-                  rows={2}
-                  className="w-full min-w-0 resize-none bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
-                />
-              </div>
-            </div>
+            ) : (
+              /* ---------------- FORM STATE ---------------- */
+              <form onSubmit={handleSubmit} noValidate>
+                {errorMessage && (
+                  <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-[13px] leading-snug text-red-700">
+                    <span className="mt-[1px]">{icons.alert}</span>
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
 
-            <button
-              type="button"
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#c99a4a] to-[#a67c2e] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#a67c2e]/20 transition-all duration-300 hover:shadow-[#a67c2e]/40 hover:brightness-105 active:scale-[0.99] sm:mt-6 sm:py-4"
-            >
-              Submit Enquiry
-              <span aria-hidden="true">→</span>
-            </button>
+                <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
+                  {/* Full Name */}
+                  <div className={inputWrapperClass("full_name")}>
+                    {icons.user}
+                    <div className="w-full min-w-0">
+                      <input
+                        type="text"
+                        name="full_name"
+                        placeholder="Full Name *"
+                        value={form.full_name}
+                        onChange={handleChange("full_name")}
+                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                      />
+                      {fieldErrors.full_name && (
+                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.full_name}</p>
+                      )}
+                    </div>
+                  </div>
 
-            <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
-              {icons.shield}
-              We respect your privacy. Your information is safe with us.
-            </p>
+                  {/* Phone */}
+                  <div className={inputWrapperClass("phone")}>
+                    {icons.phone}
+                    <div className="w-full min-w-0">
+                      <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Phone Number *"
+                        value={form.phone}
+                        onChange={handleChange("phone")}
+                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                      />
+                      {fieldErrors.phone && (
+                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.phone}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className={inputWrapperClass("email")}>
+                    {icons.mail}
+                    <div className="w-full min-w-0">
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="Email Address *"
+                        value={form.email}
+                        onChange={handleChange("email")}
+                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                      />
+                      {fieldErrors.email && (
+                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.email}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Profession */}
+                  <div className={inputWrapperClass("profession")}>
+                    {icons.briefcase}
+                    <div className="w-full min-w-0">
+                      <select
+                        name="profession"
+                        value={form.profession}
+                        onChange={handleChange("profession")}
+                        className={`w-full appearance-none bg-transparent text-sm outline-none ${
+                          form.profession ? "text-gray-900" : "text-gray-400"
+                        }`}
+                      >
+                        <option value="" disabled>
+                          Select Your Profession *
+                        </option>
+                        {PROFESSIONS.map((p) => (
+                          <option key={p} value={p}>
+                            {p}
+                          </option>
+                        ))}
+                      </select>
+                      {fieldErrors.profession && (
+                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.profession}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* City (full-width) */}
+                  <div className={`${inputWrapperClass("city")} sm:col-span-2`}>
+                    {icons.pin}
+                    <div className="w-full min-w-0">
+                      <input
+                        type="text"
+                        name="city"
+                        placeholder="Select City"
+                        value={form.city}
+                        onChange={handleChange("city")}
+                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  {/* About (full-width) */}
+                  <div className={`${inputWrapperClass("about")} sm:col-span-2`}>
+                    <div className="mt-0.5">{icons.note}</div>
+                    <textarea
+                      name="about"
+                      placeholder="Tell us about yourself (Optional)"
+                      rows={2}
+                      value={form.about}
+                      onChange={handleChange("about")}
+                      className="w-full min-w-0 resize-none bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#c99a4a] to-[#a67c2e] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#a67c2e]/20 transition-all duration-300 hover:shadow-[#a67c2e]/40 hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:mt-6 sm:py-4"
+                >
+                  {submitting ? (
+                    <>
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Submit Enquiry
+                      <span aria-hidden="true">→</span>
+                    </>
+                  )}
+                </button>
+
+                <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
+                  {icons.shield}
+                  We respect your privacy. Your information is safe with us.
+                </p>
+              </form>
+            )}
           </Reveal>
         </div>
       </div>

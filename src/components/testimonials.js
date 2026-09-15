@@ -48,51 +48,38 @@ export default function ClientReviews() {
       });
 
       tl.fromTo(
-        ".gs-eyebrow-line",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          transformOrigin: "center",
-          duration: 0.65,
-          stagger: 0.08,
-          ease: "power2.out",
-          clearProps: "transform",
-        }
+        ".gs-eyebrow",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.35, clearProps: "transform,opacity" }
       )
         .fromTo(
-          ".gs-eyebrow",
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.5, clearProps: "transform,opacity" },
-          "-=0.35"
-        )
-        .fromTo(
           ".gs-title-word",
-          { yPercent: 115, opacity: 0 },
+          { yPercent: 110, opacity: 0 },
           {
             yPercent: 0,
             opacity: 1,
-            duration: 0.95,
-            stagger: 0.08,
+            duration: 0.55,
+            stagger: 0.06,
             ease: "power4.out",
             clearProps: "transform,opacity",
           },
-          "-=0.3"
+          "-=0.2"
         )
         .fromTo(
           ".gs-sub",
-          { y: 18, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.75, ease: "power3.out", clearProps: "transform,opacity" },
-          "-=0.5"
+          { y: 15, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.45, ease: "power3.out", clearProps: "transform,opacity" },
+          "-=0.3"
         );
 
       gsap.fromTo(
         ".gs-side-word",
-        { x: -18, opacity: 0 },
+        { x: -14, opacity: 0 },
         {
           x: 0,
           opacity: 1,
-          duration: 0.6,
-          stagger: 0.06,
+          duration: 0.4,
+          stagger: 0.04,
           ease: "power3.out",
           scrollTrigger: { trigger: ".gs-head", start: "top 85%", once: true },
           clearProps: "transform,opacity",
@@ -101,11 +88,11 @@ export default function ClientReviews() {
 
       gsap.fromTo(
         ".gs-cursive",
-        { x: 20, opacity: 0 },
+        { x: 15, opacity: 0 },
         {
           x: 0,
           opacity: 1,
-          duration: 0.8,
+          duration: 0.5,
           ease: "power3.out",
           scrollTrigger: { trigger: ".gs-head", start: "top 85%", once: true },
           clearProps: "transform,opacity",
@@ -114,25 +101,25 @@ export default function ClientReviews() {
 
       const gtl = gsap.timeline({
         defaults: { ease: "power3.out" },
-        scrollTrigger: { trigger: ".gs-google", start: "top 88%", once: true },
+        scrollTrigger: { trigger: ".gs-google", start: "top 90%", once: true },
       });
 
       gtl.fromTo(
         ".gs-google",
-        { y: 35, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", clearProps: "transform,opacity" }
+        { y: 25, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: "power3.out", clearProps: "transform,opacity" }
       )
         .fromTo(
           ".gs-google-item",
-          { y: 15, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power2.out", clearProps: "transform,opacity" },
-          "-=0.5"
+          { y: 12, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.35, stagger: 0.05, ease: "power2.out", clearProps: "transform,opacity" },
+          "-=0.3"
         )
         .fromTo(
           ".gs-star-big",
           { scale: 0, opacity: 0 },
-          { scale: 1, opacity: 1, duration: 0.4, stagger: 0.06, ease: "back.out(2)", clearProps: "transform,opacity" },
-          "-=0.4"
+          { scale: 1, opacity: 1, duration: 0.3, stagger: 0.04, ease: "back.out(2)", clearProps: "transform,opacity" },
+          "-=0.25"
         );
 
       const rating = root.current?.querySelector(".gs-rating");
@@ -142,55 +129,55 @@ export default function ClientReviews() {
           obj,
           {
             v: 4.8,
-            duration: 1.2,
+            duration: 0.8,
             ease: "power2.out",
             onUpdate: () => {
               if (rating) rating.textContent = obj.v.toFixed(1);
             },
           },
-          "-=0.8"
+          "-=0.5"
         );
       }
 
       gsap.utils.toArray(".gs-card").forEach((card) => {
         const ctl = gsap.timeline({
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: card, start: "top 88%", once: true },
+          scrollTrigger: { trigger: card, start: "top 90%", once: true },
         });
 
         ctl.fromTo(
           card,
-          { y: 40, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", clearProps: "transform,opacity" }
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, ease: "power3.out", clearProps: "transform,opacity" }
         )
           .fromTo(
             card.querySelectorAll(".gs-star"),
             { scale: 0, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 0.35, stagger: 0.05, ease: "back.out(2)", clearProps: "transform,opacity" },
-            "-=0.5"
+            { scale: 1, opacity: 1, duration: 0.25, stagger: 0.04, ease: "back.out(2)", clearProps: "transform,opacity" },
+            "-=0.3"
           )
           .fromTo(
             card.querySelector(".gs-quote"),
             { scale: 0.7, opacity: 0, rotate: -10 },
-            { scale: 1, opacity: 1, rotate: 0, duration: 0.5, ease: "power2.out", clearProps: "transform,opacity" },
-            "-=0.4"
+            { scale: 1, opacity: 1, rotate: 0, duration: 0.35, ease: "power2.out", clearProps: "transform,opacity" },
+            "-=0.25"
           )
           .fromTo(
             card.querySelectorAll(".gs-line"),
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6, stagger: 0.08, ease: "power3.out", clearProps: "transform,opacity" },
-            "-=0.35"
+            { y: 12, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.4, stagger: 0.06, ease: "power3.out", clearProps: "transform,opacity" },
+            "-=0.2"
           );
       });
 
       gsap.fromTo(
         ".gs-bottom > *",
-        { y: 18, opacity: 0 },
+        { y: 12, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 0.65,
-          stagger: 0.1,
+          duration: 0.4,
+          stagger: 0.08,
           ease: "power3.out",
           scrollTrigger: { trigger: ".gs-bottom", start: "top 92%", once: true },
           clearProps: "transform,opacity",
@@ -347,7 +334,7 @@ export default function ClientReviews() {
             <ArrowRight className="h-5 w-5" style={{ color: GOLD_DEEP }} />
           </button>
 
-          {/* Mobile nav controls (arrows hidden on small screens, so give a mobile-friendly pair) */}
+          {/* Mobile nav controls */}
           <div className="mt-6 flex items-center justify-center gap-4 xl:hidden">
             <button
               aria-label="Previous"

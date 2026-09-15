@@ -4,6 +4,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Figtree } from 'next/font/google'
+import * as THREE from 'three'
 import {
   Download,
   ChevronLeft,
@@ -46,7 +47,6 @@ import {
   ArrowUpDown,
   Recycle,
   Car,
-  Plus,
   Sun,
   LayoutGrid,
   ZoomIn,
@@ -59,6 +59,12 @@ import {
   Home,
   Phone,
   Navigation2,
+  Move3d,
+  Compass,
+  RefreshCw,
+  Send,
+  Check,
+  AlertTriangle,
 } from 'lucide-react'
 
 const figtree = Figtree({
@@ -71,9 +77,12 @@ const EASE = [0.22, 1, 0.36, 1]
 const FONT = figtree.style.fontFamily
 
 // ============ THEME TOKENS ============
-const GOLD = '#a8823c' // primary accent
-const GOLD_HOVER = '#8f6d31' // darker gold on hover
-const GOLD_DARK = '#8a6a2f' // deep gold for text
+const GOLD = '#a8823c'
+const GOLD_HOVER = '#8f6d31'
+const GOLD_DARK = '#8a6a2f'
+
+const LOGO_URL = '/logo.jpeg'
+const ENQUIRY_API = 'https://api.crazystory.in/api/submit-enquiry'
 
 const landmarkIconMap = {
   Schools: School,
@@ -320,6 +329,248 @@ function PlotCell({ children, divider = true }) {
 }
 
 /* ==================================================================
+   ENQUIRE MODAL — identical to FloatingWidgets version
+================================================================== */
+function EnquireModal({ open, onClose, presetType = '', projectName = '' }) {
+  const INQUIRY_TYPES = ['General Enquiry', 'Gurudev', 'Privana']
+  const [form, setForm] = useState({ name: '', email: '', phone: '', inquiryType: '', message: '' })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [fieldErrors, setFieldErrors] = useState({})
+
+  useEffect(() => {
+    if (!open) return
+    document.body.style.overflow = 'hidden'
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [open, onClose])
+
+  useEffect(() => {
+    if (!open) {
+      setSubmitted(false)
+      setSubmitting(false)
+      setSuccessMessage('')
+      setErrorMessage('')
+      setFieldErrors({})
+      setForm({ name: '', email: '', phone: '', inquiryType: '', message: '' })
+    } else if (presetType) {
+      setForm((f) => ({ ...f, inquiryType: presetType }))
+    }
+  }, [open, presetType])
+
+  if (!open) return null
+
+  const handleChange = (field) => (e) => {
+    const value = e.target.value
+    setForm((f) => ({ ...f, [field]: value }))
+    setFieldErrors((errs) => {
+      if (!errs[field]) return errs
+      const next = { ...errs }
+      delete next[field]
+      return next
+    })
+    if (errorMessage) setErrorMessage('')
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (submitting) return
+    setSubmitting(true)
+    setErrorMessage('')
+    setFieldErrors({})
+
+    const payload = {
+      full_name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      inquiry_type: form.inquiryType,
+      message: form.message.trim(),
+    }
+
+    try {
+      const res = await fetch(ENQUIRY_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      })
+
+      let data = null
+      try {
+        data = await res.json()
+      } catch {
+        data = null
+      }
+
+      if (!res.ok || !data || data.status !== true) {
+        if (data?.errors && typeof data.errors === 'object') {
+          const mapped = {}
+          const keyMap = { full_name: 'name', email: 'email', phone: 'phone', inquiry_type: 'inquiryType', message: 'message' }
+          Object.entries(data.errors).forEach(([key, val]) => {
+            const field = keyMap[key] || key
+            mapped[field] = Array.isArray(val) ? val[0] : String(val)
+          })
+          setFieldErrors(mapped)
+        }
+        setErrorMessage(data?.message || 'Something went wrong while submitting your enquiry. Please try again.')
+        setSubmitting(false)
+        return
+      }
+
+      setSuccessMessage(data.message || 'Your enquiry has been received. Our team will reach out to you shortly.')
+      setSubmitting(false)
+      setSubmitted(true)
+    } catch (err) {
+      console.error('Enquiry submit failed:', err)
+      setErrorMessage("We couldn't reach the server. Please check your connection and try again.")
+      setSubmitting(false)
+    }
+  }
+
+  const inputClass = (field) =>
+    `w-full rounded-xl border bg-[#faf8f3] px-4 py-3 text-[14px] text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/15 ${
+      fieldErrors[field] ? 'border-red-400 focus:border-red-500' : 'border-gray-200 focus:border-[#b8860b]'
+    }`
+
+  return (
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm" onClick={onClose}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-h-full w-full max-w-[460px] overflow-y-auto rounded-[22px] bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)]"
+        style={{ animation: 'enquireModalIn 0.35s cubic-bezier(0.22,1,0.36,1)', fontFamily: FONT }}
+      >
+        <style>{`
+          @keyframes enquireModalIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+          }
+        `}</style>
+
+        <div className="relative px-6 pb-8 pt-7 sm:px-8" style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_DARK} 100%)` }}>
+          <button onClick={onClose} aria-label="Close" className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25">
+            <X className="h-4 w-4" strokeWidth={2.25} />
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-md">
+              <img src={LOGO_URL} alt="" className="h-full w-full object-cover" />
+            </div>
+            <div>
+              <h2 className="m-0 text-[19px] font-bold leading-tight text-white sm:text-[21px]">
+                {projectName ? `Enquire about ${projectName}` : "Let's Talk"}
+              </h2>
+              <p className="m-0 mt-0.5 text-[12.5px] text-[#f7e6c2]">We&apos;ll get back to you within 24 hours</p>
+            </div>
+          </div>
+        </div>
+
+        {submitted ? (
+          <div className="flex flex-col items-center gap-3 px-6 py-14 text-center sm:px-8">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: `${GOLD}1a` }}>
+              <Check className="h-7 w-7" style={{ color: GOLD }} strokeWidth={2.5} />
+            </div>
+            <h3 className="m-0 text-[18px] font-bold text-gray-800">Thank You!</h3>
+            <p className="m-0 max-w-[300px] text-[13.5px] leading-relaxed text-gray-500">{successMessage}</p>
+            <button onClick={onClose} className="mt-3 rounded-full px-6 py-2.5 text-[13.5px] font-bold text-white transition-transform hover:scale-[1.03]" style={{ backgroundColor: GOLD }}>
+              Close
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 py-6 sm:px-8">
+            {errorMessage && (
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-[13px] leading-snug text-red-700">
+                <AlertTriangle className="mt-[1px] h-4 w-4 shrink-0" strokeWidth={2} />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-semibold text-gray-600">
+                Full Name <span style={{ color: GOLD }}>*</span>
+              </label>
+              <input required type="text" name="full_name" placeholder="Enter your name" value={form.name} onChange={handleChange('name')} className={inputClass('name')} />
+              {fieldErrors.name && <span className="text-[11.5px] text-red-600">{fieldErrors.name}</span>}
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12.5px] font-semibold text-gray-600">
+                  Email <span style={{ color: GOLD }}>*</span>
+                </label>
+                <input required type="email" name="email" placeholder="you@email.com" value={form.email} onChange={handleChange('email')} className={inputClass('email')} />
+                {fieldErrors.email && <span className="text-[11.5px] text-red-600">{fieldErrors.email}</span>}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12.5px] font-semibold text-gray-600">
+                  Phone <span style={{ color: GOLD }}>*</span>
+                </label>
+                <input required type="tel" name="phone" placeholder="+91 00000 00000" value={form.phone} onChange={handleChange('phone')} className={inputClass('phone')} />
+                {fieldErrors.phone && <span className="text-[11.5px] text-red-600">{fieldErrors.phone}</span>}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-semibold text-gray-600">
+                Inquiry Type <span style={{ color: GOLD }}>*</span>
+              </label>
+              <div className="relative">
+                <select required name="inquiry_type" value={form.inquiryType} onChange={handleChange('inquiryType')} className={`${inputClass('inquiryType')} appearance-none pr-10`}>
+                  <option value="" disabled>
+                    Select an option
+                  </option>
+                  {INQUIRY_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <ChevronRight className="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 rotate-90 text-gray-400" strokeWidth={2.25} />
+              </div>
+              {fieldErrors.inquiryType && <span className="text-[11.5px] text-red-600">{fieldErrors.inquiryType}</span>}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-semibold text-gray-600">
+                Your Message <span className="font-normal text-gray-400">(optional)</span>
+              </label>
+              <textarea rows={3} name="message" placeholder="Tell us a bit more..." value={form.message} onChange={handleChange('message')} className={`${inputClass('message')} resize-none`} />
+              {fieldErrors.message && <span className="text-[11.5px] text-red-600">{fieldErrors.message}</span>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="mt-1 flex items-center justify-center gap-2 rounded-xl py-3.5 text-[14.5px] font-bold text-white shadow-[0_10px_24px_-8px_rgba(184,134,11,0.55)] transition-all hover:shadow-[0_14px_30px_-8px_rgba(184,134,11,0.65)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+              style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_DARK} 100%)` }}
+            >
+              {submitting ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" strokeWidth={2.25} />
+                  Submit Enquiry
+                </>
+              )}
+            </button>
+
+            <p className="m-0 text-center text-[11px] text-gray-400">By submitting, you agree to be contacted by PKR Estates regarding your enquiry.</p>
+          </form>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ==================================================================
    BUTTON SYSTEM
 ================================================================== */
 function SolidButton({
@@ -415,6 +666,8 @@ function IconCircleButton({ onClick, ariaLabel, variant = 'light', children, cla
       'bg-white text-[#141414] shadow-[0_8px_24px_-10px_rgba(0,0,0,0.25)] hover:shadow-[0_12px_30px_-10px_rgba(0,0,0,0.35)] hover:scale-[1.06]',
     dark: 'text-white shadow-[0_8px_24px_-10px_rgba(168,130,60,0.5)] hover:scale-[1.06]',
     gold: 'text-white shadow-[0_8px_24px_-10px_rgba(168,130,60,0.65)] hover:scale-[1.06]',
+    ghost:
+      'bg-white/10 text-white border border-white/25 backdrop-blur-md hover:bg-white/20 hover:border-white/40',
   }
   const bgStyle =
     variant === 'dark'
@@ -439,38 +692,6 @@ function IconCircleButton({ onClick, ariaLabel, variant = 'light', children, cla
     >
       {children}
     </button>
-  )
-}
-
-function SegmentedToggle({ options, value, onChange, className = '' }) {
-  return (
-    <div
-      className={`relative flex items-center gap-1 rounded-md border border-black/[0.06] bg-white/90 p-1 shadow-[0_4px_14px_-6px_rgba(0,0,0,0.15)] backdrop-blur ${className}`}
-    >
-      {options.map((opt) => {
-        const isActive = value === opt.value
-        return (
-          <button
-            key={opt.value}
-            onClick={() => onChange(opt.value)}
-            className={`relative rounded-[4px] px-4 py-2 text-[13px] font-bold transition-colors duration-300 ${
-              isActive ? 'text-white' : 'text-[#141414] hover:text-[#a8823c]'
-            }`}
-            style={{ fontFamily: FONT }}
-          >
-            {isActive && (
-              <motion.span
-                layoutId={`segment-${options.map((o) => o.value).join('-')}`}
-                transition={{ type: 'spring', stiffness: 400, damping: 34 }}
-                className="absolute inset-0 rounded-[4px]"
-                style={{ backgroundColor: GOLD }}
-              />
-            )}
-            <span className="relative">{opt.label}</span>
-          </button>
-        )
-      })}
-    </div>
   )
 }
 
@@ -519,6 +740,358 @@ function Eyebrow({ icon: Icon, children, className = '' }) {
   )
 }
 
+/* ==================================================================
+   TRUE 360° PANORAMA VIEWER
+================================================================== */
+const INITIAL_FOV = 75
+const MIN_FOV = 28
+const MAX_FOV = 100
+
+function usePanoramaViewer(containerRef, imageSrc, active) {
+  const stateRef = useRef({})
+
+  useEffect(() => {
+    if (!active || !imageSrc || !containerRef.current) return
+
+    const container = containerRef.current
+    let width = container.clientWidth
+    let height = container.clientHeight
+
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(INITIAL_FOV, width / height, 0.1, 1000)
+    camera.position.set(0, 0, 0.01)
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.setSize(width, height)
+    renderer.domElement.style.width = '100%'
+    renderer.domElement.style.height = '100%'
+    renderer.domElement.style.display = 'block'
+    container.appendChild(renderer.domElement)
+
+    const geometry = new THREE.SphereGeometry(500, 64, 48)
+    geometry.scale(-1, 1, 1)
+
+    const loader = new THREE.TextureLoader()
+    loader.crossOrigin = 'anonymous'
+    const material = new THREE.MeshBasicMaterial({ color: 0x1a1a1a })
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
+
+    let isDragging = false
+    let lastX = 0
+    let lastY = 0
+    let lon = 0
+    let lat = 0
+    let targetFov = INITIAL_FOV
+    let currentFov = INITIAL_FOV
+
+    let pinchStartDist = null
+    let pinchStartFov = INITIAL_FOV
+
+    loader.load(
+      imageSrc,
+      (texture) => {
+        texture.colorSpace = THREE.SRGBColorSpace
+        texture.minFilter = THREE.LinearFilter
+        texture.magFilter = THREE.LinearFilter
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
+        material.map = texture
+        material.color.set(0xffffff)
+        material.needsUpdate = true
+        stateRef.current.loaded = true
+        stateRef.current.onLoad?.()
+      },
+      undefined,
+      (err) => {
+        stateRef.current.onError?.(err)
+      }
+    )
+
+    function getXY(e) {
+      if (e.touches && e.touches.length) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY }
+      }
+      return { x: e.clientX, y: e.clientY }
+    }
+
+    function onPointerDown(e) {
+      if (e.touches && e.touches.length === 2) {
+        pinchStartDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        )
+        pinchStartFov = targetFov
+        isDragging = false
+        return
+      }
+      isDragging = true
+      const { x, y } = getXY(e)
+      lastX = x
+      lastY = y
+    }
+
+    function onPointerMove(e) {
+      if (e.touches && e.touches.length === 2 && pinchStartDist !== null) {
+        const dist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        )
+        const ratio = pinchStartDist / dist
+        targetFov = Math.max(MIN_FOV, Math.min(MAX_FOV, pinchStartFov * ratio))
+        return
+      }
+      if (!isDragging) return
+      const { x, y } = getXY(e)
+      const dx = x - lastX
+      const dy = y - lastY
+      lastX = x
+      lastY = y
+      lon -= dx * 0.15
+      lat += dy * 0.15
+      lat = Math.max(-85, Math.min(85, lat))
+    }
+
+    function onPointerUp() {
+      isDragging = false
+      pinchStartDist = null
+    }
+
+    function onWheel(e) {
+      e.preventDefault()
+      targetFov = Math.max(MIN_FOV, Math.min(MAX_FOV, targetFov + e.deltaY * 0.04))
+    }
+
+    container.addEventListener('mousedown', onPointerDown)
+    window.addEventListener('mousemove', onPointerMove)
+    window.addEventListener('mouseup', onPointerUp)
+    container.addEventListener('touchstart', onPointerDown, { passive: true })
+    container.addEventListener('touchmove', onPointerMove, { passive: true })
+    container.addEventListener('touchend', onPointerUp)
+    container.addEventListener('wheel', onWheel, { passive: false })
+
+    let raf
+    function animate() {
+      raf = requestAnimationFrame(animate)
+      currentFov += (targetFov - currentFov) * 0.12
+      camera.fov = currentFov
+      camera.updateProjectionMatrix()
+
+      const phi = THREE.MathUtils.degToRad(90 - lat)
+      const theta = THREE.MathUtils.degToRad(lon)
+      const x = 500 * Math.sin(phi) * Math.cos(theta)
+      const y = 500 * Math.cos(phi)
+      const z = 500 * Math.sin(phi) * Math.sin(theta)
+      camera.lookAt(x, y, z)
+
+      renderer.render(scene, camera)
+    }
+    animate()
+
+    function onResize() {
+      width = container.clientWidth
+      height = container.clientHeight
+      camera.aspect = width / height
+      camera.updateProjectionMatrix()
+      renderer.setSize(width, height)
+    }
+    window.addEventListener('resize', onResize)
+
+    stateRef.current.setZoom = (delta) => {
+      targetFov = Math.max(MIN_FOV, Math.min(MAX_FOV, targetFov + delta))
+    }
+    stateRef.current.resetZoom = () => {
+      targetFov = INITIAL_FOV
+      lon = 0
+      lat = 0
+    }
+    stateRef.current.getFov = () => currentFov
+
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('mousemove', onPointerMove)
+      window.removeEventListener('mouseup', onPointerUp)
+      container.removeEventListener('mousedown', onPointerDown)
+      container.removeEventListener('touchstart', onPointerDown)
+      container.removeEventListener('touchmove', onPointerMove)
+      container.removeEventListener('touchend', onPointerUp)
+      container.removeEventListener('wheel', onWheel)
+      geometry.dispose()
+      material.map?.dispose()
+      material.dispose()
+      renderer.dispose()
+      if (container.contains(renderer.domElement)) {
+        container.removeChild(renderer.domElement)
+      }
+    }
+  }, [active, imageSrc, containerRef])
+
+  return stateRef
+}
+
+function Panorama360Modal({ open, onClose, imageSrc, title, subtitle }) {
+  const containerRef = useRef(null)
+  const [loaded, setLoaded] = useState(false)
+  const [error, setError] = useState(false)
+  const [fovDisplay, setFovDisplay] = useState(INITIAL_FOV)
+
+  const viewer = usePanoramaViewer(containerRef, imageSrc, open)
+
+  useEffect(() => {
+    if (!open) {
+      setLoaded(false)
+      setError(false)
+      setFovDisplay(INITIAL_FOV)
+      return
+    }
+    viewer.current.onLoad = () => setLoaded(true)
+    viewer.current.onError = () => setError(true)
+  }, [open, viewer])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose()
+    }
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', onKey)
+    const id = setInterval(() => {
+      if (viewer.current.getFov) setFovDisplay(Math.round(viewer.current.getFov()))
+    }, 150)
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', onKey)
+      clearInterval(id)
+    }
+  }, [open, onClose, viewer])
+
+  const zoomIn = () => viewer.current.setZoom?.(-10)
+  const zoomOut = () => viewer.current.setZoom?.(10)
+  const resetZoom = () => viewer.current.resetZoom?.()
+
+  const zoomPercent = Math.round((INITIAL_FOV / Math.max(fovDisplay, 1)) * 100)
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.35, ease: EASE }}
+          className="fixed inset-0 z-[200] bg-[#0a0a0a]"
+          style={{ fontFamily: FONT }}
+        >
+          <div
+            ref={containerRef}
+            className="absolute inset-0 cursor-grab select-none active:cursor-grabbing"
+            style={{ touchAction: 'none' }}
+          />
+
+          {error && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#0a0a0a] px-6 text-center">
+              <p className="m-0 text-sm text-white/70">
+                Couldn&apos;t load the panoramic image.
+                <br />
+                Make sure it&apos;s a true equirectangular (2:1) photo.
+              </p>
+              <IconCircleButton onClick={onClose} ariaLabel="Close" variant="ghost">
+                <X className="h-4 w-4" strokeWidth={2} />
+              </IconCircleButton>
+            </div>
+          )}
+
+          {!loaded && !error && (
+            <motion.div
+              initial={{ opacity: 1 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="pointer-events-none absolute inset-0 z-10 flex flex-col items-center justify-center gap-5 bg-[#0a0a0a]"
+            >
+              <div className="relative h-14 w-14">
+                <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+                <div
+                  className="absolute inset-0 animate-spin rounded-full border-2 border-transparent"
+                  style={{ borderTopColor: GOLD, animationDuration: '0.9s' }}
+                />
+              </div>
+              <p className="m-0 text-[12px] font-semibold uppercase tracking-[3px] text-white/50">
+                Loading View
+              </p>
+            </motion.div>
+          )}
+
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between p-5 sm:p-7">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : -10 }}
+              transition={{ duration: 0.5, ease: EASE }}
+            >
+              {title && (
+                <p className="m-0 text-[15px] font-semibold tracking-wide text-white sm:text-[18px]">
+                  {title}
+                </p>
+              )}
+              {subtitle && (
+                <p className="m-0 mt-1 text-[11px] font-medium uppercase tracking-[2.5px] text-[#d9b877]">
+                  {subtitle}
+                </p>
+              )}
+            </motion.div>
+
+            <IconCircleButton
+              onClick={onClose}
+              ariaLabel="Close view"
+              variant="ghost"
+              className="pointer-events-auto !h-10 !w-10"
+            >
+              <X className="h-4 w-4" strokeWidth={2} />
+            </IconCircleButton>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: loaded ? 1 : 0, y: loaded ? 0 : 16 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: EASE }}
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-4 p-5 sm:p-8"
+          >
+            <div className="pointer-events-auto flex items-center gap-2 rounded-full border border-white/15 bg-black/40 px-2.5 py-2 backdrop-blur-xl">
+              <IconCircleButton onClick={zoomOut} ariaLabel="Zoom out" variant="ghost" className="!h-9 !w-9">
+                <ZoomOut className="h-4 w-4" strokeWidth={2} />
+              </IconCircleButton>
+
+              <span className="min-w-[42px] text-center text-[12px] font-semibold tabular-nums text-white/80">
+                {zoomPercent}%
+              </span>
+
+              <IconCircleButton onClick={zoomIn} ariaLabel="Zoom in" variant="ghost" className="!h-9 !w-9">
+                <ZoomIn className="h-4 w-4" strokeWidth={2} />
+              </IconCircleButton>
+
+              <span className="mx-0.5 h-6 w-px bg-white/15" />
+
+              <button
+                onClick={resetZoom}
+                aria-label="Reset view"
+                className="flex h-9 items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 text-[12px] font-bold text-white/80 transition-all duration-300 hover:bg-white/20"
+              >
+                <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+            </div>
+
+            <p className="pointer-events-none flex items-center gap-2 text-[11px] font-medium uppercase tracking-[2px] text-white/40">
+              <Move3d className="h-3.5 w-3.5" strokeWidth={1.75} />
+              Drag to look around · Scroll or pinch to zoom
+            </p>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  )
+}
+
 export default function ProjectBanner({ project }) {
   // ---------------- Amenities ----------------
   const amenityTabs = project?.amenityTabs?.length
@@ -550,6 +1123,8 @@ export default function ProjectBanner({ project }) {
   const goAmenityNext = () =>
     setAmenityImgIndex((i) => (i === amenityGalleryCount - 1 ? 0 : i + 1))
 
+  const goPrevAmenityTab = () =>
+    setActiveAmenity((i) => (i === 0 ? amenityTabs.length - 1 : i - 1))
   const goNextAmenityTab = () =>
     setActiveAmenity((i) => (i + 1) % amenityTabs.length)
 
@@ -613,12 +1188,15 @@ export default function ProjectBanner({ project }) {
   const allFloorPlans = project?.floorPlans || []
   const [activeFloorTab, setActiveFloorTab] = useState(0)
   const [activePlanIndex, setActivePlanIndex] = useState(0)
-  const [planView, setPlanView] = useState('3d')
   const [planZoom, setPlanZoom] = useState(false)
   const [likedPlans, setLikedPlans] = useState({})
   const pendingPlanIndex = useRef(null)
   const floorPlansRef = useRef(null)
   const floorPlansInView = useInView(floorPlansRef, { once: true, margin: '-100px' })
+
+  // ---- NEW: Full-screen floor plan lightbox state ----
+  const [floorLightboxOpen, setFloorLightboxOpen] = useState(false)
+  const [floorLightboxZoom, setFloorLightboxZoom] = useState(1)
 
   const activeTabLabel = floorPlanTabs[activeFloorTab]
   const activePlans = allFloorPlans.filter((p) => planMatchesTab(p, activeTabLabel))
@@ -648,21 +1226,23 @@ export default function ProjectBanner({ project }) {
     setActivePlanIndex((i) => (i === planCount - 1 ? 0 : i + 1))
   }
 
-  const selectFloorPlan = (plan) => {
-    const tabIdx = floorPlanTabs.findIndex((t) => planMatchesTab(plan, t))
-    const targetTab = tabIdx >= 0 ? tabIdx : activeFloorTab
-    const plansInTab = allFloorPlans.filter((p) => planMatchesTab(p, floorPlanTabs[targetTab]))
-    const idx = Math.max(plansInTab.indexOf(plan), 0)
-    setPlanZoom(false)
-    if (targetTab !== activeFloorTab) {
-      pendingPlanIndex.current = idx
-      setActiveFloorTab(targetTab)
-    } else {
-      setActivePlanIndex(idx)
+  // ---- NEW: Fullscreen lightbox keyboard + scroll lock ----
+  useEffect(() => {
+    if (!floorLightboxOpen) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') setFloorLightboxOpen(false)
+      if (e.key === '+' || e.key === '=') setFloorLightboxZoom((z) => Math.min(4, z + 0.25))
+      if (e.key === '-') setFloorLightboxZoom((z) => Math.max(0.5, z - 0.25))
+      if (e.key === '0') setFloorLightboxZoom(1)
     }
-  }
-
-  const thumbnailPlans = allFloorPlans.slice(0, 4)
+    window.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prevOverflow
+    }
+  }, [floorLightboxOpen])
 
   // ---------------- Plot Sizes & Pricing ----------------
   const plotTabs = project?.plotPricingTabs?.length ? project.plotPricingTabs : DEFAULT_PLOT_TABS
@@ -681,6 +1261,20 @@ export default function ProjectBanner({ project }) {
   const tourRef = useRef(null)
   const tourInView = useInView(tourRef, { once: true, margin: '-100px' })
 
+  // ---------------- 360° Cinematic View ----------------
+  const [tour360Open, setTour360Open] = useState(false)
+
+  // ---------------- Enquire Modal State ----------------
+  const [enquireOpen, setEnquireOpen] = useState(false)
+  const [enquirePreset, setEnquirePreset] = useState('')
+  const [enquireContext, setEnquireContext] = useState('')
+
+  const openEnquire = (presetType = '', context = '') => {
+    setEnquirePreset(presetType)
+    setEnquireContext(context)
+    setEnquireOpen(true)
+  }
+
   if (!project) return null
 
   const highlights = project.highlights?.length ? project.highlights : defaultHighlights
@@ -694,6 +1288,13 @@ export default function ProjectBanner({ project }) {
   const lastRowStart = factsCount - (factsCount % 2 === 0 ? 2 : 1)
 
   const { config: selectedConfig, facing: selectedFacing } = splitPlanTitle(selectedPlan)
+
+  const panoramaSrc = project.tourImage
+  const tour360Thumbnails = project.tour360Thumbnails?.length
+    ? project.tour360Thumbnails
+    : project.tourImage
+      ? [project.tourImage]
+      : []
 
   return (
     <div className={figtree.className} style={{ fontFamily: FONT }}>
@@ -744,8 +1345,9 @@ export default function ProjectBanner({ project }) {
 
             <FadeUp delay={0.3}>
               <div className="mb-8 flex flex-wrap items-center gap-3">
+                {/* Download Brochure — opens Enquire Modal */}
                 <AccentOutlineButton
-                  href={project.brochureUrl || '#'}
+                  onClick={() => openEnquire(project.name || '', 'Brochure')}
                   icon={Download}
                 >
                   Download Brochure
@@ -830,227 +1432,228 @@ export default function ProjectBanner({ project }) {
         </div>
       </section>
 
-      {/* ================= Amenities ================= */}
-      {amenityTabs.length > 0 && (
-        <section
-          ref={amenitiesRef}
-          className="relative w-full overflow-hidden bg-white px-5 py-16 sm:px-8 sm:py-20 md:px-10 lg:px-16 lg:py-24"
-          style={{ fontFamily: FONT }}
-        >
-          <div className="pointer-events-none absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-[#a8823c]/[0.05] blur-[120px]" />
+     {/* ================= Amenities ================= */}
+{amenityTabs.length > 0 && (
+  <section
+    ref={amenitiesRef}
+    className="relative w-full overflow-hidden bg-white px-5 py-16 sm:px-8 sm:py-20 md:px-10 lg:px-16 lg:py-24"
+    style={{ fontFamily: FONT }}
+  >
+    <div className="pointer-events-none absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-[#a8823c]/[0.05] blur-[120px]" />
 
-          <div className="relative mx-auto max-w-[1500px]">
-            {/* Header row */}
-            <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-[0.85fr_1.9fr_0.2fr] lg:items-start lg:gap-6">
-              <div>
-                <FadeUp>
-                  <div className="mb-5 flex items-center gap-3">
-                    <span className="text-[12px] font-medium uppercase tracking-[3.5px] text-[#a8823c]">
-                      Life at its finest
-                    </span>
-                    <span className="h-px w-14 bg-[#a8823c]/70" />
-                  </div>
-                </FadeUp>
-
-                <RevealText
-                  as="h2"
-                  text={
-                    <>
-                      World-Class
-                      <br />
-                      Amenities for a
-                      <br />
-                      <span className="text-[#a8823c]">Better Tomorrow</span>
-                    </>
-                  }
-                  className="mb-5 text-[32px] font-semibold leading-[1.14] tracking-tight text-[#1f2029] md:text-[42px]"
-                  delay={0.1}
-                />
-
-                <FadeUp delay={0.2}>
-                  <p className="mb-7 max-w-[380px] text-[14px] leading-[1.8] text-[#6b6b6b] sm:text-[15px]">
-                    {project.amenitiesDescription ||
-                      'Thoughtfully curated spaces and modern conveniences that bring comfort, community and a healthier lifestyle together at Gurudev.'}
-                  </p>
-                </FadeUp>
-
-                <FadeUp delay={0.3}>
-                  <SolidButton icon={ArrowRight}>Explore All Amenities</SolidButton>
-                </FadeUp>
-              </div>
-
-              {/* Tabs */}
-              <FadeUp delay={0.2}>
-                <div className="grid grid-cols-4 gap-x-4 gap-y-8 sm:grid-cols-8">
-                  {amenityTabs.map((tab, i) => {
-                    const TabIcon = getAmenityIcon(tab.title)
-                    const isActive = i === activeAmenity
-                    return (
-                      <button
-                        key={tab.title + i}
-                        onClick={() => setActiveAmenity(i)}
-                        className="group flex flex-col items-center gap-3 text-center"
-                      >
-                        <span
-                          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
-                            isActive
-                              ? 'text-white shadow-[0_10px_28px_-12px_rgba(168,130,60,0.75)]'
-                              : 'bg-[#efe9de] group-hover:bg-[#e6dcc7]'
-                          }`}
-                          style={isActive ? { backgroundColor: GOLD } : {}}
-                        >
-                          <TabIcon
-                            className={`h-6 w-6 transition-colors duration-300 ${
-                              isActive ? 'text-white' : 'text-[#8a7a5c]'
-                            }`}
-                            strokeWidth={1.5}
-                          />
-                        </span>
-                        <span
-                          className={`text-[13px] font-semibold leading-snug ${
-                            isActive ? 'text-[#141414]' : 'text-[#4b4b4b]'
-                          }`}
-                        >
-                          {tab.title}
-                        </span>
-                        <span
-                          className={`h-[2px] w-6 rounded-full transition-colors duration-300 ${
-                            isActive ? 'bg-[#a8823c]' : 'bg-transparent'
-                          }`}
-                        />
-                      </button>
-                    )
-                  })}
-                </div>
-              </FadeUp>
-
-              <FadeUp delay={0.25} className="hidden justify-self-end lg:flex">
-                <div className="flex items-center gap-3 border-l border-[#a8823c]/30 pl-4">
-                  <span className="text-[11px] font-semibold uppercase leading-[1.5] tracking-[2px] text-[#a8823c]">
-                    More
-                    <br />
-                    Than
-                    <br />
-                    Amenities
-                  </span>
-                </div>
-              </FadeUp>
+    <div className="relative mx-auto max-w-[1500px]">
+      <div className="mb-12 grid grid-cols-1 gap-8 lg:grid-cols-[0.85fr_1.9fr_0.2fr] lg:items-start lg:gap-6">
+        <div>
+          <FadeUp>
+            <div className="mb-5 flex items-center gap-3">
+              <span className="text-[12px] font-medium uppercase tracking-[3.5px] text-[#a8823c]">
+                Life at its finest
+              </span>
+              <span className="h-px w-14 bg-[#a8823c]/70" />
             </div>
+          </FadeUp>
 
-            {/* Featured tile row — content left, image right */}
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_1.7fr]">
-              {/* Detail card (left) */}
-              <FadeUp delay={0.2}>
-                <div className="flex h-full flex-col rounded-[24px] bg-[#f4f0e6] p-7">
-                  <Eyebrow className="mb-4 self-start !bg-transparent !border-0 !px-0 !py-0">
-                    {current?.eyebrow}
-                  </Eyebrow>
-                  <h3 className="mb-3 text-[26px] font-semibold leading-tight text-[#1f2029] md:text-[30px]">
-                    {current?.title}
-                  </h3>
-                  <span className="mb-4 h-[2px] w-10 bg-[#a8823c]" />
-                  <p className="mb-7 text-[14px] leading-[1.75] text-[#6b6b6b]">
-                    {current?.description}
-                  </p>
+          <RevealText
+            as="h2"
+            text={
+              <>
+                World-Class
+                <br />
+                Amenities for a
+                <br />
+                <span className="text-[#a8823c]">Better Tomorrow</span>
+              </>
+            }
+            className="mb-5 text-[32px] font-semibold leading-[1.14] tracking-tight text-[#1f2029] md:text-[42px]"
+            delay={0.1}
+          />
 
-                  <div className="mt-auto grid grid-cols-3 gap-3">
-                    {(current?.tags || []).map((tag, i) => {
-                      const [l1, ...rest] = tag.split(' ')
-                      return (
-                        <div key={i} className="flex flex-col items-start gap-2.5">
-                          <Sparkles className="h-5 w-5 text-[#a8823c]" strokeWidth={1.5} />
-                          <p className="m-0 text-[13px] font-semibold leading-snug text-[#1a1a1a]">
-                            {l1}
-                            <br />
-                            {rest.join(' ')}
-                          </p>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              </FadeUp>
+          <FadeUp delay={0.2}>
+            <p className="mb-7 max-w-[380px] text-[14px] leading-[1.8] text-[#6b6b6b] sm:text-[15px]">
+              {project.amenitiesDescription ||
+                'Thoughtfully curated spaces and modern conveniences that bring comfort, community and a healthier lifestyle together at Gurudev.'}
+            </p>
+          </FadeUp>
 
-              {/* Main image (right) — sharp corners, arrow navigation inside */}
-              <FadeUp delay={0.15}>
-                <div className="relative h-[340px] w-full overflow-hidden bg-[#1a1a1a] shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] sm:h-[420px] md:h-[480px]">
-                  <AnimatePresence mode="wait">
-                    <motion.img
-                      key={`${activeAmenity}-${amenityImgIndex}`}
-                      src={current?.gallery?.[amenityImgIndex] || current?.image}
-                      alt={current?.title}
-                      initial={{ opacity: 0, scale: 1.02 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.5, ease: EASE }}
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  </AnimatePresence>
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+          {/* <FadeUp delay={0.3}>
+            <SolidButton icon={ArrowRight}>Explore All Amenities</SolidButton>
+          </FadeUp> */}
+        </div>
 
-                  <span className="absolute bottom-5 left-5 rounded-full bg-black/70 px-3 py-1.5 text-[12px] font-semibold tabular-nums text-white backdrop-blur">
-                    {String(amenityImgIndex + 1).padStart(2, '0')} / {String(amenityGalleryCount).padStart(2, '0')}
-                  </span>
-
-                  <span className="absolute bottom-5 right-5 rounded-full bg-black/70 px-4 py-1.5 text-[13px] font-semibold text-white backdrop-blur">
-                    {current?.title}
-                  </span>
-
-                  {/* Arrow — next amenity, centered vertically on the right */}
-                  <IconCircleButton
-                    onClick={goNextAmenityTab}
-                    ariaLabel="Next amenity"
-                    variant="light"
-                    className="!absolute !right-5 !top-1/2 !-translate-y-1/2 sm:!right-7"
+        <FadeUp delay={0.2}>
+          {/* 5 icons per row on desktop, 3 on tablet, 2 on small mobile */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 md:grid-cols-5">
+            {amenityTabs.map((tab, i) => {
+              const TabIcon = getAmenityIcon(tab.title)
+              const isActive = i === activeAmenity
+              return (
+                <button
+                  key={tab.title + i}
+                  onClick={() => setActiveAmenity(i)}
+                  className="group flex flex-col items-center gap-3 text-center"
+                >
+                  <span
+                    className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
+                      isActive
+                        ? 'text-white shadow-[0_10px_28px_-12px_rgba(168,130,60,0.75)]'
+                        : 'bg-[#efe9de] group-hover:bg-[#e6dcc7]'
+                    }`}
+                    style={isActive ? { backgroundColor: GOLD } : {}}
                   >
-                    <ChevronRight className="h-5 w-5" strokeWidth={2} />
-                  </IconCircleButton>
+                    <TabIcon
+                      className={`h-6 w-6 transition-colors duration-300 ${
+                        isActive ? 'text-white' : 'text-[#8a7a5c]'
+                      }`}
+                      strokeWidth={1.5}
+                    />
+                  </span>
+                  <span
+                    className={`text-[13px] font-semibold leading-snug ${
+                      isActive ? 'text-[#141414]' : 'text-[#4b4b4b]'
+                    }`}
+                  >
+                    {tab.title}
+                  </span>
+                  <span
+                    className={`h-[2px] w-6 rounded-full transition-colors duration-300 ${
+                      isActive ? 'bg-[#a8823c]' : 'bg-transparent'
+                    }`}
+                  />
+                </button>
+              )
+            })}
+          </div>
+        </FadeUp>
 
-                  {/* Inline gallery prev/next when multiple images */}
-                  {amenityGalleryCount > 1 && (
-                    <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
-                      <IconCircleButton onClick={goAmenityPrev} ariaLabel="Previous" variant="light" className="!h-9 !w-9">
-                        <ChevronLeft className="h-4 w-4" strokeWidth={2} />
-                      </IconCircleButton>
-                      <IconCircleButton onClick={goAmenityNext} ariaLabel="Next" variant="dark" className="!h-9 !w-9">
-                        <ChevronRight className="h-4 w-4" strokeWidth={2} />
-                      </IconCircleButton>
-                    </div>
-                  )}
-                </div>
-              </FadeUp>
-            </div>
+        <FadeUp delay={0.25} className="hidden justify-self-end lg:flex">
+          <div className="flex items-center gap-3 border-l border-[#a8823c]/30 pl-4">
+            <span className="text-[11px] font-semibold uppercase leading-[1.5] tracking-[2px] text-[#a8823c]">
+              More
+              <br />
+              Than
+              <br />
+              Amenities
+            </span>
+          </div>
+        </FadeUp>
+      </div>
 
-            {/* Bottom stats strip */}
-            <div className="mt-12 flex flex-col gap-8 border-t border-[#ece6da] pt-8 lg:flex-row lg:items-center lg:justify-between">
-              <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
-                {amenityStats.map((stat, i) => {
-                  const StatIcon = amenityStatIconMap[stat.icon] || Sparkles
-                  return (
-                    <div key={i} className="flex items-center gap-3">
-                      <StatIcon className="h-6 w-6 shrink-0 text-[#a8823c]" strokeWidth={1.5} />
-                      <p className="m-0 text-[14px] leading-snug text-[#1a1a1a]">
-                        <span className="font-bold">{stat.value}</span>
-                        <br />
-                        <span className="text-[#6b6b6b]">{stat.label}</span>
-                      </p>
-                    </div>
-                  )
-                })}
-              </div>
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1fr_1.7fr]">
+        <FadeUp delay={0.2}>
+          <div className="flex h-full flex-col rounded-[24px] bg-[#f4f0e6] p-7">
+            <Eyebrow className="mb-4 self-start !bg-transparent !border-0 !px-0 !py-0">
+              {current?.eyebrow}
+            </Eyebrow>
+            <h3 className="mb-3 text-[26px] font-semibold leading-tight text-[#1f2029] md:text-[30px]">
+              {current?.title}
+            </h3>
+            <span className="mb-4 h-[2px] w-10 bg-[#a8823c]" />
+            <p className="mb-7 text-[14px] leading-[1.75] text-[#6b6b6b]">
+              {current?.description}
+            </p>
 
-              <div className="flex items-center gap-3">
-                <span className="h-px w-10 bg-[#a8823c]/50" />
-                <p className="m-0 text-[12px] font-semibold uppercase leading-snug tracking-[2px] text-[#a8823c]">
-                  Amenities Today
-                  <br />A Brighter Tomorrow
-                </p>
-              </div>
+            <div className="mt-auto grid grid-cols-3 gap-3">
+              {(current?.tags || []).map((tag, i) => {
+                const [l1, ...rest] = tag.split(' ')
+                return (
+                  <div key={i} className="flex flex-col items-start gap-2.5">
+                    <Sparkles className="h-5 w-5 text-[#a8823c]" strokeWidth={1.5} />
+                    <p className="m-0 text-[13px] font-semibold leading-snug text-[#1a1a1a]">
+                      {l1}
+                      <br />
+                      {rest.join(' ')}
+                    </p>
+                  </div>
+                )
+              })}
             </div>
           </div>
-        </section>
-      )}
+        </FadeUp>
 
+        <FadeUp delay={0.15}>
+          <div className="relative h-[340px] w-full overflow-hidden rounded-2xl bg-[#1a1a1a] shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] sm:h-[420px] md:h-[480px]">
+            <AnimatePresence mode="wait">
+              <motion.img
+                key={`${activeAmenity}-${amenityImgIndex}`}
+                src={current?.gallery?.[amenityImgIndex] || current?.image}
+                alt={current?.title}
+                initial={{ opacity: 0, scale: 1.02 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5, ease: EASE }}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            </AnimatePresence>
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+            <span className="absolute bottom-5 left-5 rounded-full bg-black/70 px-3 py-1.5 text-[12px] font-semibold tabular-nums text-white backdrop-blur">
+              {String(amenityImgIndex + 1).padStart(2, '0')} / {String(amenityGalleryCount).padStart(2, '0')}
+            </span>
+
+            <span className="absolute bottom-5 right-5 rounded-full bg-black/70 px-4 py-1.5 text-[13px] font-semibold text-white backdrop-blur">
+              {current?.title}
+            </span>
+
+            <IconCircleButton
+              onClick={goPrevAmenityTab}
+              ariaLabel="Previous amenity"
+              variant="light"
+              className="!absolute !left-5 !top-1/2 !-translate-y-1/2 sm:!left-7"
+            >
+              <ChevronLeft className="h-5 w-5" strokeWidth={2} />
+            </IconCircleButton>
+
+            <IconCircleButton
+              onClick={goNextAmenityTab}
+              ariaLabel="Next amenity"
+              variant="light"
+              className="!absolute !right-5 !top-1/2 !-translate-y-1/2 sm:!right-7"
+            >
+              <ChevronRight className="h-5 w-5" strokeWidth={2} />
+            </IconCircleButton>
+
+            {amenityGalleryCount > 1 && (
+              <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2">
+                <IconCircleButton onClick={goAmenityPrev} ariaLabel="Previous image" variant="light" className="!h-9 !w-9">
+                  <ChevronLeft className="h-4 w-4" strokeWidth={2} />
+                </IconCircleButton>
+                <IconCircleButton onClick={goAmenityNext} ariaLabel="Next image" variant="dark" className="!h-9 !w-9">
+                  <ChevronRight className="h-4 w-4" strokeWidth={2} />
+                </IconCircleButton>
+              </div>
+            )}
+          </div>
+        </FadeUp>
+      </div>
+
+      <div className="mt-12 flex flex-col gap-8 border-t border-[#ece6da] pt-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-4">
+          {amenityStats.map((stat, i) => {
+            const StatIcon = amenityStatIconMap[stat.icon] || Sparkles
+            return (
+              <div key={i} className="flex items-center gap-3">
+                <StatIcon className="h-6 w-6 shrink-0 text-[#a8823c]" strokeWidth={1.5} />
+                <p className="m-0 text-[14px] leading-snug text-[#1a1a1a]">
+                  <span className="font-bold">{stat.value}</span>
+                  <br />
+                  <span className="text-[#6b6b6b]">{stat.label}</span>
+                </p>
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="h-px w-10 bg-[#a8823c]/50" />
+          <p className="m-0 text-[12px] font-semibold uppercase leading-snug tracking-[2px] text-[#a8823c]">
+            Amenities Today
+            <br />A Brighter Tomorrow
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+)}
       {/* ================= Gallery ================= */}
       {galleryItems.length > 0 && (
         <section
@@ -1321,31 +1924,6 @@ export default function ProjectBanner({ project }) {
                   )
                 })}
               </div>
-
-              <SolidButton
-                href={project.floorPlansCtaHref || '#'}
-                icon={ArrowUpRight}
-                className="mb-12 w-fit"
-              >
-                {project.floorPlansCtaLabel || 'View All Plans'}
-              </SolidButton>
-
-              <div className="mb-12 ml-10 border-l border-[#a8823c]/50 pl-5 sm:ml-16">
-                <p className="m-0 text-[22px] italic leading-[1.4] text-[#8a6a2f]">
-                  Well Planned
-                  <br />
-                  for a Brighter Tomorrow
-                </p>
-                <span className="mt-3 block h-px w-10 bg-[#a8823c]/60" />
-              </div>
-
-              <div className="ml-8 mt-auto flex items-center gap-6 text-[12px] font-medium uppercase tracking-[3px] text-[#a8823c]/80 sm:ml-14">
-                <span>Live</span>
-                <span className="text-[#a8823c]/50">|</span>
-                <span>Invest</span>
-                <span className="text-[#a8823c]/50">|</span>
-                <span>Grow</span>
-              </div>
             </FadeUp>
 
             {/* ---------- Right column ---------- */}
@@ -1409,19 +1987,19 @@ export default function ProjectBanner({ project }) {
                       <div className="absolute inset-0 flex items-center justify-center overflow-hidden px-16 pb-24 pt-8 sm:px-24">
                         <AnimatePresence mode="wait">
                           <motion.img
-                            key={`${planKey}-${planView}`}
-                            src={
-                              planView === '2d'
-                                ? selectedPlan?.image2d || selectedPlan?.image
-                                : selectedPlan?.image3d || selectedPlan?.image
-                            }
+                            key={planKey}
+                            src={selectedPlan?.image3d || selectedPlan?.image}
                             alt={selectedPlan?.title}
                             initial={{ opacity: 0, scale: 0.97 }}
                             animate={{ opacity: 1, scale: planZoom ? 1.45 : 1 }}
                             exit={{ opacity: 0, scale: 0.98 }}
                             transition={{ duration: 0.5, ease: EASE }}
-                            className="max-h-full max-w-full select-none object-contain"
+                            className="max-h-full max-w-full cursor-zoom-in select-none object-contain"
                             draggable={false}
+                            onClick={() => {
+                              setFloorLightboxZoom(1)
+                              setFloorLightboxOpen(true)
+                            }}
                           />
                         </AnimatePresence>
                       </div>
@@ -1454,15 +2032,6 @@ export default function ProjectBanner({ project }) {
 
                       {/* Bottom controls */}
                       <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between gap-3">
-                        <SegmentedToggle
-                          options={[
-                            { value: '2d', label: '2D View' },
-                            { value: '3d', label: '3D View' },
-                          ]}
-                          value={planView}
-                          onChange={setPlanView}
-                        />
-
                         <div className="hidden flex-col items-center gap-1 sm:flex">
                           <span className="h-0 w-0 border-x-[8px] border-b-[12px] border-x-transparent border-b-[#a8823c]" />
                           <span className="text-[13px] text-[#4a4a4a]">Entry</span>
@@ -1470,7 +2039,7 @@ export default function ProjectBanner({ project }) {
 
                         <button
                           onClick={() => setPlanZoom((z) => !z)}
-                          className="group flex items-center gap-2 rounded-md border border-black/[0.06] bg-white px-4 py-2.5 text-[13px] font-bold text-[#141414] shadow-[0_6px_18px_-8px_rgba(0,0,0,0.2)] transition-all duration-300 hover:bg-[#141414] hover:text-white active:scale-[0.97]"
+                          className="group ml-auto flex items-center gap-2 rounded-md border border-black/[0.06] bg-white px-4 py-2.5 text-[13px] font-bold text-[#141414] shadow-[0_6px_18px_-8px_rgba(0,0,0,0.2)] transition-all duration-300 hover:bg-[#141414] hover:text-white active:scale-[0.97]"
                         >
                           {planZoom ? (
                             <ZoomOut className="h-4 w-4" strokeWidth={1.75} />
@@ -1534,8 +2103,9 @@ export default function ProjectBanner({ project }) {
                           </ul>
 
                           <div className="mt-auto flex items-center gap-4 pt-6">
+                            {/* Download Floor Plan — opens Enquire Modal */}
                             <SolidButton
-                              href={selectedPlan?.pdf || selectedPlan?.href || selectedPlan?.image}
+                              onClick={() => openEnquire(project.name || '', 'Floor Plan')}
                               icon={Download}
                               fullWidth
                             >
@@ -1561,73 +2131,103 @@ export default function ProjectBanner({ project }) {
                       </AnimatePresence>
                     </motion.div>
                   </div>
-
-                  {/* Thumbnails */}
-                  <div className="mt-6 grid grid-cols-2 items-stretch gap-3 sm:grid-cols-3 lg:grid-cols-[1fr_1fr_1fr_1fr_0.9fr_0.95fr]">
-                    {thumbnailPlans.map((plan, i) => {
-                      const isActive = plan === selectedPlan
-                      const { config } = splitPlanTitle(plan)
-                      return (
-                        <button
-                          key={plan.id || plan.title || i}
-                          onClick={() => selectFloorPlan(plan)}
-                          className={`flex flex-col rounded-[14px] border-2 bg-white p-3 text-left transition-all duration-300 ${
-                            isActive
-                              ? 'border-[#a8823c] shadow-[0_10px_24px_-14px_rgba(168,130,60,0.5)]'
-                              : 'border-transparent hover:border-[#f0e8d8]'
-                          }`}
-                        >
-                          <img
-                            src={plan.thumbnail || plan.image}
-                            alt={plan.title}
-                            loading="lazy"
-                            className="mb-3 h-[100px] w-full object-contain"
-                          />
-                          <p className="m-0 text-[13px] font-medium text-[#1a1a1a]">{config}</p>
-                          {plan.area && (
-                            <p className="m-0 mt-0.5 text-[12px] text-[#8a6a2f]">{plan.area}</p>
-                          )}
-                        </button>
-                      )
-                    })}
-
-                    
-                      <a href={project.floorPlansCtaHref || '#'}
-                      className="flex min-h-[160px] flex-col items-center justify-center gap-3 rounded-[14px] border border-dashed border-[#ddd5c6] p-3 text-center no-underline transition-colors hover:bg-white"
-                    >
-                      <span
-                        className="flex h-8 w-8 items-center justify-center rounded-full text-white"
-                        style={{ backgroundColor: GOLD }}
-                      >
-                        <Plus className="h-4 w-4" strokeWidth={2.5} />
-                      </span>
-                      <span className="text-[15px] leading-snug text-[#3a3a3a]">
-                        View
-                        <br />
-                        All Plans
-                      </span>
-                    </a>
-
-                    <div className="hidden items-center gap-8 pl-4 lg:flex">
-                      <span className="h-[120px] w-px bg-[#a8823c]/50" />
-                      <div>
-                        <p className="m-0 text-[12px] font-semibold uppercase leading-[1.85] tracking-[3px] text-[#a8823c]">
-                          Thoughtful
-                          <br />
-                          Spaces
-                          <br />
-                          Stronger
-                          <br />
-                          Tomorrows
-                        </p>
-                        <span className="mt-2 block h-px w-10 bg-[#a8823c]/60" />
-                      </div>
-                    </div>
-                  </div>
                 </>
               )}
             </div>
           </div>
+
+          {/* ---------- NEW: Full-Screen Floor Plan Lightbox ---------- */}
+          <AnimatePresence>
+            {floorLightboxOpen && selectedPlan && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+                onClick={() => setFloorLightboxOpen(false)}
+                onWheel={(e) => {
+                  e.preventDefault()
+                  setFloorLightboxZoom((z) =>
+                    Math.min(4, Math.max(0.5, z - e.deltaY * 0.0015))
+                  )
+                }}
+              >
+                {/* Close button */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setFloorLightboxOpen(false)
+                  }}
+                  aria-label="Close"
+                  className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20"
+                >
+                  <X className="h-5 w-5" strokeWidth={2} />
+                </button>
+
+                {/* Zoom controls */}
+                <div
+                  className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/10 px-2 py-2 backdrop-blur-md"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <button
+                    onClick={() => setFloorLightboxZoom((z) => Math.max(0.5, z - 0.25))}
+                    aria-label="Zoom out"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20"
+                  >
+                    <ZoomOut className="h-5 w-5" strokeWidth={1.75} />
+                  </button>
+
+                  <span className="min-w-[60px] text-center text-[13px] font-medium tabular-nums text-white">
+                    {Math.round(floorLightboxZoom * 100)}%
+                  </span>
+
+                  <button
+                    onClick={() => setFloorLightboxZoom((z) => Math.min(4, z + 0.25))}
+                    aria-label="Zoom in"
+                    className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20"
+                  >
+                    <ZoomIn className="h-5 w-5" strokeWidth={1.75} />
+                  </button>
+
+                  <span className="mx-1 h-6 w-px bg-white/20" />
+
+                  <button
+                    onClick={() => setFloorLightboxZoom(1)}
+                    aria-label="Reset zoom"
+                    className="flex h-10 items-center justify-center rounded-full px-3 text-[12px] font-medium text-white transition hover:bg-white/20"
+                  >
+                    Reset
+                  </button>
+                </div>
+
+                {/* Image wrapper — stops propagation so clicking image doesn't close */}
+                <motion.div
+                  className="flex max-h-full max-w-full items-center justify-center p-4"
+                  onClick={(e) => e.stopPropagation()}
+                  drag={floorLightboxZoom > 1}
+                  dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                  dragElastic={0.1}
+                  style={{ cursor: floorLightboxZoom > 1 ? 'grab' : 'default' }}
+                >
+                  <motion.img
+                    key={planKey}
+                    src={selectedPlan?.image3d || selectedPlan?.image}
+                    alt={selectedPlan?.title}
+                    animate={{ scale: floorLightboxZoom }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    className="max-h-[90vh] max-w-[90vw] select-none object-contain"
+                    draggable={false}
+                  />
+                </motion.div>
+
+                {/* Hint */}
+                <p className="absolute bottom-20 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] tracking-wide text-white/50">
+                  Scroll to zoom · Drag to pan · ESC to close
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
       )}
 
@@ -1704,7 +2304,7 @@ export default function ProjectBanner({ project }) {
                   <div className="relative h-[240px] overflow-hidden rounded-[22px] bg-[#1f2a1c] shadow-[0_24px_50px_-28px_rgba(0,0,0,0.45)]">
                     {(project.plotPricingCtaImage || project.aboutImage) && (
                       <img
-                        src={project.plotPricingCtaImage || project.aboutImage}
+                        src="/plot.png"
                         alt=""
                         className="absolute inset-0 h-full w-full object-cover"
                       />
@@ -1720,8 +2320,9 @@ export default function ProjectBanner({ project }) {
                       <p className="m-0 mb-6 max-w-[250px] text-[14px] leading-[1.5] text-white/90">
                         Secure your slice of a better lifestyle today.
                       </p>
+                      {/* Enquire Now — opens Enquire Modal */}
                       <OutlineButton
-                        href={project.enquireHref || '#enquire'}
+                        onClick={() => openEnquire(project.name || '', 'Pricing')}
                         icon={ArrowRight}
                         className="w-fit"
                       >
@@ -1735,7 +2336,6 @@ export default function ProjectBanner({ project }) {
               {/* ---------- Pricing table ---------- */}
               <FadeUp delay={0.15} className="min-w-0">
                 <div className="h-full rounded-[26px] border border-[#efe9de] bg-white p-4 shadow-[0_30px_70px_-35px_rgba(0,0,0,0.22)] sm:p-6">
-                  {/* Filter tabs */}
                   <div className="mb-5 flex items-center overflow-x-auto pb-1">
                     {plotTabs.map((tab, i) => {
                       const isActive = plotFilter === tab.id
@@ -1770,7 +2370,6 @@ export default function ProjectBanner({ project }) {
                     })}
                   </div>
 
-                  {/* Table */}
                   <div className="overflow-x-auto">
                     <div className="min-w-[540px]">
                       <div className="grid grid-cols-4 rounded-[14px] bg-[#f5f2ec] py-5 text-center">
@@ -1870,56 +2469,80 @@ export default function ProjectBanner({ project }) {
                 {project.tourDescription}
               </p>
 
-              {project.tourUrl && (
-                <SolidButton href={project.tourUrl} icon={Play}>
-                  {project.tourCtaLabel || 'Start 360° Tour'}
+              {panoramaSrc && (
+                <SolidButton onClick={() => setTour360Open(true)} icon={Play}>
+                  {project.tourCtaLabel || 'Start Cinematic View'}
                 </SolidButton>
               )}
             </FadeUp>
 
-            <motion.div
-              initial={{ opacity: 0, scale: 0.97 }}
-              animate={tourInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
-              className="relative h-[300px] w-full overflow-hidden rounded-[28px] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.4)] md:h-[460px]"
-            >
-              <img
-                src={project.tourImage}
-                alt={`${project.name} 360 tour`}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
-
-              
-                <a href={project.tourUrl || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Start 360 virtual tour"
-                className="group absolute left-1/2 top-1/2 flex h-[140px] w-[140px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-white/40 bg-white/10 text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-white/20 md:h-[170px] md:w-[170px]"
+            <div className="flex flex-col gap-4">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.97 }}
+                animate={tourInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
+                className="relative h-[300px] w-full overflow-hidden rounded-[28px] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.4)] md:h-[460px]"
               >
-                <span className="absolute inset-0 animate-ping rounded-full border border-white/30 [animation-duration:2.5s]" />
-                <span className="text-3xl font-bold leading-none md:text-4xl">360°</span>
-                <span className="mt-1.5 text-[10px] font-semibold tracking-[2px] md:text-xs">
-                  VIRTUAL TOUR
-                </span>
-              </a>
+                <img
+                  src={project.tourImage}
+                  alt={`${project.name} 360 tour`}
+                  className="h-full w-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
-              {project.tourTagline?.length > 0 && (
-                <div
-                  className="absolute bottom-6 right-6 text-right leading-tight text-white"
-                  style={{ fontFamily: "'Brush Script MT', cursive" }}
+                <button
+                  onClick={() => setTour360Open(true)}
+                  aria-label="Open panoramic view"
+                  className="group absolute left-1/2 top-1/2 flex h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-white/50 bg-black/20 text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white hover:bg-black/35 md:h-[128px] md:w-[128px]"
                 >
-                  {project.tourTagline.map((line, i) => (
-                    <p key={i} className="m-0 text-xl italic md:text-2xl">
-                      {line}
-                    </p>
-                  ))}
+                  <span className="absolute -inset-[6px] rounded-full border border-white/10" />
+                  <Play className="mb-1 h-5 w-5 fill-white" strokeWidth={0} />
+                  <span className="text-[10px] font-bold tracking-[2.5px]">360°</span>
+                </button>
+
+                <div className="absolute bottom-6 left-6 flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3.5 py-2 backdrop-blur-md">
+                  <Move3d className="h-3.5 w-3.5 text-white/80" strokeWidth={1.75} />
+                  <span className="text-[11px] font-semibold uppercase tracking-[1.5px] text-white/85">
+                    Panoramic View
+                  </span>
                 </div>
-              )}
-            </motion.div>
+
+                {project.tourTagline?.length > 0 && (
+                  <div
+                    className="absolute bottom-6 right-6 text-right leading-tight text-white"
+                    style={{ fontFamily: "'Brush Script MT', cursive" }}
+                  >
+                    {project.tourTagline.map((line, i) => (
+                      <p key={i} className="m-0 text-xl italic md:text-2xl">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+
+             
+            </div>
           </div>
         </section>
       )}
+
+      {/* ---- 360° Panorama Modal ---- */}
+      <Panorama360Modal
+        open={tour360Open}
+        onClose={() => setTour360Open(false)}
+        imageSrc={panoramaSrc}
+        title={project.name}
+        subtitle="Panoramic View"
+      />
+
+      {/* ---- Enquire Modal ---- */}
+      <EnquireModal
+        open={enquireOpen}
+        onClose={() => setEnquireOpen(false)}
+        presetType={enquirePreset}
+        projectName={enquireContext}
+      />
 
       {/* ================= Location ================= */}
       {project.locationLandmarks?.length > 0 && (

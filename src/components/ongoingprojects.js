@@ -2,6 +2,8 @@
 
 import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Figtree } from "next/font/google";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,11 +12,7 @@ import {
   Home,
   BedDouble,
   Ruler,
-  Layers,
-  Video,
-  Orbit,
   Building2,
-  Map,
   ArrowRight,
   Phone,
 } from "lucide-react";
@@ -34,6 +32,7 @@ const LINE = "#E8DFCB";
 const PROJECTS = [
   {
     id: 1,
+    slug: "gurudev",
     category: "APARTMENTS",
     status: "Under Construction",
     name: "Gurudev",
@@ -50,6 +49,7 @@ const PROJECTS = [
   },
   {
     id: 2,
+    slug: "privana",
     category: "APARTMENTS",
     status: "Under Construction",
     name: "Privana",
@@ -98,99 +98,86 @@ export default function OurProjects() {
     () => {
       const tl = gsap.timeline({
         defaults: { ease: "power3.out" },
-        scrollTrigger: { trigger: ".gs-head", start: "top 82%", once: true },
+        scrollTrigger: { trigger: ".gs-head", start: "top 85%", once: true },
       });
 
       tl.fromTo(
-        ".gs-eyebrow-line",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          transformOrigin: "center",
-          duration: 0.65,
-          stagger: 0.08,
-          ease: "power2.out",
-          clearProps: "transform",
-        }
+        ".gs-eyebrow-text",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.35, clearProps: "transform,opacity" }
       )
         .fromTo(
-          ".gs-eyebrow-text",
-          { opacity: 0, y: 12 },
-          { opacity: 1, y: 0, duration: 0.5, clearProps: "transform,opacity" },
-          "-=0.35"
-        )
-        .fromTo(
           ".gs-title-word",
-          { yPercent: 115, opacity: 0 },
+          { yPercent: 110, opacity: 0 },
           {
             yPercent: 0,
             opacity: 1,
-            duration: 0.95,
-            stagger: 0.08,
+            duration: 0.55,
+            stagger: 0.06,
             ease: "power4.out",
             clearProps: "transform,opacity",
           },
-          "-=0.3"
+          "-=0.2"
         )
         .fromTo(
           ".gs-sub",
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.75, ease: "power3.out", clearProps: "transform,opacity" },
-          "-=0.5"
+          { y: 15, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.45, ease: "power3.out", clearProps: "transform,opacity" },
+          "-=0.3"
         );
 
       gsap.utils.toArray(".gs-card").forEach((card) => {
         const ctl = gsap.timeline({
           defaults: { ease: "power3.out" },
-          scrollTrigger: { trigger: card, start: "top 84%", once: true },
+          scrollTrigger: { trigger: card, start: "top 88%", once: true },
         });
 
         ctl.fromTo(
           card,
-          { y: 45, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.85, ease: "power3.out", clearProps: "transform,opacity" }
+          { y: 35, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.55, ease: "power3.out", clearProps: "transform,opacity" }
         )
           .fromTo(
             card.querySelector(".gs-img"),
-            { scale: 1.1, opacity: 0.85 },
-            { scale: 1, opacity: 1, duration: 1.1, ease: "power2.out", clearProps: "transform,opacity" },
-            "-=0.7"
+            { scale: 1.08, opacity: 0.85 },
+            { scale: 1, opacity: 1, duration: 0.7, ease: "power2.out", clearProps: "transform,opacity" },
+            "-=0.4"
           )
           .fromTo(
             card.querySelector(".gs-badge"),
-            { x: 30, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.5, ease: "power2.out", clearProps: "transform,opacity" },
-            "-=0.7"
+            { x: 25, opacity: 0 },
+            { x: 0, opacity: 1, duration: 0.35, ease: "power2.out", clearProps: "transform,opacity" },
+            "-=0.45"
           )
           .fromTo(
             card.querySelector(".gs-card-rule"),
             { scaleX: 0 },
-            { scaleX: 1, transformOrigin: "left center", duration: 0.5, ease: "power2.out", clearProps: "transform" },
-            "-=0.6"
+            { scaleX: 1, transformOrigin: "left center", duration: 0.35, ease: "power2.out", clearProps: "transform" },
+            "-=0.35"
           )
           .fromTo(
             card.querySelectorAll(".gs-line"),
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6, stagger: 0.06, ease: "power3.out", clearProps: "transform,opacity" },
-            "-=0.5"
+            { y: 14, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.4, stagger: 0.04, ease: "power3.out", clearProps: "transform,opacity" },
+            "-=0.3"
           )
           .fromTo(
             card.querySelectorAll(".gs-spec"),
-            { y: 15, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.5, stagger: 0.05, ease: "power2.out", clearProps: "transform,opacity" },
-            "-=0.4"
+            { y: 12, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.35, stagger: 0.04, ease: "power2.out", clearProps: "transform,opacity" },
+            "-=0.25"
           )
           .fromTo(
             card.querySelector(".gs-countdown-box"),
-            { y: 15, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.55, ease: "power2.out", clearProps: "transform,opacity" },
-            "-=0.3"
+            { y: 12, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.4, ease: "power2.out", clearProps: "transform,opacity" },
+            "-=0.2"
           )
           .fromTo(
             card.querySelector(".gs-actions"),
-            { y: 18, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", clearProps: "transform,opacity" },
-            "-=0.3"
+            { y: 14, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.4, ease: "power3.out", clearProps: "transform,opacity" },
+            "-=0.2"
           );
       });
     },
@@ -242,20 +229,26 @@ export default function OurProjects() {
 
 function ProjectCard({ project }) {
   const { days, hrs, min, sec } = useCountdown(project.completionDate);
+  const router = useRouter();
+  const href = `/projects/${project.slug}`;
 
   return (
     <div
-      className="gs-card overflow-hidden rounded-2xl border bg-white shadow-[0_18px_50px_-30px_rgba(90,70,30,0.45)]"
+      className="gs-card group/card overflow-hidden rounded-2xl border bg-white shadow-[0_18px_50px_-30px_rgba(90,70,30,0.45)]"
       style={{ borderColor: LINE }}
     >
       <div className="grid grid-cols-1 sm:grid-cols-2">
-        {/* Image */}
-        <div className="relative h-52 overflow-hidden sm:h-full sm:min-h-[320px] md:min-h-[360px]">
+        {/* Image — clickable */}
+        <Link
+          href={href}
+          aria-label={`View ${project.name} project details`}
+          className="relative block h-52 overflow-hidden sm:h-full sm:min-h-[320px] md:min-h-[360px]"
+        >
           <Image
             src={project.image}
             alt={project.name}
             fill
-            className="gs-img object-cover"
+            className="gs-img object-cover transition-transform duration-500 group-hover/card:scale-[1.04]"
           />
           <span
             className="gs-badge absolute right-0 top-4 rounded-l-md px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white sm:top-5 sm:px-4 sm:text-xs"
@@ -263,7 +256,7 @@ function ProjectCard({ project }) {
           >
             {project.status}
           </span>
-        </div>
+        </Link>
 
         {/* Details */}
         <div className="flex flex-col justify-center px-5 py-6 sm:px-6 sm:py-7 md:px-8">
@@ -275,14 +268,25 @@ function ProjectCard({ project }) {
               >
                 {project.category}
               </span>
+
+              {/* Project name — clickable */}
               <h3 className="gs-line mt-1 text-xl font-semibold tracking-tight text-neutral-900 sm:text-2xl">
-                {project.name}
+                <Link
+                  href={href}
+                  className="transition-colors duration-300 hover:text-[#8A6B2E]"
+                >
+                  {project.name}
+                </Link>
               </h3>
             </div>
 
             <button
               type="button"
               aria-label={`Call about ${project.name}`}
+              onClick={(e) => {
+                e.stopPropagation();
+                window.location.href = "tel:+911234567890";
+              }}
               className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 hover:-translate-y-0.5 sm:h-10 sm:w-10"
               style={{ borderColor: LINE, backgroundColor: CREAM, color: GOLD_DEEP }}
             >
@@ -381,44 +385,18 @@ function ProjectCard({ project }) {
           </div>
         </div>
 
-        {/* Actions */}
-        <div
-          className="gs-actions mt-5 flex flex-col gap-5 rounded-xl border px-4 py-4 sm:mt-6 sm:px-5 md:flex-row md:items-center md:justify-between"
-          style={{ borderColor: "#EFE7D6", backgroundColor: CREAM }}
-        >
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start sm:gap-5">
-            <ActionIcon icon={Video} label="Walk Through" />
-            <ActionIcon icon={Orbit} label="Aerial View" />
-            <ActionIcon icon={Building2} label="Home Tour" />
-            <ActionIcon icon={Map} label="Route Map" />
-          </div>
-
-          <button
-            type="button"
-            className="group inline-flex w-full items-center justify-center gap-3 rounded-full px-6 py-3 text-sm font-bold tracking-wide text-white transition-all duration-300 hover:-translate-y-0.5 md:w-auto"
+        {/* Actions — compact right-aligned CTA */}
+        <div className="gs-actions mt-6 flex justify-end sm:mt-7">
+          <Link
+            href={href}
+            className="group inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[11px] font-bold tracking-[0.14em] text-white shadow-[0_6px_18px_-8px_rgba(138,107,46,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgba(138,107,46,0.85)] active:scale-[0.98] sm:px-6 sm:py-3 sm:text-xs sm:tracking-[0.16em]"
             style={{ backgroundColor: GOLD_DEEP }}
           >
             KNOW MORE
-            <ArrowRight className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-          </button>
+            <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
-    </div>
-  );
-}
-
-function ActionIcon({ icon: Icon, label }) {
-  return (
-    <div className="group flex flex-col items-center gap-1.5">
-      <span
-        className="flex h-9 w-9 items-center justify-center rounded-md text-white transition-transform duration-300 group-hover:-translate-y-1"
-        style={{ backgroundColor: GOLD }}
-      >
-        <Icon className="h-4 w-4" />
-      </span>
-      <span className="text-center text-[10px] font-bold leading-tight tracking-wide text-neutral-600">
-        {label}
-      </span>
     </div>
   );
 }

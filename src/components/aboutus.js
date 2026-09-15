@@ -88,13 +88,13 @@ export default function AboutStats() {
             type="button"
             className="group inline-flex items-center gap-3 text-sm font-bold uppercase tracking-wide text-black sm:text-base"
           >
-            <span className="relative">
+            {/* <span className="relative">
               Read More
               <span className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-black transition-transform duration-300 group-hover:scale-x-100" />
-            </span>
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black text-white transition-transform duration-300 group-hover:translate-x-1 sm:h-9 sm:w-9">
+            </span> */}
+            {/* <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-black text-white transition-transform duration-300 group-hover:translate-x-1 sm:h-9 sm:w-9">
               <ChevronRight className="h-4 w-4" />
-            </span>
+            </span> */}
           </button>
         </FadeUp>
       </div>

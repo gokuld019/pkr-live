@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { Figtree } from "next/font/google";
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -26,6 +27,13 @@ if (typeof window !== "undefined") {
 
 const figtree = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
+const SOCIAL_LINKS = {
+  facebook: "https://www.facebook.com/pkrestates",
+  instagram: "https://www.instagram.com/pkrestates",
+  linkedin: "https://www.linkedin.com/company/pkrestates",
+  youtube: "https://www.youtube.com/channel/UCqxFo8on9tQNwQq11KNfU2w",
+};
+
 const SOCIAL_ICONS = {
   facebook: (
     <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.5 1.49-3.89 3.77-3.89 1.09 0 2.23.2 2.23.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22c4.78-.79 8.44-4.94 8.44-9.94Z" />
@@ -40,6 +48,21 @@ const SOCIAL_ICONS = {
     <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14C4.5 20.5 12 20.5 12 20.5s7.5 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.81ZM9.6 15.6V8.4l6.27 3.6-6.27 3.6Z" />
   ),
 };
+
+/* ------------------------------------------------------------------ */
+/*  EXPLORE LINKS — mirrored from Navbar                               */
+/* ------------------------------------------------------------------ */
+const EXPLORE_LINKS = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/aboutus" },
+  { label: "Ongoing Projects", href: "#" },
+  { label: "Gurudev", href: "/projects/gurudev", isSub: true },
+  { label: "Privana", href: "/projects/privana", isSub: true },
+  { label: "EMI Calculator", href: "/emicalculator" },
+  { label: "Channel Partners", href: "/channelpartners" },
+  { label: "Blogs", href: "/blogs" },
+  { label: "Contact Us", href: "/contactus" },
+];
 
 export default function Footer() {
   const root = useRef(null);
@@ -151,40 +174,61 @@ export default function Footer() {
             </p>
 
             <div className="mt-5 flex items-center gap-3">
-              <SocialIcon name="facebook" label="Facebook" />
-              <SocialIcon name="instagram" label="Instagram" />
-              <SocialIcon name="linkedin" label="LinkedIn" />
-              <SocialIcon name="youtube" label="YouTube" />
+              <SocialIcon
+                name="facebook"
+                label="Facebook"
+                href={SOCIAL_LINKS.facebook}
+              />
+              <SocialIcon
+                name="instagram"
+                label="Instagram"
+                href={SOCIAL_LINKS.instagram}
+              />
+              <SocialIcon
+                name="linkedin"
+                label="LinkedIn"
+                href={SOCIAL_LINKS.linkedin}
+              />
+              <SocialIcon
+                name="youtube"
+                label="YouTube"
+                href={SOCIAL_LINKS.youtube}
+              />
             </div>
           </div>
 
-          {/* Explore */}
-          <FooterColumn
-            title="EXPLORE"
-            links={[
-              "About Us",
-              "Our Projects",
-              "Ongoing Projects",
-              "Upcoming Projects",
-              "Completed Projects",
-              "Blog",
-              "Careers",
-              "Contact Us",
-            ]}
-          />
+          {/* Explore — mirrors Navbar links */}
+          <div>
+            <h4 className="text-xs font-bold tracking-[0.2em] text-neutral-900">EXPLORE</h4>
+            <span className="mt-2 block h-px w-6 bg-[#8a6d1f]" />
+            <ul className="mt-5 flex flex-col gap-3">
+              {EXPLORE_LINKS.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className={`text-sm transition-colors hover:text-[#8a6d1f] ${
+                      link.isSub
+                        ? "pl-3 text-neutral-500"
+                        : "text-neutral-600"
+                    }`}
+                  >
+                    {link.isSub && (
+                      <span className="mr-1.5 inline-block h-1 w-1 -translate-y-[2px] rounded-full bg-[#8a6d1f]/60 align-middle" />
+                    )}
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
 
           {/* Help & Support */}
           <FooterColumn
             title="HELP & SUPPORT"
             links={[
-              "FAQs",
-              "Site Visit",
-              "Home Loan Assistance",
-              "Customer Support",
+              
               "Terms & Conditions",
               "Privacy Policy",
-              "RERA Disclaimer",
-              "Sitemap",
             ]}
           />
 
@@ -197,24 +241,40 @@ export default function Footer() {
               <div className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
                 <span className="text-sm leading-relaxed text-neutral-600">
-                  No. 123, Mount Road,
+                  Flat A10, Archana Castle,
                   <br />
-                  Guindy, Chennai – 600 032,
+                  4/23 Patrick Church Road,
+                  <br />
+                  St. Thomas Mount, Chennai – 600 016,
                   <br />
                   Tamil Nadu, India
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
-                <span className="text-sm text-neutral-600">+91 44 1234 5678</span>
+                <a
+                  href="tel:+919543633333"
+                  className="text-sm text-neutral-600 hover:text-[#8a6d1f]"
+                >
+                  +91 95436 33333
+                </a>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
-                <span className="break-all text-sm text-neutral-600">enquiry@tvshomes.com</span>
+                <a
+                  href="mailto:pkr@pkrestates.com"
+                  className="break-all text-sm text-neutral-600 hover:text-[#8a6d1f]"
+                >
+                  pkr@pkrestates.com
+                </a>
               </div>
-              <div className="flex items-center gap-3">
-                <Clock className="h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
-                <span className="text-sm text-neutral-600">Mon – Sat, 9:00 AM – 6:00 PM</span>
+              <div className="flex items-start gap-3">
+                <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
+                <span className="text-sm leading-relaxed text-neutral-600">
+                  Mon – Sat: 9:00 AM – 6:00 PM
+                  <br />
+                  Sunday: By Appointment
+                </span>
               </div>
             </div>
           </div>
@@ -233,10 +293,13 @@ export default function Footer() {
               Have a question or want to know more? We&apos;re here to help.
             </p>
 
-            <button className="mt-5 flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-[#1d4ed8] hover:bg-neutral-50">
+            <Link
+              href="/contactus"
+              className="mt-5 inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-[#1d4ed8] hover:bg-neutral-50"
+            >
               Get in Touch
               <ArrowRight className="h-4 w-4" />
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -304,16 +367,19 @@ function FooterBadge({ icon: Icon, label }) {
   );
 }
 
-function SocialIcon({ name, label }) {
+function SocialIcon({ name, label, href }) {
   return (
-    <button
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-white hover:bg-neutral-700"
+      className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-white transition-colors hover:bg-[#8a6d1f]"
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
         {SOCIAL_ICONS[name]}
       </svg>
-    </button>
+    </a>
   );
 }
 

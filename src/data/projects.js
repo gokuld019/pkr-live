@@ -9,7 +9,7 @@ export const projects = [
     tagline: "Thoughtfully planned homes in the heart of Guduvancheri",
     location: "Guduvancheri, Chennai",
     heroImage: "/gurudevg.jpeg",
-    aboutImage: "/gurudevg.jpeg",
+    aboutImage: "/abb.png",
 
     eyebrow: "MORE THAN JUST A HOME",
     heading: ["Designed for a", "Better Way of Life"],
@@ -41,15 +41,15 @@ export const projects = [
     amenitiesCtaLabel: "VIEW ALL AMENITIES",
     amenitiesCtaHref: "#amenities",
     amenities: [
-      { id: "shops", image: "/amenities/amenities.jpeg", title: "Shops", tagline: "Everyday Convenience" },
-      { id: "security", image: "/amenities/amenities3.jpeg", title: "Security Cabin with CCTV", tagline: "Safe & Secure" },
-      { id: "play", image: "/amenities/amenities4.jpeg", title: "Children's Play Area", tagline: "Play. Learn. Grow." },
-      { id: "walking", image: "/amenities/amenities5.jpeg", title: "Walking Track", tagline: "Move. Breathe. Recharge." },
-      { id: "park", image: "/amenities/amenities6.jpeg", title: "Park", tagline: "Green & Relaxing" },
-      { id: "avenue", image: "/amenities/amenities7.jpeg", title: "Avenue Trees", tagline: "Shaded, Landscaped Paths" },
-      { id: "elevator", image: "/amenities/amenities.jpeg", title: "Elevator", tagline: "Effortless Access" },
-      { id: "stp", image: "/amenities/amenities3.jpeg", title: "Sewage Treatment Plant (STP)", tagline: "Sustainable Living" },
-      { id: "parking", image: "/amenities/amenities4.jpeg", title: "Car Parking", tagline: "Covered & Convenient" },
+      { id: "shops", image: "/amenities/amenities2.png", title: "Shops", tagline: "Everyday Convenience" },
+      { id: "security", image: "/amenities/amenities.png", title: "Security Cabin with CCTV", tagline: "Safe & Secure" },
+      { id: "play", image: "/amenities/amenities3.png", title: "Children's Play Area", tagline: "Play. Learn. Grow." },
+      { id: "walking", image: "/amenities/amenities4.png", title: "Walking Track", tagline: "Move. Breathe. Recharge." },
+      { id: "park", image: "/amenities/amenities5.png", title: "Park", tagline: "Green & Relaxing" },
+      { id: "avenue", image: "/amenities/amenities6.png", title: "Avenue Trees", tagline: "Shaded, Landscaped Paths" },
+      { id: "elevator", image: "/amenities/amenities7.png", title: "Elevator", tagline: "Effortless Access" },
+      { id: "stp", image: "/amenities/amenities8.png", title: "Sewage Treatment Plant (STP)", tagline: "Sustainable Living" },
+      { id: "parking", image: "/amenities/amenities9.png", title: "Car Parking", tagline: "Covered & Convenient" },
     ],
 
     floorPlansHeading: ["Homes Tailored", "to Your Needs"],
@@ -185,9 +185,9 @@ export const projects = [
     galleryCtaHref: "#gallery",
     galleryFilters: ["All", "Exteriors", "Interiors", "Amenities", "Lifestyle"],
     galleryImages: [
-      { id: "g1", image: "/gallery.jpeg", title: "Aerial View", category: "Exteriors", size: "large" },
-      { id: "g2", image: "/gallery/gallery2.png", title: "Elevation View — Block A", category: "Exteriors", size: "small" },
-      { id: "g3", image: "/gallery/gallery3.jpeg", category: "Amenities", size: "small" },
+      { id: "g1", image: "/gurudev1.png", title: "Aerial View", category: "Exteriors", size: "large" },
+      { id: "g2", image: "/gurudev2.png", title: "Elevation View — Block A", category: "Exteriors", size: "small" },
+      { id: "g3", image: "/gurudev3.png", category: "Amenities", size: "small" },
     ],
 
     gallery: ["/gallery.jpeg", "/gallery/gallery2.png", "/gallery/gallery3.jpeg"],
@@ -359,7 +359,7 @@ export const projects = [
     tourDescription:
       "Take a virtual tour and explore the spaces, views and lifestyle that await you. Get a real feel of Gurudev from anywhere, anytime.",
     tourCtaLabel: "Start 360° Tour",
-    tourImage: "/tour/gurudev-360-cover.jpg",
+    tourImage: "/360.png",
     tourUrl: "https://example.com/gurudev-360-tour",
     tourTagline: ["See it,", "Feel it,", "Live it."],
 

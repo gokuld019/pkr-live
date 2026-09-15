@@ -2,11 +2,13 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Figtree } from "next/font/google";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { ArrowRight, Clock } from "lucide-react";
+import { ALL_POSTS } from "@/lib/blogData";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -17,36 +19,8 @@ const GOLD_DEEP = "#8A6B2E";
 const CREAM = "#FBF8F2";
 const LINE = "#E8DFCB";
 
-const FEATURED = {
-  category: "REAL ESTATE",
-  date: "AUG 12, 2025",
-  title: "Why North Bangalore is the Next Big Growth Corridor",
-  excerpt:
-    "From infrastructure to lifestyle, explore what makes North Bangalore a preferred choice for homebuyers and investors.",
-  readTime: "10 MIN READ",
-  image: "/Blog-1.png",
-};
-
-const POSTS = [
-  {
-    id: 1,
-    category: "HOME BUYING",
-    date: "AUG 05, 2025",
-    title: "5 Essential Tips for First-Time Homebuyers",
-    excerpt:
-      "A complete guide to help you make confident and informed decisions on your first home purchase.",
-    image: "/Blog-2.png",
-  },
-  {
-    id: 2,
-    category: "INVESTMENT",
-    date: "JUL 28, 2025",
-    title: "Real Estate Investment Trends in 2025",
-    excerpt:
-      "Discover the key trends shaping the real estate market and where the best opportunities lie.",
-    image: "/Blog-3.png",
-  },
-];
+const FEATURED = ALL_POSTS[0];
+const POSTS = ALL_POSTS.slice(1);
 
 export default function OurBlogs() {
   const root = useRef(null);
@@ -223,7 +197,8 @@ export default function OurBlogs() {
             </div>
           </div>
 
-          <button
+          <Link
+            href="/blogs"
             className="gs-viewall group flex w-full items-center justify-center gap-2 rounded-full border px-6 py-3 text-xs font-bold tracking-widest transition-colors hover:text-white sm:w-auto sm:self-start lg:self-auto"
             style={{ borderColor: GOLD, color: GOLD_DEEP }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = GOLD_DEEP)}
@@ -231,14 +206,15 @@ export default function OurBlogs() {
           >
             VIEW ALL BLOGS
             <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-          </button>
+          </Link>
         </div>
 
         {/* Blog grid */}
         <div className="mt-9 grid grid-cols-1 gap-5 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
           {/* Featured */}
-          <div
-            className="gs-card overflow-hidden rounded-2xl border bg-white shadow-sm md:col-span-2 lg:col-span-1"
+          <Link
+            href={`/blogs/${FEATURED.slug}`}
+            className="gs-card block overflow-hidden rounded-2xl border bg-white shadow-sm md:col-span-2 lg:col-span-1"
             style={{ borderColor: LINE }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
@@ -282,23 +258,24 @@ export default function OurBlogs() {
                 </p>
 
                 <div className="gs-line mt-5 border-t pt-4" style={{ borderColor: LINE }}>
-                  <button className="group flex items-center gap-2 text-sm font-bold text-neutral-900">
+                  <span className="group flex items-center gap-2 text-sm font-bold text-neutral-900">
                     Read More
                     <ArrowRight
                       className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                       style={{ color: GOLD }}
                     />
-                  </button>
+                  </span>
                 </div>
               </div>
             </div>
-          </div>
+          </Link>
 
           {/* Regular posts */}
           {POSTS.map((post) => (
-            <div
-              key={post.id}
-              className="gs-card overflow-hidden rounded-2xl border bg-white shadow-sm"
+            <Link
+              key={post.slug}
+              href={`/blogs/${post.slug}`}
+              className="gs-card block overflow-hidden rounded-2xl border bg-white shadow-sm"
               style={{ borderColor: LINE }}
             >
               <div className="relative h-48 overflow-hidden sm:h-52">
@@ -336,51 +313,17 @@ export default function OurBlogs() {
                 </p>
 
                 <div className="gs-line mt-5 border-t pt-4" style={{ borderColor: LINE }}>
-                  <button className="group flex items-center gap-2 text-sm font-bold text-neutral-900">
+                  <span className="group flex items-center gap-2 text-sm font-bold text-neutral-900">
                     Read More
                     <ArrowRight
                       className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                       style={{ color: GOLD }}
                     />
-                  </button>
+                  </span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
-        </div>
-
-        {/* Bottom bar */}
-        <div className="gs-bottom mt-8 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-5 sm:gap-6">
-            {["01", "02", "03"].map((n, i) => (
-              <button
-                key={n}
-                className="pb-1 text-sm font-semibold tracking-wide"
-                style={
-                  i === 0
-                    ? { color: GOLD_DEEP, borderBottom: `2px solid ${GOLD}` }
-                    : { color: "#a3a3a3" }
-                }
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              className="flex h-10 w-10 items-center justify-center rounded-full border bg-white text-neutral-700 transition-transform duration-300 hover:-translate-y-0.5 sm:h-11 sm:w-11"
-              style={{ borderColor: GOLD }}
-            >
-              <ArrowRight className="h-4 w-4 rotate-180" />
-            </button>
-            <button
-              className="flex h-10 w-10 items-center justify-center rounded-full text-white transition-transform duration-300 hover:-translate-y-0.5 sm:h-11 sm:w-11"
-              style={{ backgroundColor: GOLD_DEEP }}
-            >
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
         </div>
       </div>
     </section>

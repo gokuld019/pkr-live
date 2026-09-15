@@ -119,7 +119,7 @@ export default function ContactPage() {
       <section className="w-full">
         <div className="relative w-full h-[220px] sm:h-[300px] md:h-[420px] lg:h-[780px] flex overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl mx-3 mt-3 sm:mx-4 sm:mt-4 md:mx-8 md:mt-8">
           <div
-            className="hero-img flex-[1.7] relative bg-cover bg-center mr-10"
+            className="hero-img flex-[1.7] relative bg-cover bg-center mr-23"
             style={{ backgroundImage: `url(/contactus.png)` }}
           >
           </div>
@@ -129,122 +129,124 @@ export default function ContactPage() {
       {/* ---------------- GET IN TOUCH ---------------- */}
       <section
         id="get-in-touch"
-        className="relative z-[5] mx-auto mt-8 grid max-w-[1240px] grid-cols-1 items-stretch gap-4 px-4 pb-10 sm:mt-12 sm:gap-5 sm:px-6 sm:pb-14 lg:mt-16 lg:grid-cols-[1.3fr_1fr_1fr] lg:gap-[22px] lg:pb-[60px]"
+        className="relative z-[5] mx-auto mt-8 max-w-[1240px] px-4 pb-6 sm:mt-12 sm:px-6 sm:pb-8 lg:mt-16 lg:pb-10"
       >
-        {/* Form card */}
-        <div className={`${CARD} flex flex-col p-5 sm:p-7 lg:col-span-1 lg:p-8`}>
-          <h2 className="mb-1.5 text-xl font-semibold text-[#16233b] sm:text-2xl">Get in Touch</h2>
-          <p className="mb-5 text-sm text-[#6f7580] sm:mb-6">Fill out the form and our team will get back to you shortly.</p>
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:gap-5 lg:grid-cols-[1.3fr_1fr] lg:gap-[22px]">
+          {/* Form card */}
+          <div className={`${CARD} flex flex-col p-5 sm:p-7 lg:p-8`}>
+            <h2 className="mb-1.5 text-xl font-semibold text-[#16233b] sm:text-2xl">Get in Touch</h2>
+            <p className="mb-5 text-sm text-[#6f7580] sm:mb-6">Fill out the form and our team will get back to you shortly.</p>
 
-          <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
-            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="name" className="text-[13px] font-semibold text-[#16233b]">Full Name *</label>
-                <input
-                  id="name"
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  placeholder="Enter your name"
-                  required
-                  className="rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="phone" className="text-[13px] font-semibold text-[#16233b]">Phone Number *</label>
-                <div className="flex items-center overflow-hidden rounded-lg border border-[#e8e1d3] focus-within:outline focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-[#bd8a4d]">
-                  <span className="border-r border-[#e8e1d3] px-3 py-3 text-sm text-[#6f7580]">+91</span>
+            <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
+              <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="name" className="text-[13px] font-semibold text-[#16233b]">Full Name *</label>
                   <input
-                    id="phone"
-                    type="tel"
-                    name="phone"
-                    value={form.phone}
+                    id="name"
+                    name="name"
+                    value={form.name}
                     onChange={handleChange}
-                    placeholder="Enter your phone number"
+                    placeholder="Enter your name"
                     required
-                    className="w-full min-w-0 flex-1 border-none px-3.5 py-3 text-sm text-[#16233b] focus:outline-none"
+                    className="rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
                   />
                 </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="phone" className="text-[13px] font-semibold text-[#16233b]">Phone Number *</label>
+                  <div className="flex items-center overflow-hidden rounded-lg border border-[#e8e1d3] focus-within:outline focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-[#bd8a4d]">
+                    <span className="border-r border-[#e8e1d3] px-3 py-3 text-sm text-[#6f7580]">+91</span>
+                    <input
+                      id="phone"
+                      type="tel"
+                      name="phone"
+                      value={form.phone}
+                      onChange={handleChange}
+                      placeholder="Enter your phone number"
+                      required
+                      className="w-full min-w-0 flex-1 border-none px-3.5 py-3 text-sm text-[#16233b] focus:outline-none"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
 
-            <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="email" className="text-[13px] font-semibold text-[#16233b]">Email Address *</label>
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={form.email}
+              <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="email" className="text-[13px] font-semibold text-[#16233b]">Email Address *</label>
+                  <input
+                    id="email"
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="Enter your email address"
+                    required
+                    className="rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="interest" className="text-[13px] font-semibold text-[#16233b]">Interested In</label>
+                  <select
+                    id="interest"
+                    name="interest"
+                    value={form.interest}
+                    onChange={handleChange}
+                    className="rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
+                  >
+                    <option value="">Select an option</option>
+                    <option value="apartments">Apartments</option>
+                    <option value="villas">Villas</option>
+                    <option value="plots">Plots</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Message grows to absorb extra height */}
+              <div className="mb-4 flex flex-1 flex-col gap-2">
+                <label htmlFor="message" className="text-[13px] font-semibold text-[#16233b]">Your Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={form.message}
                   onChange={handleChange}
-                  placeholder="Enter your email address"
-                  required
-                  className="rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
+                  rows={4}
+                  placeholder="Tell us how we can help you..."
+                  className="min-h-[110px] flex-1 resize-none rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="interest" className="text-[13px] font-semibold text-[#16233b]">Interested In</label>
-                <select
-                  id="interest"
-                  name="interest"
-                  value={form.interest}
-                  onChange={handleChange}
-                  className="rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
-                >
-                  <option value="">Select an option</option>
-                  <option value="apartments">Apartments</option>
-                  <option value="villas">Villas</option>
-                  <option value="plots">Plots</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-            </div>
 
-            {/* Message grows to absorb extra height */}
-            <div className="mb-4 flex flex-1 flex-col gap-2">
-              <label htmlFor="message" className="text-[13px] font-semibold text-[#16233b]">Your Message</label>
-              <textarea
-                id="message"
-                name="message"
-                value={form.message}
-                onChange={handleChange}
-                rows={4}
-                placeholder="Tell us how we can help you..."
-                className="min-h-[110px] flex-1 resize-none rounded-lg border border-[#e8e1d3] bg-white px-3.5 py-3 text-sm text-[#16233b] focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-[#bd8a4d]"
-              />
-            </div>
+              <button
+                type="submit"
+                className="mt-1.5 inline-flex w-full items-center justify-center gap-2 rounded-md border-none bg-[#bd8a4d] px-6 py-[13px] text-sm font-semibold text-white transition-colors hover:bg-[#a97b42]"
+              >
+                {submitted ? "Message Sent!" : "Send Message"} {!submitted && <Icon.Arrow />}
+              </button>
+              <p className="mb-0 mt-3 flex items-center gap-1.5 text-xs text-[#6f7580]">
+                <span>&#128274;</span> Your information is safe with us. We respect your privacy.
+              </p>
+            </form>
+          </div>
 
-            <button
-              type="submit"
-              className="mt-1.5 inline-flex w-full items-center justify-center gap-2 rounded-md border-none bg-[#bd8a4d] px-6 py-[13px] text-sm font-semibold text-white transition-colors hover:bg-[#a97b42]"
-            >
-              {submitted ? "Message Sent!" : "Send Message"} {!submitted && <Icon.Arrow />}
-            </button>
-            <p className="mb-0 mt-3 flex items-center gap-1.5 text-xs text-[#6f7580]">
-              <span>&#128274;</span> Your information is safe with us. We respect your privacy.
-            </p>
-          </form>
+          {/* Info card */}
+          <div className={`${CARD} flex flex-col p-5 sm:p-7 lg:p-8`}>
+            <InfoRow icon="Pin" title="Visit Our Office">
+              Flat A10, Archana Castle, 4/23 Patrick Church Road, St. Thomas Mount, Chennai&nbsp;&ndash;&nbsp;600&nbsp;016, Tamil Nadu, India
+            </InfoRow>
+            <InfoRow icon="Phone" title="Call Us">
+              +91 95436 33333
+            </InfoRow>
+            <InfoRow icon="Mail" title="Email Us">
+              pkr@pkrestates.com
+            </InfoRow>
+            <InfoRow icon="Clock" title="Working Hours" last>
+              Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM<br />Sunday: By Appointment
+            </InfoRow>
+          </div>
         </div>
 
-        {/* Info card */}
-        <div className={`${CARD} flex flex-col p-5 sm:p-7 lg:p-8`}>
-          <InfoRow icon="Pin" title="Visit Our Office">
-            Flat A10, Archana Castle, 4/23 Patrick Church Road, St. Thomas Mount, Chennai&nbsp;&ndash;&nbsp;600&nbsp;016, Tamil Nadu, India
-          </InfoRow>
-          <InfoRow icon="Phone" title="Call Us">
-            +91 95436 33333
-          </InfoRow>
-          <InfoRow icon="Mail" title="Email Us">
-            pkr@pkrestates.com
-          </InfoRow>
-          <InfoRow icon="Clock" title="Working Hours" last>
-            Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM<br />Sunday: By Appointment
-          </InfoRow>
-        </div>
-
-        {/* Map card: map stretches to fill full height */}
-        <div className={`${CARD} flex flex-col gap-3 p-3 md:col-span-2 lg:col-span-1`}>
-          <div className="relative min-h-[220px] flex-1 overflow-hidden rounded-[10px] bg-[#e9e8e3] sm:min-h-[260px]">
+        {/* Map card: full width, below form + info */}
+        <div className={`${CARD} mt-4 flex flex-col gap-3 p-3 sm:mt-5 lg:mt-[22px]`}>
+          <div className="relative h-[280px] w-full overflow-hidden rounded-[10px] bg-[#e9e8e3] sm:h-[340px] lg:h-[400px]">
             <iframe
               src={MAP_SRC}
               style={{ border: 0 }}
@@ -255,8 +257,8 @@ export default function ContactPage() {
               title="PKR Estates Location"
             />
           </div>
-          <a
-            href="https://maps.google.com/?q=Archana+Castle,+4/23+Patrick+Church+Road,+St.Thomas+Mount,+Chennai+600016"
+          
+            <a href="https://maps.google.com/?q=Archana+Castle,+4/23+Patrick+Church+Road,+St.Thomas+Mount,+Chennai+600016"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 rounded-lg bg-[#f3ece0] p-3 text-[13px] font-semibold text-[#a97b42] transition-colors hover:bg-[#eadfcb]"
@@ -273,8 +275,8 @@ export default function ContactPage() {
           {OTHER_WAYS.map((w) => {
             const Ico = Icon[w.icon];
             return (
-              <a
-                href="#"
+              
+                <a href="#"
                 className="flex h-full items-center gap-3.5 rounded-xl border border-[#e8e1d3] bg-white p-4 transition-colors hover:border-[#bd8a4d] sm:p-5"
                 key={w.title}
               >
@@ -324,8 +326,8 @@ export default function ContactPage() {
             </div>
           ))}
 
-          <a
-            href="#"
+          
+            <a href="#"
             className="flex items-center justify-end gap-2 text-sm font-semibold text-[#a97b42] sm:col-start-2 sm:justify-self-end"
           >
             View All FAQs <Icon.Arrow />

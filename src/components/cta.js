@@ -1,165 +1,369 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { motion } from "framer-motion";
+import { X, Send, Check, AlertTriangle, ChevronRight } from "lucide-react";
 
 const BG_IMAGE = "/CTA.png";
 const MODEL_IMAGE = "/lineart.png";
+const LOGO_URL = "/logo.jpeg";
 
-const INK = "#feffff";
+const CREAM = "#FBF8F2";
+const GOLD = "#b8860b";
+const GOLD_LIGHT = "#d4a017";
+const GOLD_DARK = "#8f6a08";
+const GOLD_DEEP = "#8A6B2E";
 
-export default function PromiseHeroBanner() {
-  const root = useRef(null);
-  const overlayRef = useRef(null);
-  const modelRef = useRef(null);
+const ENQUIRY_API = "https://api.crazystory.in/api/submit-enquiry";
+const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
+
+const EASE = [0.22, 1, 0.36, 1];
+
+const LINES = ["Crafting", "Your Perfect", "Space"];
+
+/* ------------------------------------------------------------------ */
+/*  ENQUIRE MODAL — identical to FloatingWidgets version               */
+/* ------------------------------------------------------------------ */
+function EnquireModal({ open, onClose, presetType }) {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", inquiryType: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
-    if (!root.current) return;
+    if (!open) return;
+    document.body.style.overflow = "hidden";
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open, onClose]);
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        defaults: { ease: "power4.out" },
-        scrollTrigger: {
-          trigger: root.current,
-          start: "top 80%",
-          once: true,
-        },
+  useEffect(() => {
+    if (!open) {
+      setSubmitted(false);
+      setSubmitting(false);
+      setSuccessMessage("");
+      setErrorMessage("");
+      setFieldErrors({});
+      setForm({ name: "", email: "", phone: "", inquiryType: "", message: "" });
+    } else if (presetType) {
+      setForm((f) => ({ ...f, inquiryType: presetType }));
+    }
+  }, [open, presetType]);
+
+  if (!open) return null;
+
+  const handleChange = (field) => (e) => {
+    const value = e.target.value;
+    setForm((f) => ({ ...f, [field]: value }));
+    setFieldErrors((errs) => {
+      if (!errs[field]) return errs;
+      const next = { ...errs };
+      delete next[field];
+      return next;
+    });
+    if (errorMessage) setErrorMessage("");
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
+    setErrorMessage("");
+    setFieldErrors({});
+
+    const payload = {
+      full_name: form.name.trim(),
+      email: form.email.trim(),
+      phone: form.phone.trim(),
+      inquiry_type: form.inquiryType,
+      message: form.message.trim(),
+    };
+
+    try {
+      const res = await fetch(ENQUIRY_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      if (overlayRef.current) {
-        tl.to(
-          overlayRef.current,
-          { opacity: 0, scaleY: 0, transformOrigin: "top center", duration: 0.8, ease: "power4.inOut", clearProps: "all" },
-          0
-        );
+      let data = null;
+      try {
+        data = await res.json();
+      } catch {
+        data = null;
       }
 
-      if (modelRef.current) {
-        tl.fromTo(
-          modelRef.current,
-          { opacity: 0, x: 30 },
-          { opacity: 0.85, x: 0, duration: 1.1, ease: "power3.out", clearProps: "transform" },
-          0.2
-        );
+      if (!res.ok || !data || data.status !== true) {
+        if (data?.errors && typeof data.errors === "object") {
+          const mapped = {};
+          const keyMap = { full_name: "name", email: "email", phone: "phone", inquiry_type: "inquiryType", message: "message" };
+          Object.entries(data.errors).forEach(([key, val]) => {
+            const field = keyMap[key] || key;
+            mapped[field] = Array.isArray(val) ? val[0] : String(val);
+          });
+          setFieldErrors(mapped);
+        }
+        setErrorMessage(data?.message || "Something went wrong while submitting your enquiry. Please try again.");
+        setSubmitting(false);
+        return;
       }
 
-      tl.fromTo(
-        ".ph-word",
-        { yPercent: 110, opacity: 0 },
-        {
-          yPercent: 0,
-          opacity: 1,
-          duration: 0.95,
-          stagger: 0.08,
-          ease: "power4.out",
-          clearProps: "all",
-        },
-        0.25
-      )
-        .fromTo(
-          ".ph-subline",
-          { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.7, ease: "power2.out", clearProps: "all" },
-          0.6
-        )
-        .fromTo(
-          ".ph-cta",
-          { opacity: 0, y: 18, scale: 0.95 },
-          { opacity: 1, y: 0, scale: 1, duration: 0.75, ease: "back.out(1.5)", clearProps: "all" },
-          0.75
-        )
-        .fromTo(
-          ".ph-scrollbar",
-          { scaleX: 0 },
-          { scaleX: 1, transformOrigin: "left center", duration: 0.6, ease: "power2.out", clearProps: "transform" },
-          0.9
-        );
-    }, root);
+      setSuccessMessage(data.message || "Your enquiry has been received. Our team will reach out to you shortly.");
+      setSubmitting(false);
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Enquiry submit failed:", err);
+      setErrorMessage("We couldn't reach the server. Please check your connection and try again.");
+      setSubmitting(false);
+    }
+  };
 
-    return () => ctx.revert();
-  }, []);
+  const inputClass = (field) =>
+    `w-full rounded-xl border bg-[#faf8f3] px-4 py-3 text-[14px] text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/15 ${
+      fieldErrors[field] ? "border-red-400 focus:border-red-500" : "border-gray-200 focus:border-[#b8860b]"
+    }`;
 
   return (
-    <section
-      ref={root}
-      id="contact"
-      className="relative w-full overflow-hidden bg-[#F4F2ED]"
-      style={{
-        fontFamily: "'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif",
-        minHeight: "clamp(420px, 62vw, 660px)",
-        height: "clamp(420px, 62vw, 660px)",
-      }}
-    >
-      {/* Background texture */}
-      <div className="absolute inset-0 z-0">
-        <Image src={BG_IMAGE} alt="" fill priority sizes="100vw" className="object-cover" />
-      </div>
-
-      {/* Model cutout */}
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm" onClick={onClose}>
       <div
-        ref={modelRef}
-        className="pointer-events-none absolute z-20 bottom-0 right-[2%] hidden sm:right-[4%] sm:block md:right-[6%]"
-        style={{ height: "100%", width: "42%", maxWidth: "420px" }}
+        onClick={(e) => e.stopPropagation()}
+        className="relative max-h-full w-full max-w-[460px] overflow-y-auto rounded-[22px] bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)]"
+        style={{ animation: "enquireModalIn 0.35s cubic-bezier(0.22,1,0.36,1)" }}
       >
-        <Image
-          src={MODEL_IMAGE}
-          alt="Happy resident"
-          fill
-          priority
-          sizes="(max-width: 768px) 42vw, 34vw"
-          className="object-contain object-bottom"
-        />
-      </div>
+        <style>{`
+          @keyframes enquireModalIn {
+            from { opacity: 0; transform: translateY(16px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+          }
+        `}</style>
 
-      {/* Copy block */}
-      <div className="absolute inset-0 z-30 flex items-center">
-        <div className="w-full px-6 sm:px-12 md:px-16 lg:px-24">
-          <div className="max-w-[600px]">
-            <h1
-              className="leading-[0.95] tracking-[-0.01em] sm:leading-[0.92]"
-              style={{
-                fontSize: "clamp(2.2rem, 8vw, 4.4rem)",
-                color: INK,
-                fontWeight: 300,
-              }}
-            >
-              {["Pride", "is Our", "Promise"].map((line) => (
-                <span
-                  key={line}
-                  className="block overflow-hidden"
-                  style={{ paddingBottom: "0.12em", marginBottom: "-0.12em" }}
-                >
-                  <span className="ph-word block will-change-transform">{line}</span>
-                </span>
-              ))}
-            </h1>
-
-            <p
-              className="ph-subline mt-4 max-w-[420px] text-sm leading-relaxed sm:mt-5 sm:text-base"
-              style={{ color: INK, opacity: 0.9 }}
-            >
-              Quality homes built on trust, delivered with care — your dream address starts here.
-            </p>
-
-            <button
-              type="button"
-              onClick={() =>
-                document.getElementById("enquiry")?.scrollIntoView({ behavior: "smooth" })
-              }
-              className="ph-cta mt-7 inline-flex cursor-pointer items-center bg-white px-7 py-3 text-[11px] font-bold tracking-[0.13em] shadow-md transition-transform duration-300 hover:-translate-y-0.5 active:scale-[0.98] sm:mt-8 sm:px-9 sm:py-3.5 sm:text-xs sm:tracking-[0.15em]"
-              style={{ color: INK }}
-            >
-              ENQUIRE NOW
-            </button>
+        <div className="relative px-6 pb-8 pt-7 sm:px-8" style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_DARK} 100%)` }}>
+          <button onClick={onClose} aria-label="Close" className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25">
+            <X className="h-4 w-4" strokeWidth={2.25} />
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-md">
+              <img src={LOGO_URL} alt="" className="h-full w-full object-cover" />
+            </div>
+            <div>
+              <h2 className="m-0 text-[19px] font-bold leading-tight text-white sm:text-[21px]">Let&apos;s Talk</h2>
+              <p className="m-0 mt-0.5 text-[12.5px] text-[#f7e6c2]">We&apos;ll get back to you within 24 hours</p>
+            </div>
           </div>
         </div>
+
+        {submitted ? (
+          <div className="flex flex-col items-center gap-3 px-6 py-14 text-center sm:px-8">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: `${GOLD}1a` }}>
+              <Check className="h-7 w-7" style={{ color: GOLD }} strokeWidth={2.5} />
+            </div>
+            <h3 className="m-0 text-[18px] font-bold text-gray-800">Thank You!</h3>
+            <p className="m-0 max-w-[300px] text-[13.5px] leading-relaxed text-gray-500">{successMessage}</p>
+            <button onClick={onClose} className="mt-3 rounded-full px-6 py-2.5 text-[13.5px] font-bold text-white transition-transform hover:scale-[1.03]" style={{ backgroundColor: GOLD }}>
+              Close
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 py-6 sm:px-8">
+            {errorMessage && (
+              <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-[13px] leading-snug text-red-700">
+                <AlertTriangle className="mt-[1px] h-4 w-4 shrink-0" strokeWidth={2} />
+                <span>{errorMessage}</span>
+              </div>
+            )}
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-semibold text-gray-600">
+                Full Name <span style={{ color: GOLD }}>*</span>
+              </label>
+              <input required type="text" name="full_name" placeholder="Enter your name" value={form.name} onChange={handleChange("name")} className={inputClass("name")} />
+              {fieldErrors.name && <span className="text-[11.5px] text-red-600">{fieldErrors.name}</span>}
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12.5px] font-semibold text-gray-600">
+                  Email <span style={{ color: GOLD }}>*</span>
+                </label>
+                <input required type="email" name="email" placeholder="you@email.com" value={form.email} onChange={handleChange("email")} className={inputClass("email")} />
+                {fieldErrors.email && <span className="text-[11.5px] text-red-600">{fieldErrors.email}</span>}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[12.5px] font-semibold text-gray-600">
+                  Phone <span style={{ color: GOLD }}>*</span>
+                </label>
+                <input required type="tel" name="phone" placeholder="+91 00000 00000" value={form.phone} onChange={handleChange("phone")} className={inputClass("phone")} />
+                {fieldErrors.phone && <span className="text-[11.5px] text-red-600">{fieldErrors.phone}</span>}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-semibold text-gray-600">
+                Inquiry Type <span style={{ color: GOLD }}>*</span>
+              </label>
+              <div className="relative">
+                <select required name="inquiry_type" value={form.inquiryType} onChange={handleChange("inquiryType")} className={`${inputClass("inquiryType")} appearance-none pr-10`}>
+                  <option value="" disabled>
+                    Select an option
+                  </option>
+                  {INQUIRY_TYPES.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+                <ChevronRight className="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 rotate-90 text-gray-400" strokeWidth={2.25} />
+              </div>
+              {fieldErrors.inquiryType && <span className="text-[11.5px] text-red-600">{fieldErrors.inquiryType}</span>}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[12.5px] font-semibold text-gray-600">
+                Your Message <span className="font-normal text-gray-400">(optional)</span>
+              </label>
+              <textarea rows={3} name="message" placeholder="Tell us a bit more..." value={form.message} onChange={handleChange("message")} className={`${inputClass("message")} resize-none`} />
+              {fieldErrors.message && <span className="text-[11.5px] text-red-600">{fieldErrors.message}</span>}
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="mt-1 flex items-center justify-center gap-2 rounded-xl py-3.5 text-[14.5px] font-bold text-white shadow-[0_10px_24px_-8px_rgba(184,134,11,0.55)] transition-all hover:shadow-[0_14px_30px_-8px_rgba(184,134,11,0.65)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+              style={{ background: `linear-gradient(135deg, ${GOLD} 0%, ${GOLD_DARK} 100%)` }}
+            >
+              {submitting ? (
+                <>
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />
+                  Sending...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" strokeWidth={2.25} />
+                  Submit Enquiry
+                </>
+              )}
+            </button>
+
+            <p className="m-0 text-center text-[11px] text-gray-400">By submitting, you agree to be contacted by PKR Estates regarding your enquiry.</p>
+          </form>
+        )}
       </div>
-    </section>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  HERO BANNER                                                        */
+/* ------------------------------------------------------------------ */
+export default function PromiseHeroBanner() {
+  const [enquireOpen, setEnquireOpen] = useState(false);
+
+  return (
+    <>
+      <section
+        id="contact"
+        className="relative w-full overflow-hidden bg-[#F4F2ED]"
+        style={{
+          fontFamily: "'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif",
+          minHeight: "clamp(420px, 62vw, 660px)",
+          height: "clamp(420px, 62vw, 660px)",
+        }}
+      >
+        {/* Background texture */}
+        <div className="absolute inset-0 z-0">
+          <Image src={BG_IMAGE} alt="" fill priority sizes="100vw" className="object-cover" />
+        </div>
+
+        {/* Model cutout */}
+        <motion.div
+          initial={{ x: 40, opacity: 0 }}
+          animate={{ x: 0, opacity: 0.9 }}
+          transition={{ duration: 1.1, ease: EASE, delay: 0.15 }}
+          className="pointer-events-none absolute bottom-0 right-[2%] z-20 hidden sm:right-[4%] sm:block md:right-[6%]"
+          style={{ height: "100%", width: "42%", maxWidth: "420px" }}
+        >
+          <Image
+            src={MODEL_IMAGE}
+            alt="Happy resident"
+            fill
+            priority
+            sizes="(max-width: 768px) 42vw, 34vw"
+            className="object-contain object-bottom"
+          />
+        </motion.div>
+
+        {/* Copy block */}
+        <div className="absolute inset-0 z-30 flex items-center">
+          <div className="w-full px-6 sm:px-12 md:px-16 lg:px-24">
+            <div className="max-w-[600px]">
+              <h1
+                className="leading-[1.1] tracking-[-0.01em] sm:leading-[1.05]"
+                style={{
+                  fontSize: "clamp(2.2rem, 8vw, 4.4rem)",
+                  color: CREAM,
+                  fontWeight: 300,
+                }}
+              >
+                {LINES.map((line, i) => (
+                  <motion.span
+                    key={line}
+                    className="block"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.9,
+                      ease: EASE,
+                      delay: 0.2 + i * 0.12,
+                    }}
+                  >
+                    {line}
+                  </motion.span>
+                ))}
+              </h1>
+
+              <motion.p
+                className="mt-5 max-w-[420px] text-sm leading-relaxed sm:mt-6 sm:text-base"
+                style={{ color: CREAM }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 0.85, y: 0 }}
+                transition={{ duration: 0.7, ease: EASE, delay: 0.65 }}
+              >
+                Thoughtfully designed residences where comfort meets style — your new chapter begins here.
+              </motion.p>
+
+              <motion.button
+                type="button"
+                onClick={() => setEnquireOpen(true)}
+                className="mt-7 inline-flex cursor-pointer items-center rounded-full px-7 py-3 text-[11px] font-bold tracking-[0.13em] shadow-md sm:mt-8 sm:px-9 sm:py-3.5 sm:text-xs sm:tracking-[0.15em]"
+                style={{ backgroundColor: GOLD_DEEP, color: CREAM }}
+                initial={{ opacity: 0, y: 18, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.7, ease: EASE, delay: 0.85 }}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                GET IN TOUCH
+              </motion.button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Enquire Modal */}
+      <EnquireModal
+        open={enquireOpen}
+        onClose={() => setEnquireOpen(false)}
+        presetType="General Enquiry"
+      />
+    </>
   );
 }
