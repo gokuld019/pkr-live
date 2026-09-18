@@ -8,8 +8,8 @@ export const projects = [
     name: "Gurudev",
     tagline: "Thoughtfully planned homes in the heart of Guduvancheri",
     location: "Guduvancheri, Chennai",
-    heroImage: "/gurudevg.jpeg",
-    aboutImage: "/abb.png",
+    heroImage: "/upGurudev.jpeg",
+    aboutImage: "/g.png",
 
     eyebrow: "MORE THAN JUST A HOME",
     heading: ["Designed for a", "Better Way of Life"],

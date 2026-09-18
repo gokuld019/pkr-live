@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { X, Send, Check, AlertTriangle, ChevronRight } from "lucide-react";
 
-const BG_IMAGE = "/CTA.png";
+const BG_IMAGE = "/CTA1.jpeg";
 const MODEL_IMAGE = "/lineart.png";
 const LOGO_URL = "/logo.jpeg";
 
@@ -20,7 +20,7 @@ const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
 
 const EASE = [0.22, 1, 0.36, 1];
 
-const LINES = ["Crafting", "Your Perfect", "Space"];
+const LINES = ["Crafting Your Perfect", "Space"];
 
 /* ------------------------------------------------------------------ */
 /*  ENQUIRE MODAL — identical to FloatingWidgets version               */
@@ -271,9 +271,8 @@ export default function PromiseHeroBanner() {
     <>
       <section
         id="contact"
-        className="relative w-full overflow-hidden bg-[#F4F2ED]"
+        className="relative w-full overflow-hidden bg-[#F4F2ED] font-sans"
         style={{
-          fontFamily: "'Poppins', 'Plus Jakarta Sans', system-ui, sans-serif",
           minHeight: "clamp(420px, 62vw, 660px)",
           height: "clamp(420px, 62vw, 660px)",
         }}
@@ -301,10 +300,10 @@ export default function PromiseHeroBanner() {
           />
         </motion.div>
 
-        {/* Copy block */}
-        <div className="absolute inset-0 z-30 flex items-center">
-          <div className="w-full px-6 sm:px-12 md:px-16 lg:px-24">
-            <div className="max-w-[600px]">
+        {/* Copy block — now centered */}
+        <div className="absolute inset-0 z-30 flex items-center justify-center">
+          <div className="w-full px-6 text-center sm:px-12 md:px-16 lg:px-24">
+            <div className="mx-auto max-w-[700px]">
               <h1
                 className="leading-[1.1] tracking-[-0.01em] sm:leading-[1.05]"
                 style={{
@@ -331,28 +330,32 @@ export default function PromiseHeroBanner() {
               </h1>
 
               <motion.p
-                className="mt-5 max-w-[420px] text-sm leading-relaxed sm:mt-6 sm:text-base"
+                className="mx-auto mt-5 max-w-[420px] text-sm leading-relaxed sm:mt-6 sm:text-base"
                 style={{ color: CREAM }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 0.85, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.65 }}
               >
-                Thoughtfully designed residences where comfort meets style — your new chapter begins here.
+                Thoughtfully designed residences where comfort meets style your new chapter begins here.
               </motion.p>
 
-              <motion.button
-                type="button"
-                onClick={() => setEnquireOpen(true)}
-                className="mt-7 inline-flex cursor-pointer items-center rounded-full px-7 py-3 text-[11px] font-bold tracking-[0.13em] shadow-md sm:mt-8 sm:px-9 sm:py-3.5 sm:text-xs sm:tracking-[0.15em]"
-                style={{ backgroundColor: GOLD_DEEP, color: CREAM }}
-                initial={{ opacity: 0, y: 18, scale: 0.96 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
+              <motion.div
+                className="mt-7 flex justify-center sm:mt-8"
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, ease: EASE, delay: 0.85 }}
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.98 }}
               >
-                GET IN TOUCH
-              </motion.button>
+                <motion.button
+  type="button"
+  onClick={() => setEnquireOpen(true)}
+  className="inline-flex cursor-pointer items-center rounded-md bg-white px-7 py-3 text-[11px] font-bold tracking-[0.13em] shadow-md sm:px-9 sm:py-3.5 sm:text-xs sm:tracking-[0.15em]"
+  style={{ color: "#0F3A6B" }}
+  whileHover={{ y: -2 }}
+  whileTap={{ scale: 0.98 }}
+>
+  GET IN TOUCH
+</motion.button>
+              </motion.div>
             </div>
           </div>
         </div>

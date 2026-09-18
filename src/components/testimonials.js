@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Figtree } from "next/font/google";
+import { Geist } from "next/font/google";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -9,12 +9,13 @@ import { Star, Quote, ArrowLeft, ArrowRight } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const figtree = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
+const geist = Geist({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
 
-const GOLD = "#B08D3F";
-const GOLD_DEEP = "#8A6B2E";
-const CREAM = "#FBF8F2";
-const LINE = "#E8DFCB";
+const DEEP_NAVY = "#0F3A6B";
+const DEEP_NAVY_HOVER = "#0A2B50";
+const TEXT_CHARCOAL = "#2D3A46";
+const LIGHT_BLUE = "#E8F0F9";
+const LIGHT_BLUE_RING = "rgba(15,58,107,0.10)";
 
 const REVIEWS = [
   {
@@ -190,7 +191,7 @@ export default function ClientReviews() {
   return (
     <section
       ref={root}
-      className={`${figtree.className} relative w-full overflow-hidden bg-white py-14 sm:py-16 md:py-20 lg:py-24`}
+      className={`${geist.className} relative w-full overflow-hidden bg-white py-14 sm:py-16 md:py-20 lg:py-24`}
     >
       <div className="relative mx-auto w-full max-w-[1800px] px-5 sm:px-6 md:px-8 lg:px-10 xl:px-12">
         {/* Header */}
@@ -198,13 +199,16 @@ export default function ClientReviews() {
           <div className="flex items-center justify-center gap-3">
             <span
               className="gs-eyebrow text-[10px] font-semibold tracking-[0.25em] sm:text-xs sm:tracking-[0.3em]"
-              style={{ color: GOLD_DEEP }}
+              style={{ color: DEEP_NAVY }}
             >
               REAL FAMILIES. REAL HOMES.
             </span>
           </div>
 
-          <h2 className="mt-3 text-[clamp(2.25rem,7vw,3.75rem)] font-bold leading-[1.05] text-neutral-900">
+          <h2
+            className="mt-3 text-[clamp(2.25rem,7vw,3.75rem)] font-bold leading-[1.05]"
+            style={{ color: DEEP_NAVY }}
+          >
             {["What", "Our", "Owners", "Say"].map((w, i) => (
               <span
                 key={i}
@@ -218,37 +222,57 @@ export default function ClientReviews() {
             ))}
           </h2>
 
-          <p className="gs-sub mt-4 text-[clamp(0.95rem,2vw,1.125rem)] text-neutral-500">
+          <p
+            className="gs-sub mt-4 text-[clamp(0.95rem,2vw,1.125rem)]"
+            style={{ color: TEXT_CHARCOAL }}
+          >
             Trusted by families across Chennai. Built for a brighter tomorrow.
           </p>
         </div>
 
-        {/* Google reviews bar */}
+        {/* Google reviews bar — light blue background */}
         <div
           className="gs-google mx-auto mt-8 flex w-full max-w-4xl flex-col items-stretch gap-5 rounded-2xl px-5 py-6 sm:mt-10 sm:gap-6 sm:px-8 md:flex-row md:items-center md:justify-between"
-          style={{ backgroundColor: CREAM, border: `1px solid ${LINE}` }}
+          style={{
+            backgroundColor: LIGHT_BLUE,
+            boxShadow: `0 4px 20px rgba(15,58,107,0.06)`,
+          }}
         >
           <div className="gs-google-item flex items-center justify-center gap-3 md:justify-start">
             <GoogleGIcon className="h-7 w-7 shrink-0 sm:h-8 sm:w-8" />
-            <span className="text-lg font-semibold text-neutral-800 sm:text-xl">
+            <span
+              className="text-lg font-semibold sm:text-xl"
+              style={{ color: DEEP_NAVY }}
+            >
               Google Reviews
             </span>
           </div>
 
-          <div className="hidden h-10 w-px md:block" style={{ backgroundColor: LINE }} />
+          <div
+            className="hidden h-10 w-px md:block"
+            style={{ backgroundColor: LIGHT_BLUE_RING }}
+          />
 
           <div className="flex items-center justify-center gap-6 sm:gap-8 md:justify-start md:gap-3">
             <div className="gs-google-item flex items-center gap-2 sm:gap-3">
               <span
                 className="gs-rating text-3xl font-bold tabular-nums sm:text-4xl"
-                style={{ color: GOLD_DEEP }}
+                style={{ color: DEEP_NAVY }}
               >
                 4.8
               </span>
-              <span className="text-sm text-neutral-500 sm:text-base">out of 5</span>
+              <span
+                className="text-sm sm:text-base"
+                style={{ color: TEXT_CHARCOAL }}
+              >
+                out of 5
+              </span>
             </div>
 
-            <div className="hidden h-10 w-px sm:block md:hidden" style={{ backgroundColor: LINE }} />
+            <div
+              className="hidden h-10 w-px sm:block md:hidden"
+              style={{ backgroundColor: LIGHT_BLUE_RING }}
+            />
 
             <div className="gs-google-item flex flex-col items-center gap-1">
               <div className="flex items-center gap-0.5">
@@ -256,20 +280,34 @@ export default function ClientReviews() {
                   <Star
                     key={i}
                     className="gs-star-big h-4 w-4 sm:h-5 sm:w-5"
-                    style={{ fill: GOLD, color: GOLD }}
+                    style={{ fill: DEEP_NAVY, color: DEEP_NAVY }}
                   />
                 ))}
-                <Star className="gs-star-big h-4 w-4 fill-neutral-300 text-neutral-300 sm:h-5 sm:w-5" />
+                <Star
+                  className="gs-star-big h-4 w-4 sm:h-5 sm:w-5"
+                  style={{ fill: "#CBD5E1", color: "#CBD5E1" }}
+                />
               </div>
-              <span className="text-xs text-neutral-500 sm:text-sm">326 reviews</span>
+              <span
+                className="text-xs sm:text-sm"
+                style={{ color: TEXT_CHARCOAL }}
+              >
+                326 reviews
+              </span>
             </div>
           </div>
 
-          <div className="hidden h-10 w-px md:block" style={{ backgroundColor: LINE }} />
+          <div
+            className="hidden h-10 w-px md:block"
+            style={{ backgroundColor: LIGHT_BLUE_RING }}
+          />
 
           <button
-            className="gs-google-item group mx-auto flex w-full max-w-xs items-center justify-center gap-2 rounded-full border bg-white px-6 py-3 text-[11px] font-bold tracking-widest transition-all duration-300 hover:-translate-y-0.5 sm:text-xs md:mx-0 md:w-auto"
-            style={{ borderColor: GOLD, color: GOLD_DEEP }}
+            className="gs-google-item group mx-auto flex w-full max-w-xs items-center justify-center gap-2 rounded-md bg-white px-6 py-3 text-[11px] font-bold tracking-widest transition-all duration-300 hover:-translate-y-0.5 sm:text-xs md:mx-0 md:w-auto"
+            style={{
+              color: DEEP_NAVY,
+              boxShadow: `0 2px 10px rgba(15,58,107,0.10)`,
+            }}
           >
             WRITE A REVIEW
             <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
@@ -280,18 +318,16 @@ export default function ClientReviews() {
         <div className="relative mt-10 sm:mt-12 lg:mt-14">
           <button
             aria-label="Previous"
-            className="absolute -left-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] xl:-left-5 xl:flex xl:h-12 xl:w-12"
-            style={{ borderColor: LINE }}
+            className="absolute -left-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] xl:-left-5 xl:flex xl:h-12 xl:w-12"
           >
-            <ArrowLeft className="h-5 w-5" style={{ color: GOLD_DEEP }} />
+            <ArrowLeft className="h-5 w-5" style={{ color: DEEP_NAVY }} />
           </button>
 
           <div className="grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
             {REVIEWS.map((review) => (
               <div
                 key={review.id}
-                className="gs-card relative flex flex-col rounded-2xl border bg-white p-6 shadow-sm sm:p-7 lg:p-8"
-                style={{ borderColor: LINE }}
+                className="gs-card relative flex flex-col rounded-2xl bg-white p-6 shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] sm:p-7 lg:p-8"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-1">
@@ -299,26 +335,32 @@ export default function ClientReviews() {
                       <Star
                         key={i}
                         className="gs-star h-4 w-4"
-                        style={{ fill: GOLD, color: GOLD }}
+                        style={{ fill: DEEP_NAVY, color: DEEP_NAVY }}
                       />
                     ))}
                   </div>
                   <Quote
                     className="gs-quote h-7 w-7 sm:h-8 sm:w-8"
                     fill="currentColor"
-                    style={{ color: LINE }}
+                    style={{ color: LIGHT_BLUE }}
                   />
                 </div>
 
-                <p className="gs-line mt-5 flex-1 text-[14.5px] leading-relaxed text-neutral-600 sm:text-[15px]">
+                <p
+                  className="gs-line mt-5 flex-1 text-[14.5px] leading-relaxed sm:text-[15px]"
+                  style={{ color: TEXT_CHARCOAL }}
+                >
                   &ldquo;{review.text}&rdquo;
                 </p>
 
-                <div className="gs-line mt-6 border-t pt-4" style={{ borderColor: LINE }}>
-                  <div className="text-[15px] font-bold text-neutral-900 sm:text-base">
+                <div className="gs-line mt-6 pt-4">
+                  <div
+                    className="text-[15px] font-bold sm:text-base"
+                    style={{ color: DEEP_NAVY }}
+                  >
                     {review.name}
                   </div>
-                  <div className="text-sm" style={{ color: GOLD_DEEP }}>
+                  <div className="text-sm" style={{ color: DEEP_NAVY }}>
                     {review.project}
                   </div>
                 </div>
@@ -328,46 +370,43 @@ export default function ClientReviews() {
 
           <button
             aria-label="Next"
-            className="absolute -right-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] xl:-right-5 xl:flex xl:h-12 xl:w-12"
-            style={{ borderColor: LINE }}
+            className="absolute -right-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white shadow-md transition-transform duration-300 hover:-translate-y-[55%] xl:-right-5 xl:flex xl:h-12 xl:w-12"
           >
-            <ArrowRight className="h-5 w-5" style={{ color: GOLD_DEEP }} />
+            <ArrowRight className="h-5 w-5" style={{ color: DEEP_NAVY }} />
           </button>
 
           {/* Mobile nav controls */}
           <div className="mt-6 flex items-center justify-center gap-4 xl:hidden">
             <button
               aria-label="Previous"
-              className="flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-sm"
-              style={{ borderColor: LINE }}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md"
             >
-              <ArrowLeft className="h-4 w-4" style={{ color: GOLD_DEEP }} />
+              <ArrowLeft className="h-4 w-4" style={{ color: DEEP_NAVY }} />
             </button>
             <button
               aria-label="Next"
-              className="flex h-10 w-10 items-center justify-center rounded-full border bg-white shadow-sm"
-              style={{ borderColor: LINE }}
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-md"
             >
-              <ArrowRight className="h-4 w-4" style={{ color: GOLD_DEEP }} />
+              <ArrowRight className="h-4 w-4" style={{ color: DEEP_NAVY }} />
             </button>
           </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="gs-bottom mt-10 flex flex-col items-center justify-between gap-5 sm:mt-12 sm:gap-6 sm:flex-row">
+        {/* Bottom bar (commented out in original, kept as-is) */}
+        {/* <div className="gs-bottom mt-10 flex flex-col items-center justify-between gap-5 sm:mt-12 sm:gap-6 sm:flex-row">
           <div
             className="text-center text-[10px] font-semibold leading-relaxed tracking-[0.12em] sm:text-left sm:text-[11px] sm:tracking-[0.15em]"
-            style={{ color: GOLD_DEEP }}
+            style={{ color: DEEP_NAVY }}
           >
             HAPPY FAMILIES.<br />BRIGHTER TOMORROWS.
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: LINE }} />
-            <span className="h-1.5 w-6 rounded-full" style={{ backgroundColor: GOLD_DEEP }} />
-            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: LINE }} />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: LIGHT_BLUE_RING }} />
+            <span className="h-1.5 w-6 rounded-full" style={{ backgroundColor: DEEP_NAVY }} />
+            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: LIGHT_BLUE_RING }} />
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

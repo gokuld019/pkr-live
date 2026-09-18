@@ -6,6 +6,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 
+const DEEP_NAVY = "#0F3A6B";
+const DEEP_NAVY_HOVER = "#0A2B50";
+const LIGHT_BLUE_SOFT = "#F0F6FC";
+
 const navLinks = [
   { label: "HOME", href: "/" },
   { label: "ABOUT US", href: "/aboutus" },
@@ -56,7 +60,7 @@ export default function Navbar() {
       }`}
     >
       <nav
-        className={`relative flex items-center justify-between gap-3 border-b border-[#1B3B8C]/15 px-4 transition-[padding] duration-300 sm:px-6 md:px-8 lg:justify-center lg:gap-6 lg:px-10 xl:gap-10 ${
+        className={`relative flex items-center justify-between gap-3 border-b border-[#0F3A6B]/15 px-4 transition-[padding] duration-300 sm:px-6 md:px-8 lg:justify-center lg:gap-6 lg:px-10 xl:gap-10 ${
           scrolled ? "py-2.5 sm:py-3" : "py-3.5 sm:py-5"
         }`}
       >
@@ -66,7 +70,9 @@ export default function Navbar() {
             <li key={link.label}>
               <Link
                 href={link.href}
-                className="whitespace-nowrap text-[13px] font-bold tracking-wide text-neutral-900 transition-colors hover:text-[#F0722F] lg:text-[14px] xl:text-[15px]"
+                className="whitespace-nowrap text-[13px] font-bold tracking-wide text-neutral-900 transition-colors lg:text-[14px] xl:text-[15px]"
+                onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '')}
               >
                 {link.label}
               </Link>
@@ -82,7 +88,9 @@ export default function Navbar() {
             >
               <button
                 type="button"
-                className="flex items-center gap-1.5 whitespace-nowrap text-[13px] font-bold tracking-wide text-neutral-900 transition-colors hover:text-[#F0722F] lg:text-[14px] xl:text-[15px]"
+                className="flex items-center gap-1.5 whitespace-nowrap text-[13px] font-bold tracking-wide text-neutral-900 transition-colors lg:text-[14px] xl:text-[15px]"
+                onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '')}
               >
                 {link.label}
                 <svg
@@ -103,7 +111,15 @@ export default function Navbar() {
                       <li key={project.slug}>
                         <Link
                           href={`/projects/${project.slug}`}
-                          className="block whitespace-nowrap px-5 py-2.5 text-[13px] font-semibold text-neutral-900 transition-colors hover:bg-[#f6ede2] hover:text-[#F0722F]"
+                          className="block whitespace-nowrap px-5 py-2.5 text-[13px] font-semibold text-neutral-900 transition-colors"
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT
+                            e.currentTarget.style.color = DEEP_NAVY
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = ''
+                            e.currentTarget.style.color = ''
+                          }}
                         >
                           {project.name}
                         </Link>
@@ -138,7 +154,9 @@ export default function Navbar() {
             <li key={link.label}>
               <Link
                 href={link.href}
-                className="whitespace-nowrap text-[13px] font-bold tracking-wide text-neutral-900 transition-colors hover:text-[#F0722F] lg:text-[14px] xl:text-[15px]"
+                className="whitespace-nowrap text-[13px] font-bold tracking-wide text-neutral-900 transition-colors lg:text-[14px] xl:text-[15px]"
+                onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '')}
               >
                 {link.label}
               </Link>
@@ -166,7 +184,9 @@ export default function Navbar() {
                 <Link
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-1.5 text-sm font-bold text-neutral-800 hover:text-[#F0722F]"
+                  className="block py-1.5 text-sm font-bold text-neutral-800 transition-colors"
+                  onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >
                   {link.label}
                 </Link>
@@ -180,7 +200,9 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setMobileDropdown(mobileDropdown === link.label ? null : link.label)}
-                  className="flex w-full items-center justify-between text-sm font-bold text-neutral-800 hover:text-[#F0722F]"
+                  className="flex w-full items-center justify-between text-sm font-bold text-neutral-800 transition-colors"
+                  onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >
                   <span>{link.label}</span>
                   <svg
@@ -194,13 +216,15 @@ export default function Navbar() {
                 </button>
 
                 {mobileDropdown === link.label && (
-                  <ul className="ml-3 mt-2 space-y-2 border-l-2 border-[#F0722F] py-1 pl-3">
+                  <ul className="ml-3 mt-2 space-y-2 border-l-2 py-1 pl-3" style={{ borderColor: DEEP_NAVY }}>
                     {link.projects.map((project) => (
                       <li key={project.slug}>
                         <Link
                           href={`/projects/${project.slug}`}
                           onClick={() => setMobileMenuOpen(false)}
-                          className="block text-xs font-semibold text-neutral-600 hover:text-[#F0722F]"
+                          className="block text-xs font-semibold text-neutral-600 transition-colors"
+                          onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                         >
                           {project.name}
                         </Link>
@@ -218,7 +242,9 @@ export default function Navbar() {
                 <Link
                   href={link.href}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="block py-1.5 text-sm font-bold text-neutral-800 hover:text-[#F0722F]"
+                  className="block py-1.5 text-sm font-bold text-neutral-800 transition-colors"
+                  onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = '')}
                 >
                   {link.label}
                 </Link>

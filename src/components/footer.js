@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import { Figtree } from "next/font/google";
+import { Geist } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
@@ -25,7 +25,11 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const figtree = Figtree({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
+const geist = Geist({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
+
+const DEEP_NAVY = "#0F3A6B";
+const DEEP_NAVY_HOVER = "#0A2B50";
+const TEXT_CHARCOAL = "#2D3A46";
 
 const SOCIAL_LINKS = {
   facebook: "https://www.facebook.com/pkrestates",
@@ -49,9 +53,6 @@ const SOCIAL_ICONS = {
   ),
 };
 
-/* ------------------------------------------------------------------ */
-/*  EXPLORE LINKS — mirrored from Navbar                               */
-/* ------------------------------------------------------------------ */
 const EXPLORE_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/aboutus" },
@@ -103,18 +104,23 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer ref={root} className={`${figtree.className} relative w-full overflow-hidden bg-white`}>
+    <footer ref={root} className={`${geist.className} relative w-full overflow-hidden bg-white`}>
       <div className="relative mx-auto max-w-[1800px] px-5 pt-12 sm:px-6 md:px-8 lg:px-10 lg:pt-14">
         {/* Newsletter row */}
         <div className="ft-newsletter flex flex-col gap-7 border-b border-neutral-200 pb-9 sm:gap-8 sm:pb-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="lg:max-w-md">
             <div className="flex items-center gap-3">
-              <span className="text-[11px] font-semibold tracking-[0.2em] text-neutral-500 sm:text-xs sm:tracking-[0.25em]">
+              <span
+                className="text-[11px] font-semibold tracking-[0.2em] sm:text-xs sm:tracking-[0.25em]"
+                style={{ color: TEXT_CHARCOAL }}
+              >
                 STAY AHEAD
               </span>
-              <span className="h-px w-10 bg-neutral-400" />
             </div>
-            <h3 className="mt-2 text-xl font-semibold leading-snug text-neutral-900 sm:text-2xl lg:text-3xl">
+            <h3
+              className="mt-2 text-xl font-semibold leading-snug sm:text-2xl lg:text-3xl"
+              style={{ color: DEEP_NAVY }}
+            >
               Get the latest updates
               <br />
               on our projects, offers &amp; insights.
@@ -124,19 +130,26 @@ export default function Footer() {
           <div className="lg:max-w-sm">
             <div className="flex flex-col gap-3 rounded-2xl border border-neutral-300 p-2 sm:flex-row sm:items-center sm:gap-3 sm:rounded-full sm:px-4 sm:py-2.5">
               <div className="flex items-center gap-3 px-2 sm:px-0">
-                <Mail className="h-4 w-4 flex-shrink-0 text-neutral-400" />
+                <Mail className="h-4 w-4 flex-shrink-0" style={{ color: DEEP_NAVY }} />
                 <input
                   type="email"
                   placeholder="Enter your email address"
                   className="w-full bg-transparent text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none"
                 />
               </div>
-              <button className="flex flex-shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#8a6d1f] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#75592a] sm:py-2">
+              <button
+                className="flex flex-shrink-0 items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-colors sm:py-2"
+                style={{ backgroundColor: DEEP_NAVY }}
+                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
+                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
+              >
                 Subscribe
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
-            <p className="mt-2 text-xs text-neutral-500">Be the first to know. No spam, ever.</p>
+            <p className="mt-2 text-xs" style={{ color: TEXT_CHARCOAL, opacity: 0.8 }}>
+              Be the first to know. No spam, ever.
+            </p>
           </div>
 
           <div className="grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-6">
@@ -162,13 +175,19 @@ export default function Footer() {
               className="h-auto w-[140px] object-contain sm:w-[160px]"
             />
 
-            <div className="mt-4 text-xs font-bold tracking-[0.15em] text-[#8a6d1f]">
+            <div
+              className="mt-4 text-xs font-bold tracking-[0.15em]"
+              style={{ color: DEEP_NAVY }}
+            >
               SPACES FOR A
               <br />
               BRIGHTER TOMORROW
             </div>
 
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-neutral-500">
+            <p
+              className="mt-4 max-w-xs text-sm leading-relaxed"
+              style={{ color: TEXT_CHARCOAL }}
+            >
               Creating thoughtfully designed homes and communities that enrich lives,
               today and for generations to come.
             </p>
@@ -199,21 +218,32 @@ export default function Footer() {
 
           {/* Explore — mirrors Navbar links */}
           <div>
-            <h4 className="text-xs font-bold tracking-[0.2em] text-neutral-900">EXPLORE</h4>
-            <span className="mt-2 block h-px w-6 bg-[#8a6d1f]" />
+            <h4
+              className="text-xs font-bold tracking-[0.2em]"
+              style={{ color: DEEP_NAVY }}
+            >
+              EXPLORE
+            </h4>
             <ul className="mt-5 flex flex-col gap-3">
               {EXPLORE_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className={`text-sm transition-colors hover:text-[#8a6d1f] ${
-                      link.isSub
-                        ? "pl-3 text-neutral-500"
-                        : "text-neutral-600"
-                    }`}
+                    className="text-sm transition-colors"
+                    style={{
+                      color: link.isSub ? TEXT_CHARCOAL : TEXT_CHARCOAL,
+                      opacity: link.isSub ? 0.75 : 1,
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = link.isSub ? TEXT_CHARCOAL : TEXT_CHARCOAL)
+                    }
                   >
                     {link.isSub && (
-                      <span className="mr-1.5 inline-block h-1 w-1 -translate-y-[2px] rounded-full bg-[#8a6d1f]/60 align-middle" />
+                      <span
+                        className="mr-1.5 inline-block h-1 w-1 -translate-y-[2px] rounded-full align-middle"
+                        style={{ backgroundColor: DEEP_NAVY, opacity: 0.6 }}
+                      />
                     )}
                     {link.label}
                   </Link>
@@ -225,22 +255,28 @@ export default function Footer() {
           {/* Help & Support */}
           <FooterColumn
             title="HELP & SUPPORT"
-            links={[
-              
-              "Terms & Conditions",
-              "Privacy Policy",
-            ]}
+            links={["Terms & Conditions", "Privacy Policy"]}
           />
 
           {/* Get in touch */}
           <div>
-            <h4 className="text-xs font-bold tracking-[0.2em] text-neutral-900">GET IN TOUCH</h4>
-            <span className="mt-2 block h-px w-6 bg-[#8a6d1f]" />
+            <h4
+              className="text-xs font-bold tracking-[0.2em]"
+              style={{ color: DEEP_NAVY }}
+            >
+              GET IN TOUCH
+            </h4>
 
             <div className="mt-5 flex flex-col gap-4">
               <div className="flex items-start gap-3">
-                <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
-                <span className="text-sm leading-relaxed text-neutral-600">
+                <MapPin
+                  className="mt-0.5 h-4 w-4 flex-shrink-0"
+                  style={{ color: DEEP_NAVY }}
+                />
+                <span
+                  className="text-sm leading-relaxed"
+                  style={{ color: TEXT_CHARCOAL }}
+                >
                   Flat A10, Archana Castle,
                   <br />
                   4/23 Patrick Church Road,
@@ -251,26 +287,38 @@ export default function Footer() {
                 </span>
               </div>
               <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
+                <Phone className="h-4 w-4 flex-shrink-0" style={{ color: DEEP_NAVY }} />
                 <a
                   href="tel:+919543633333"
-                  className="text-sm text-neutral-600 hover:text-[#8a6d1f]"
+                  className="text-sm transition-colors"
+                  style={{ color: TEXT_CHARCOAL }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
                 >
                   +91 95436 33333
                 </a>
               </div>
               <div className="flex items-center gap-3">
-                <Mail className="h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
+                <Mail className="h-4 w-4 flex-shrink-0" style={{ color: DEEP_NAVY }} />
                 <a
                   href="mailto:pkr@pkrestates.com"
-                  className="break-all text-sm text-neutral-600 hover:text-[#8a6d1f]"
+                  className="break-all text-sm transition-colors"
+                  style={{ color: TEXT_CHARCOAL }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
                 >
                   pkr@pkrestates.com
                 </a>
               </div>
               <div className="flex items-start gap-3">
-                <Clock className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#8a6d1f]" />
-                <span className="text-sm leading-relaxed text-neutral-600">
+                <Clock
+                  className="mt-0.5 h-4 w-4 flex-shrink-0"
+                  style={{ color: DEEP_NAVY }}
+                />
+                <span
+                  className="text-sm leading-relaxed"
+                  style={{ color: TEXT_CHARCOAL }}
+                >
                   Mon – Sat: 9:00 AM – 6:00 PM
                   <br />
                   Sunday: By Appointment
@@ -281,70 +329,84 @@ export default function Footer() {
 
           {/* Let's build */}
           <div className="relative sm:col-span-2 lg:col-span-1">
-            <h4 className="text-xs font-bold leading-relaxed tracking-[0.2em] text-neutral-900">
+            <h4
+              className="text-xs font-bold leading-relaxed tracking-[0.2em]"
+              style={{ color: DEEP_NAVY }}
+            >
               LET&apos;S BUILD
               <br />A BRIGHTER
               <br />
               TOMORROW
             </h4>
-            <span className="mt-2 block h-px w-6 bg-[#8a6d1f]" />
 
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-neutral-500">
+            <p
+              className="mt-4 max-w-xs text-sm leading-relaxed"
+              style={{ color: TEXT_CHARCOAL }}
+            >
               Have a question or want to know more? We&apos;re here to help.
             </p>
 
             <Link
               href="/contactus"
-              className="mt-5 inline-flex items-center gap-2 rounded-full border border-neutral-300 px-5 py-2.5 text-sm font-semibold text-[#1d4ed8] hover:bg-neutral-50"
+              className="mt-5 inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors"
+              style={{ borderColor: DEEP_NAVY, color: DEEP_NAVY }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = DEEP_NAVY;
+                e.currentTarget.style.color = "#FFFFFF";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = DEEP_NAVY;
+              }}
             >
               Get in Touch
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
-
-        {/* Stats row */}
-        <div className="ft-stats flex flex-col gap-8 border-t border-neutral-200 py-8 sm:flex-row sm:items-center sm:justify-between">
-          <div className="grid grid-cols-2 gap-6 sm:flex sm:flex-wrap sm:items-center sm:gap-8 lg:gap-10">
-            <StatItem icon={Users} value="10,000+" label="HAPPY FAMILIES" />
-            <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
-            <StatItem icon={Sprout} value="25+" label="YEARS OF TRUST" />
-            <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
-            <StatItem icon={Building2} value="50+" label="PROJECTS DELIVERED" />
-            <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
-            <StatItem icon={Star} value="4.3★" label="GOOGLE RATING" />
-          </div>
-
-          <div className="flex items-center gap-4">
-            <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
-            <div className="text-xl italic leading-tight text-[#8a6d1f] sm:text-2xl" style={{ fontFamily: "cursive" }}>
-              More
-              <br />
-              Than a Home
-            </div>
-            <span className="h-px w-8 bg-neutral-400" />
-          </div>
-        </div>
       </div>
 
       {/* Bottom bar */}
       <div className="border-t border-neutral-200 bg-white">
-        <div className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-3 px-5 py-5 text-center text-xs text-neutral-500 sm:px-6 sm:text-sm sm:flex-row sm:text-left lg:px-10">
+        <div
+          className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-3 px-5 py-5 text-center text-xs sm:px-6 sm:text-sm sm:flex-row sm:text-left lg:px-10"
+          style={{ color: TEXT_CHARCOAL }}
+        >
           <span>© 2026 PKR ESTATES. All rights reserved.</span>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-            <a href="#" className="hover:text-neutral-800">
+            <a
+              href="#"
+              className="transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
+            >
               Terms &amp; Conditions
             </a>
             <span className="text-neutral-300">|</span>
-            <a href="#" className="hover:text-neutral-800">
+            <a
+              href="#"
+              className="transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
+            >
               Privacy Policy
             </a>
             <span className="text-neutral-300">|</span>
-            <a href="#" className="hover:text-neutral-800">
+            <a
+              href="#"
+              className="transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
+            >
               RERA
             </a>
             <span className="text-neutral-300">|</span>
-            <a href="#" className="hover:text-neutral-800">
+            <a
+              href="#"
+              className="transition-colors"
+              onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
+            >
               Sitemap
             </a>
           </div>
@@ -357,10 +419,16 @@ export default function Footer() {
 function FooterBadge({ icon: Icon, label }) {
   return (
     <div className="flex flex-col items-center gap-2 text-center">
-      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 text-[#8a6d1f] sm:h-11 sm:w-11">
+      <span
+        className="flex h-10 w-10 items-center justify-center rounded-full border sm:h-11 sm:w-11"
+        style={{ borderColor: DEEP_NAVY, color: DEEP_NAVY }}
+      >
         <Icon className="h-4 w-4" />
       </span>
-      <span className="whitespace-pre-line text-[11px] font-semibold leading-tight text-neutral-700 sm:text-xs">
+      <span
+        className="whitespace-pre-line text-[11px] font-semibold leading-tight sm:text-xs"
+        style={{ color: TEXT_CHARCOAL }}
+      >
         {label}
       </span>
     </div>
@@ -374,7 +442,10 @@ function SocialIcon({ name, label, href }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-white transition-colors hover:bg-[#8a6d1f]"
+      className="flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors"
+      style={{ backgroundColor: DEEP_NAVY }}
+      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
+      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
     >
       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor">
         {SOCIAL_ICONS[name]}
@@ -386,12 +457,22 @@ function SocialIcon({ name, label, href }) {
 function FooterColumn({ title, links }) {
   return (
     <div>
-      <h4 className="text-xs font-bold tracking-[0.2em] text-neutral-900">{title}</h4>
-      <span className="mt-2 block h-px w-6 bg-[#8a6d1f]" />
+      <h4
+        className="text-xs font-bold tracking-[0.2em]"
+        style={{ color: DEEP_NAVY }}
+      >
+        {title}
+      </h4>
       <ul className="mt-5 flex flex-col gap-3">
         {links.map((link) => (
           <li key={link}>
-            <a href="#" className="text-sm text-neutral-600 hover:text-[#8a6d1f]">
+            <a
+              href="#"
+              className="text-sm transition-colors"
+              style={{ color: TEXT_CHARCOAL }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
+              onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
+            >
               {link}
             </a>
           </li>
@@ -404,10 +485,24 @@ function FooterColumn({ title, links }) {
 function StatItem({ icon: Icon, value, label }) {
   return (
     <div className="flex items-center gap-3">
-      <Icon className="h-6 w-6 shrink-0 text-[#8a6d1f] sm:h-7 sm:w-7" strokeWidth={1.5} />
+      <Icon
+        className="h-6 w-6 shrink-0 sm:h-7 sm:w-7"
+        strokeWidth={1.5}
+        style={{ color: DEEP_NAVY }}
+      />
       <div>
-        <div className="text-lg font-bold text-neutral-900 sm:text-xl">{value}</div>
-        <div className="text-[9.5px] font-medium tracking-wide text-neutral-500 sm:text-[10px]">{label}</div>
+        <div
+          className="text-lg font-bold sm:text-xl"
+          style={{ color: DEEP_NAVY }}
+        >
+          {value}
+        </div>
+        <div
+          className="text-[9.5px] font-medium tracking-wide sm:text-[10px]"
+          style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}
+        >
+          {label}
+        </div>
       </div>
     </div>
   );

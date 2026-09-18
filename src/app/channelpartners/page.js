@@ -11,6 +11,18 @@ const figtree = Figtree({
 });
 
 /* ------------------------------------------------------------------ */
+/*  THEME TOKENS                                                       */
+/* ------------------------------------------------------------------ */
+const DEEP_NAVY = "#0F3A6B";
+const DEEP_NAVY_HOVER = "#0A2B50";
+const DEEP_NAVY_DARK = "#0A2B50";
+const TEXT_CHARCOAL = "#2D3A46";
+const LIGHT_BLUE = "#E8F0F9";
+const LIGHT_BLUE_SOFT = "#F0F6FC";
+const LIGHT_BLUE_DEEP = "#D5E1ED";
+const LINE = "#E0E8F0";
+
+/* ------------------------------------------------------------------ */
 /*  API CONFIG                                                         */
 /* ------------------------------------------------------------------ */
 const CHANNEL_PARTNER_API =
@@ -178,7 +190,6 @@ export default function ChannelPartnersHero() {
       }
 
       if (!res.ok || !data || data.status !== true) {
-        // Map Laravel-style validation errors if present
         if (data?.errors && typeof data.errors === "object") {
           const mapped = {};
           Object.entries(data.errors).forEach(([key, val]) => {
@@ -213,18 +224,18 @@ export default function ChannelPartnersHero() {
     `flex items-center gap-3 rounded-xl border bg-gray-50 px-4 py-3 transition-colors duration-300 sm:py-3.5 ${
       fieldErrors[field]
         ? "border-red-400 focus-within:border-red-500"
-        : "border-gray-200 focus-within:border-[#a67c2e]/60"
+        : "border-gray-200 focus-within:border-[#0F3A6B]/60"
     }`;
 
   const icons = {
     diamond: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#a67c2e] sm:h-8 sm:w-8">
+      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#0F3A6B] sm:h-8 sm:w-8">
         <path d="M6 3h12l3 5-9 13L3 8l3-5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
         <path d="M3 8h18M9 3l3 5-3 13M15 3l-3 5 3 13" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
       </svg>
     ),
     team: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#a67c2e] sm:h-8 sm:w-8">
+      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#0F3A6B] sm:h-8 sm:w-8">
         <circle cx="12" cy="7" r="3" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="5" cy="10" r="2.2" stroke="currentColor" strokeWidth="1.5" />
         <circle cx="19" cy="10" r="2.2" stroke="currentColor" strokeWidth="1.5" />
@@ -233,19 +244,19 @@ export default function ChannelPartnersHero() {
       </svg>
     ),
     growth: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#a67c2e] sm:h-8 sm:w-8">
+      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#0F3A6B] sm:h-8 sm:w-8">
         <path d="M4 20V10M10 20V4M16 20v-7M4 20h16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <path d="M14 6l4-2 2 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
     handshake: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#a67c2e] sm:h-8 sm:w-8">
+      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#0F3A6B] sm:h-8 sm:w-8">
         <path d="M2 12l4-3 4 2 4-3 4 2 4-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
         <path d="M6 9l3 6 3-2 3 3 3-2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
     headset: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#a67c2e] sm:h-7 sm:w-7">
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#0F3A6B] sm:h-7 sm:w-7">
         <path d="M4 13a8 8 0 0 1 16 0" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
         <rect x="3" y="13" width="4" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
         <rect x="17" y="13" width="4" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.5" />
@@ -253,7 +264,7 @@ export default function ChannelPartnersHero() {
       </svg>
     ),
     training: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#a67c2e] sm:h-7 sm:w-7">
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#0F3A6B] sm:h-7 sm:w-7">
         <path d="M7 3h8l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
         <path d="M15 3v4h4" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
         <path d="M9 12h3M9 15h6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -261,19 +272,19 @@ export default function ChannelPartnersHero() {
       </svg>
     ),
     tag: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#a67c2e] sm:h-7 sm:w-7">
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#0F3A6B] sm:h-7 sm:w-7">
         <path d="M12 2 4 10v10a1 1 0 0 0 1 1h6l9-9-8-10Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
         <circle cx="9" cy="9" r="1.3" stroke="currentColor" strokeWidth="1.3" />
       </svg>
     ),
     events: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#a67c2e] sm:h-7 sm:w-7">
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#0F3A6B] sm:h-7 sm:w-7">
         <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="1.5" />
         <path d="M8 8a4 4 0 1 1 8 0M4 21c0-3.3 2.7-6 6-6M20 21c0-3.3-2.7-6-6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
     gift: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#a67c2e] sm:h-7 sm:w-7">
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#0F3A6B] sm:h-7 sm:w-7">
         <rect x="4" y="9" width="16" height="11" rx="1" stroke="currentColor" strokeWidth="1.5" />
         <path d="M4 13h16" stroke="currentColor" strokeWidth="1.5" />
         <path d="M12 9v11" stroke="currentColor" strokeWidth="1.5" />
@@ -281,7 +292,7 @@ export default function ChannelPartnersHero() {
       </svg>
     ),
     person: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#a67c2e] sm:h-7 sm:w-7">
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-[#0F3A6B] sm:h-7 sm:w-7">
         <circle cx="12" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.5" />
         <path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
@@ -327,7 +338,7 @@ export default function ChannelPartnersHero() {
       </svg>
     ),
     check: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#a67c2e]" strokeWidth="2.5">
+      <svg viewBox="0 0 24 24" fill="none" className="h-7 w-7 text-[#0F3A6B]" strokeWidth="2.5">
         <path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
@@ -358,19 +369,19 @@ export default function ChannelPartnersHero() {
         <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="max-w-full lg:max-w-lg">
             <Reveal>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-[#a67c2e] sm:mb-3 sm:text-xs">
+              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 Why Partner With PKR Estates
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-3.5 text-2xl font-semibold leading-tight text-gray-900 sm:mb-4 sm:text-3xl lg:text-4xl">
+              <h2 className="mb-3.5 text-2xl font-semibold leading-tight sm:mb-4 sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
                 A Trusted Brand
                 <br className="hidden sm:block" />
                 <span className="sm:hidden"> </span>for a Bigger Tomorrow
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <p className="mb-5 text-sm leading-relaxed text-gray-500 sm:mb-6">
+              <p className="mb-5 text-sm leading-relaxed sm:mb-6" style={{ color: TEXT_CHARCOAL }}>
                 At PKR Estates, our channel partners are more than business
                 associates — they are valued growth partners. With a legacy of
                 quality, transparency, and care, we create opportunities that
@@ -380,15 +391,19 @@ export default function ChannelPartnersHero() {
             <Reveal delay={240}>
               <a
                 href="#partner-form"
-                className="group inline-flex items-center gap-2 rounded-full bg-[#a67c2e] px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#8f6a26] hover:shadow-lg hover:shadow-[#a67c2e]/30 sm:px-6"
+                className="group inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg sm:px-6"
+                style={{ backgroundColor: DEEP_NAVY }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER
+                  e.currentTarget.style.boxShadow = '0 12px 28px -8px rgba(15,58,107,0.5)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = DEEP_NAVY
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
               >
                 Partner With a Leading Brand
-                <span
-                  aria-hidden="true"
-                  className="transition-transform duration-300 group-hover:translate-x-1"
-                >
-                  →
-                </span>
+                <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">→</span>
               </a>
             </Reveal>
           </div>
@@ -396,12 +411,12 @@ export default function ChannelPartnersHero() {
           <div className="grid flex-1 grid-cols-2 gap-6 sm:gap-7 md:grid-cols-4 md:gap-8">
             {features.map((f, i) => (
               <Reveal key={i} delay={i * 100} className="flex flex-col items-start gap-3 sm:gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#f6efe2] transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:h-16 sm:w-16">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:h-16 sm:w-16" style={{ backgroundColor: LIGHT_BLUE }}>
                   {icons[f.icon]}
                 </div>
                 <div>
-                  <h3 className="mb-1 text-[13px] font-bold text-gray-900 sm:text-sm">{f.title}</h3>
-                  <p className="text-xs leading-relaxed text-gray-500">{f.desc}</p>
+                  <h3 className="mb-1 text-[13px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>{f.title}</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: TEXT_CHARCOAL }}>{f.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -410,21 +425,21 @@ export default function ChannelPartnersHero() {
       </div>
 
       {/* Your Journey as a Partner Section */}
-      <div className="w-full bg-[#f7f3ec] px-4 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
+      <div className="w-full px-4 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16" style={{ backgroundColor: LIGHT_BLUE_SOFT }}>
         <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="flex-1">
             <Reveal>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-[#a67c2e] sm:mb-3 sm:text-xs">
+              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 A Simple Process
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-3 text-2xl font-semibold leading-tight text-gray-900 sm:text-3xl lg:text-4xl">
+              <h2 className="mb-3 text-2xl font-semibold leading-tight sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
                 Your Journey as a Partner
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <p className="mb-8 text-sm leading-relaxed text-gray-500 sm:mb-10">
+              <p className="mb-8 text-sm leading-relaxed sm:mb-10" style={{ color: TEXT_CHARCOAL }}>
                 Get started in just a few steps and unlock a world of opportunities.
               </p>
             </Reveal>
@@ -433,17 +448,18 @@ export default function ChannelPartnersHero() {
               {steps.map((s, i) => (
                 <Reveal key={i} delay={i * 120} className="relative flex flex-col items-start">
                   <div className="mb-3.5 flex items-center sm:mb-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#a67c2e] text-[13px] font-bold text-[#a67c2e] transition-transform duration-300 hover:scale-110 sm:h-14 sm:w-14 sm:text-sm">
+                    <div
+                      className="flex h-12 w-12 items-center justify-center rounded-full border-2 text-[13px] font-bold transition-transform duration-300 hover:scale-110 sm:h-14 sm:w-14 sm:text-sm"
+                      style={{ borderColor: DEEP_NAVY, color: DEEP_NAVY }}
+                    >
                       {s.number}
                     </div>
                     {i < steps.length - 1 && (
-                      <span aria-hidden="true" className="ml-3 hidden text-[#a67c2e] md:inline">
-                        →
-                      </span>
+                      <span aria-hidden="true" className="ml-3 hidden md:inline" style={{ color: DEEP_NAVY }}>→</span>
                     )}
                   </div>
-                  <h3 className="mb-1 text-[13px] font-bold text-gray-900 sm:text-sm">{s.title}</h3>
-                  <p className="text-xs leading-relaxed text-gray-500">{s.desc}</p>
+                  <h3 className="mb-1 text-[13px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>{s.title}</h3>
+                  <p className="text-xs leading-relaxed" style={{ color: TEXT_CHARCOAL }}>{s.desc}</p>
                 </Reveal>
               ))}
             </div>
@@ -451,13 +467,14 @@ export default function ChannelPartnersHero() {
 
           <Reveal
             delay={200}
-            className="flex flex-col items-start border-t border-gray-300 pt-8 lg:w-64 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
+            className="flex flex-col items-start border-t pt-8 lg:w-64 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
           >
-            <p className="mb-4 text-xl font-semibold italic leading-tight text-[#a67c2e] sm:text-2xl">
+            <div style={{ borderColor: LINE }} className="hidden" />
+            <p className="mb-4 text-xl font-semibold italic leading-tight sm:text-2xl" style={{ color: DEEP_NAVY }}>
               More Opportunities Together
             </p>
-            <div className="mb-4 h-px w-10 bg-gray-400" />
-            <p className="text-sm leading-relaxed text-gray-600">
+            <div className="mb-4 h-px w-10" style={{ backgroundColor: DEEP_NAVY, opacity: 0.4 }} />
+            <p className="text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
               More Homes.
               <br />
               Happier Families.
@@ -473,19 +490,19 @@ export default function ChannelPartnersHero() {
         <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="max-w-full lg:max-w-md">
             <Reveal>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest text-[#a67c2e] sm:mb-3 sm:text-xs">
+              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 Partner Benefits
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-3.5 text-2xl font-semibold leading-tight text-gray-900 sm:mb-4 sm:text-3xl lg:text-4xl">
+              <h2 className="mb-3.5 text-2xl font-semibold leading-tight sm:mb-4 sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
                 Everything You Need
                 <br className="hidden sm:block" />
                 <span className="sm:hidden"> </span>to Succeed
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <p className="text-sm leading-relaxed text-gray-500">
+              <p className="text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
                 We provide the right tools, training and support to help you grow faster in real estate.
               </p>
             </Reveal>
@@ -494,10 +511,10 @@ export default function ChannelPartnersHero() {
           <div className="grid flex-1 grid-cols-3 gap-5 sm:gap-6 md:grid-cols-6 md:gap-8">
             {benefits.map((b, i) => (
               <Reveal key={i} delay={i * 80} className="flex flex-col items-center text-center">
-                <div className="mb-2.5 flex h-14 w-14 items-center justify-center rounded-full bg-[#f6efe2] transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:mb-3 sm:h-16 sm:w-16">
+                <div className="mb-2.5 flex h-14 w-14 items-center justify-center rounded-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:mb-3 sm:h-16 sm:w-16" style={{ backgroundColor: LIGHT_BLUE }}>
                   {icons[b.icon]}
                 </div>
-                <h3 className="text-[11px] font-bold leading-snug text-gray-900 sm:text-xs">{b.title}</h3>
+                <h3 className="text-[11px] font-bold leading-snug sm:text-xs" style={{ color: DEEP_NAVY }}>{b.title}</h3>
               </Reveal>
             ))}
           </div>
@@ -510,31 +527,30 @@ export default function ChannelPartnersHero() {
         className="relative w-full overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-16 md:px-10 md:py-20 lg:px-16"
       >
         {/* Subtle decorative glow */}
-        <div className="pointer-events-none absolute -left-32 -top-32 h-72 w-72 rounded-full bg-[#a67c2e]/10 blur-3xl sm:h-96 sm:w-96" />
-        <div className="pointer-events-none absolute -bottom-32 -right-32 h-72 w-72 rounded-full bg-[#a67c2e]/5 blur-3xl sm:h-96 sm:w-96" />
+        <div className="pointer-events-none absolute -left-32 -top-32 h-72 w-72 rounded-full blur-3xl sm:h-96 sm:w-96" style={{ backgroundColor: 'rgba(15,58,107,0.10)' }} />
+        <div className="pointer-events-none absolute -bottom-32 -right-32 h-72 w-72 rounded-full blur-3xl sm:h-96 sm:w-96" style={{ backgroundColor: 'rgba(15,58,107,0.05)' }} />
 
         <div className="relative mx-auto flex max-w-7xl flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
           {/* Left content */}
           <div className="max-w-full lg:max-w-md">
             <Reveal>
-              <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-widest text-[#a67c2e] sm:mb-4 sm:text-xs">
+              <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-4 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 Become a Channel Partner
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-4 text-3xl font-semibold leading-tight text-gray-900 sm:mb-5 sm:text-4xl lg:text-5xl">
+              <h2 className="mb-4 text-3xl font-semibold leading-tight sm:mb-5 sm:text-4xl lg:text-5xl" style={{ color: DEEP_NAVY }}>
                 Let&apos;s Grow
                 <br />
                 Together
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <div className="mb-5 h-px w-12 bg-[#a67c2e] sm:mb-6" />
+              <div className="mb-5 h-px w-12 sm:mb-6" style={{ backgroundColor: DEEP_NAVY }} />
             </Reveal>
             <Reveal delay={220}>
-              <p className="text-sm leading-relaxed text-gray-500">
-                Share a few details and our experts will reach out to you
-                shortly.
+              <p className="text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
+                Share a few details and our experts will reach out to you shortly.
               </p>
             </Reveal>
           </div>
@@ -542,24 +558,28 @@ export default function ChannelPartnersHero() {
           {/* Right form card */}
           <Reveal
             delay={160}
-            className="w-full rounded-2xl border border-gray-200 bg-white p-5 shadow-2xl transition-shadow duration-300 hover:shadow-[0_20px_60px_-15px_rgba(166,124,46,0.25)] sm:p-6 md:p-8 lg:max-w-2xl"
+            className="w-full rounded-2xl border bg-white p-5 shadow-2xl transition-shadow duration-300 sm:p-6 md:p-8 lg:max-w-2xl"
+            style={{ borderColor: LINE }}
           >
             {submitted ? (
               /* ---------------- SUCCESS STATE ---------------- */
               <div className="flex flex-col items-center gap-4 px-2 py-10 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#f6efe2]">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE }}>
                   {icons.check}
                 </div>
-                <h3 className="m-0 text-xl font-semibold text-gray-900">
+                <h3 className="m-0 text-xl font-semibold" style={{ color: DEEP_NAVY }}>
                   Thank You!
                 </h3>
-                <p className="m-0 max-w-md text-sm leading-relaxed text-gray-500">
+                <p className="m-0 max-w-md text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
                   {successMessage}
                 </p>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="mt-3 rounded-xl border border-[#a67c2e]/40 bg-white px-6 py-3 text-sm font-semibold text-[#a67c2e] transition-all hover:bg-[#f6efe2]"
+                  className="mt-3 rounded-xl border bg-white px-6 py-3 text-sm font-semibold transition-all"
+                  style={{ borderColor: `${DEEP_NAVY}66`, color: DEEP_NAVY }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE)}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
                 >
                   Register Another Partner
                 </button>
@@ -585,7 +605,8 @@ export default function ChannelPartnersHero() {
                         placeholder="Full Name *"
                         value={form.full_name}
                         onChange={handleChange("full_name")}
-                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        style={{ color: DEEP_NAVY }}
                       />
                       {fieldErrors.full_name && (
                         <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.full_name}</p>
@@ -603,7 +624,8 @@ export default function ChannelPartnersHero() {
                         placeholder="Phone Number *"
                         value={form.phone}
                         onChange={handleChange("phone")}
-                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        style={{ color: DEEP_NAVY }}
                       />
                       {fieldErrors.phone && (
                         <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.phone}</p>
@@ -621,7 +643,8 @@ export default function ChannelPartnersHero() {
                         placeholder="Email Address *"
                         value={form.email}
                         onChange={handleChange("email")}
-                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        style={{ color: DEEP_NAVY }}
                       />
                       {fieldErrors.email && (
                         <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.email}</p>
@@ -637,18 +660,11 @@ export default function ChannelPartnersHero() {
                         name="profession"
                         value={form.profession}
                         onChange={handleChange("profession")}
-                        className={`w-full appearance-none bg-transparent text-sm outline-none ${
-                          form.profession ? "text-gray-900" : "text-gray-400"
-                        }`}
+                        className="w-full appearance-none bg-transparent text-sm outline-none"
+                        style={{ color: form.profession ? DEEP_NAVY : '#9CA3AF' }}
                       >
-                        <option value="" disabled>
-                          Select Your Profession *
-                        </option>
-                        {PROFESSIONS.map((p) => (
-                          <option key={p} value={p}>
-                            {p}
-                          </option>
-                        ))}
+                        <option value="" disabled>Select Your Profession *</option>
+                        {PROFESSIONS.map((p) => (<option key={p} value={p}>{p}</option>))}
                       </select>
                       {fieldErrors.profession && (
                         <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.profession}</p>
@@ -666,7 +682,8 @@ export default function ChannelPartnersHero() {
                         placeholder="Select City"
                         value={form.city}
                         onChange={handleChange("city")}
-                        className="w-full bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        style={{ color: DEEP_NAVY }}
                       />
                     </div>
                   </div>
@@ -680,7 +697,8 @@ export default function ChannelPartnersHero() {
                       rows={2}
                       value={form.about}
                       onChange={handleChange("about")}
-                      className="w-full min-w-0 resize-none bg-transparent text-sm text-gray-900 placeholder-gray-400 outline-none"
+                      className="w-full min-w-0 resize-none bg-transparent text-sm outline-none placeholder-gray-400"
+                      style={{ color: DEEP_NAVY }}
                     />
                   </div>
                 </div>
@@ -688,7 +706,10 @@ export default function ChannelPartnersHero() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#c99a4a] to-[#a67c2e] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#a67c2e]/20 transition-all duration-300 hover:shadow-[#a67c2e]/40 hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:mt-6 sm:py-4"
+                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:mt-6 sm:py-4"
+                  style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
+                  onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 18px 34px -12px rgba(15,58,107,0.6)')}
+                  onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 10px 24px -8px rgba(15,58,107,0.4)')}
                 >
                   {submitting ? (
                     <>
@@ -703,7 +724,7 @@ export default function ChannelPartnersHero() {
                   )}
                 </button>
 
-                <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
+                <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs" style={{ color: TEXT_CHARCOAL, opacity: 0.8 }}>
                   {icons.shield}
                   We respect your privacy. Your information is safe with us.
                 </p>

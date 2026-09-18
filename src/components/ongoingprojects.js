@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Figtree } from "next/font/google";
+import { Geist } from "next/font/google";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -19,15 +19,16 @@ import {
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-const figtree = Figtree({
+const geist = Geist({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
 });
 
-const GOLD = "#B08D3F";
-const GOLD_DEEP = "#8A6B2E";
-const CREAM = "#FBF8F2";
-const LINE = "#E8DFCB";
+const DEEP_NAVY = "#0F3A6B";
+const DEEP_NAVY_HOVER = "#0A2B50";
+const TEXT_CHARCOAL = "#2D3A46";
+const LIGHT_BLUE = "#E8F0F9"; // soft light-blue (matches your second image)
+const LIGHT_BLUE_RING = "rgba(15,58,107,0.10)";
 
 const PROJECTS = [
   {
@@ -45,7 +46,7 @@ const PROJECTS = [
     units: "90 Apartments",
     completion: "DEC 2026",
     completionDate: "2026-12-31T23:59:59",
-    image: "/gurudev.png",
+    image: "/upGurudev.png",
   },
   {
     id: 2,
@@ -58,11 +59,11 @@ const PROJECTS = [
     price: "₹20.01 Lacs Onwards*",
     type: "Apartments",
     size: "1.41 Acres",
-    bedrooms: "Studio, 1BHK, 2BHK & 3BHK",
+    bedrooms: " 1BHK, 2BHK & 3BHK",
     units: "186 Units",
     completion: "JUN 2028",
     completionDate: "2028-06-30T23:59:59",
-    image: "/privana.png",
+    image: "/upPrivana.png",
   },
 ];
 
@@ -188,8 +189,7 @@ export default function OurProjects() {
     <section
       ref={root}
       id="projects"
-      className={`${figtree.className} relative w-full py-12 sm:py-16 md:py-20`}
-      style={{ backgroundColor: CREAM }}
+      className={`${geist.className} relative w-full py-12 sm:py-16 md:py-20`}
     >
       <div className="relative mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-10">
         {/* Section Heading */}
@@ -197,22 +197,34 @@ export default function OurProjects() {
           <div className="flex items-center justify-center gap-3">
             <span
               className="gs-eyebrow-text text-[11px] font-semibold tracking-[0.2em] sm:text-xs sm:tracking-[0.28em]"
-              style={{ color: GOLD_DEEP }}
+              style={{ color: DEEP_NAVY }}
             >
               EXPLORE
             </span>
           </div>
 
-          <h2 className="mt-3 text-[32px] font-bold tracking-tight text-neutral-900 sm:mt-4 sm:text-5xl md:text-6xl lg:text-7xl">
+          <h2
+            className="mt-3 text-[32px] font-bold tracking-tight sm:mt-4 sm:text-5xl md:text-6xl lg:text-7xl"
+            style={{ color: DEEP_NAVY }}
+          >
             {["Our", "Projects"].map((word) => (
-              <span key={word} className="inline-block overflow-hidden align-bottom" style={{ paddingBottom: "0.14em", marginBottom: "-0.14em" }}>
-                <span className="gs-title-word inline-block pr-[0.22em] will-change-transform">{word}</span>
+              <span
+                key={word}
+                className="inline-block overflow-hidden align-bottom"
+                style={{ paddingBottom: "0.14em", marginBottom: "-0.14em" }}
+              >
+                <span className="gs-title-word inline-block pr-[0.22em] will-change-transform">
+                  {word}
+                </span>
               </span>
             ))}
           </h2>
 
-          <p className="gs-sub mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-neutral-600 sm:mt-5 sm:text-lg">
-            Two ongoing residential communities in Chennai South — thoughtfully
+          <p
+            className="gs-sub mx-auto mt-4 max-w-2xl text-sm leading-relaxed sm:mt-5 sm:text-lg"
+            style={{ color: TEXT_CHARCOAL }}
+          >
+            Two ongoing residential communities in Chennai South thoughtfully
             designed, transparently priced.
           </p>
         </div>
@@ -233,10 +245,7 @@ function ProjectCard({ project }) {
   const href = `/projects/${project.slug}`;
 
   return (
-    <div
-      className="gs-card group/card overflow-hidden rounded-2xl border bg-white shadow-[0_18px_50px_-30px_rgba(90,70,30,0.45)]"
-      style={{ borderColor: LINE }}
-    >
+    <div className="gs-card group/card overflow-hidden rounded-2xl bg-white shadow-[0_10px_40px_-14px_rgba(15,58,107,0.25)] transition-shadow duration-300 hover:shadow-[0_18px_50px_-16px_rgba(15,58,107,0.35)]">
       <div className="grid grid-cols-1 sm:grid-cols-2">
         {/* Image — clickable */}
         <Link
@@ -250,12 +259,12 @@ function ProjectCard({ project }) {
             fill
             className="gs-img object-cover transition-transform duration-500 group-hover/card:scale-[1.04]"
           />
-          <span
+          {/* <span
             className="gs-badge absolute right-0 top-4 rounded-l-md px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white sm:top-5 sm:px-4 sm:text-xs"
-            style={{ backgroundColor: GOLD_DEEP }}
+            style={{ backgroundColor: DEEP_NAVY }}
           >
             {project.status}
-          </span>
+          </span> */}
         </Link>
 
         {/* Details */}
@@ -264,16 +273,22 @@ function ProjectCard({ project }) {
             <div className="min-w-0">
               <span
                 className="gs-line text-[10.5px] font-semibold tracking-[0.18em] sm:text-[11px] sm:tracking-[0.22em]"
-                style={{ color: GOLD_DEEP }}
+                style={{ color: DEEP_NAVY }}
               >
                 {project.category}
               </span>
 
               {/* Project name — clickable */}
-              <h3 className="gs-line mt-1 text-xl font-semibold tracking-tight text-neutral-900 sm:text-2xl">
+              <h3
+                className="gs-line mt-1 text-xl font-semibold tracking-tight sm:text-2xl"
+                style={{ color: DEEP_NAVY }}
+              >
                 <Link
                   href={href}
-                  className="transition-colors duration-300 hover:text-[#8A6B2E]"
+                  className="transition-colors duration-300"
+                  style={{ color: DEEP_NAVY }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY_HOVER)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
                 >
                   {project.name}
                 </Link>
@@ -287,28 +302,29 @@ function ProjectCard({ project }) {
                 e.stopPropagation();
                 window.location.href = "tel:+911234567890";
               }}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-all duration-300 hover:-translate-y-0.5 sm:h-10 sm:w-10"
-              style={{ borderColor: LINE, backgroundColor: CREAM, color: GOLD_DEEP }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-0.5 sm:h-10 sm:w-10"
+              style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
             >
               <Phone className="h-4 w-4" />
             </button>
           </div>
 
-          <span
-            className="gs-card-rule mt-3.5 block h-[3px] w-12 rounded-full sm:mt-4"
-            style={{ backgroundColor: GOLD }}
-          />
-
-          <p className="gs-line mt-3.5 text-[13.5px] leading-relaxed text-neutral-500 sm:mt-4 sm:text-[14px]">
+          <p
+            className="gs-line mt-3.5 text-[13.5px] leading-relaxed sm:mt-4 sm:text-[14px]"
+            style={{ color: TEXT_CHARCOAL }}
+          >
             {project.address}
           </p>
 
-          <div className="gs-line mt-5 text-xs font-medium tracking-wide text-neutral-500 sm:mt-6">
+          <div
+            className="gs-line mt-5 text-xs font-medium tracking-wide sm:mt-6"
+            style={{ color: TEXT_CHARCOAL }}
+          >
             Starting from
           </div>
           <div
             className="gs-line mt-1 text-xl font-bold tracking-tight sm:text-2xl md:text-3xl"
-            style={{ color: GOLD_DEEP }}
+            style={{ color: DEEP_NAVY }}
           >
             {project.price}
           </div>
@@ -316,7 +332,7 @@ function ProjectCard({ project }) {
       </div>
 
       {/* Specs */}
-      <div className="border-t px-5 py-5 sm:px-6 sm:py-6 md:px-8" style={{ borderColor: "#EFE7D6" }}>
+      <div className="px-5 py-5 sm:px-6 sm:py-6 md:px-8">
         <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-6 sm:gap-y-5 md:grid-cols-4">
           {[
             { icon: Building2, label: "TYPE", value: project.type },
@@ -328,13 +344,19 @@ function ProjectCard({ project }) {
               <Icon
                 className="mt-0.5 h-5 w-5 shrink-0"
                 strokeWidth={1.5}
-                style={{ color: GOLD }}
+                style={{ color: DEEP_NAVY }}
               />
               <div className="min-w-0">
-                <div className="text-[10px] font-semibold tracking-[0.14em] text-neutral-400">
+                <div
+                  className="text-[10px] font-semibold tracking-[0.14em]"
+                  style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}
+                >
                   {label}
                 </div>
-                <div className="mt-0.5 text-[13px] font-bold leading-snug text-neutral-900 sm:text-sm">
+                <div
+                  className="mt-0.5 text-[13px] font-bold leading-snug sm:text-sm"
+                  style={{ color: DEEP_NAVY }}
+                >
                   {value}
                 </div>
               </div>
@@ -343,25 +365,29 @@ function ProjectCard({ project }) {
         </div>
 
         {/* Countdown */}
-        <div
-          className="mt-6 border-t pt-5 sm:mt-7 sm:pt-6"
-          style={{ borderColor: "#EFE7D6" }}
-        >
+        <div className="mt-6 pt-5 sm:mt-7 sm:pt-6">
           <div className="flex flex-col gap-1.5 xs:flex-row xs:items-center xs:justify-between sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-[10px] font-semibold tracking-[0.14em] text-neutral-400 sm:tracking-[0.16em]">
+            <span
+              className="text-[10px] font-semibold tracking-[0.14em] sm:tracking-[0.16em]"
+              style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}
+            >
               TIME LEFT FOR PROJECT COMPLETION
             </span>
             <span
               className="text-[11px] font-bold tracking-[0.12em]"
-              style={{ color: GOLD_DEEP }}
+              style={{ color: DEEP_NAVY }}
             >
               {project.completion}
             </span>
           </div>
 
+          {/* Countdown box — now light blue background */}
           <div
-            className="gs-countdown-box mt-3.5 grid grid-cols-4 divide-x overflow-hidden rounded-xl border sm:mt-4"
-            style={{ borderColor: LINE, backgroundColor: CREAM }}
+            className="gs-countdown-box mt-3.5 grid grid-cols-4 overflow-hidden rounded-xl sm:mt-4"
+            style={{
+              backgroundColor: LIGHT_BLUE,
+              boxShadow: `inset 0 0 0 1px ${LIGHT_BLUE_RING}`,
+            }}
           >
             {[
               { v: days, l: "DAYS" },
@@ -372,12 +398,17 @@ function ProjectCard({ project }) {
               <div
                 key={l}
                 className="gs-count flex flex-col items-center py-3 sm:py-4"
-                style={{ borderColor: LINE }}
               >
-                <span className="text-lg font-bold tabular-nums text-neutral-900 sm:text-xl md:text-2xl">
+                <span
+                  className="text-lg font-bold tabular-nums sm:text-xl md:text-2xl"
+                  style={{ color: DEEP_NAVY }}
+                >
                   {v}
                 </span>
-                <span className="mt-1 text-[9px] font-semibold tracking-[0.1em] text-neutral-400 sm:text-[10px] sm:tracking-[0.14em]">
+                <span
+                  className="mt-1 text-[9px] font-semibold tracking-[0.1em] sm:text-[10px] sm:tracking-[0.14em]"
+                  style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}
+                >
                   {l}
                 </span>
               </div>
@@ -389,8 +420,10 @@ function ProjectCard({ project }) {
         <div className="gs-actions mt-6 flex justify-end sm:mt-7">
           <Link
             href={href}
-            className="group inline-flex items-center gap-2.5 rounded-full px-5 py-2.5 text-[11px] font-bold tracking-[0.14em] text-white shadow-[0_6px_18px_-8px_rgba(138,107,46,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgba(138,107,46,0.85)] active:scale-[0.98] sm:px-6 sm:py-3 sm:text-xs sm:tracking-[0.16em]"
-            style={{ backgroundColor: GOLD_DEEP }}
+            className="group inline-flex items-center gap-2.5 rounded-md px-5 py-2.5 text-[11px] font-bold tracking-[0.14em] text-white shadow-[0_6px_18px_-8px_rgba(15,58,107,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgba(15,58,107,0.85)] active:scale-[0.98] sm:px-6 sm:py-3 sm:text-xs sm:tracking-[0.16em]"
+            style={{ backgroundColor: DEEP_NAVY }}
+            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
+            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
           >
             KNOW MORE
             <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />

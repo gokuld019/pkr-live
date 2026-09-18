@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
  * - IMAGE_URL -> path to your single promo image in /public
  */
 
-const IMAGE_URL = "/popup.png";
+const IMAGE_URL = "/promoo.jpeg";
 
 export default function PromoPopup() {
   const [open, setOpen] = useState(false);
