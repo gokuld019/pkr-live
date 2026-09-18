@@ -129,7 +129,7 @@ export default function ContactPage() {
         <div className="relative w-full h-[220px] sm:h-[300px] md:h-[420px] lg:h-[780px] flex overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl mx-3 mt-3 sm:mx-4 sm:mt-4 md:mx-8 md:mt-8">
           <div
             className="hero-img flex-[1.7] relative bg-cover bg-center mr-23"
-            style={{ backgroundImage: `url(/contactus.png)` }}
+            style={{ backgroundImage: `url(/cus.jpeg)` }}
           />
         </div>
       </section>

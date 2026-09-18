@@ -353,16 +353,14 @@ export default function ChannelPartnersHero() {
   return (
     <section className={`relative w-full ${figtree.className}`}>
       {/* Hero Image */}
-      <div className="relative w-full">
-        <Image
-          src="/cp.png"
-          alt="PKR Estates — An Affordable Home Company"
-          width={1920}
-          height={800}
-          className="h-auto w-full mr-23"
-          priority
-        />
-      </div>
+      <section className="w-full">
+        <div className="relative w-full h-[220px] sm:h-[300px] md:h-[420px] lg:h-[780px] flex overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl mx-3 mt-3 sm:mx-4 sm:mt-4 md:mx-8 md:mt-8">
+          <div
+            className="hero-img flex-[1.7] relative bg-cover bg-center mr-23"
+            style={{ backgroundImage: `url(/cp.jpeg)` }}
+          />
+        </div>
+      </section>
 
       {/* Why Partner Section */}
       <div className="w-full bg-white px-4 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
@@ -558,7 +556,7 @@ export default function ChannelPartnersHero() {
           {/* Right form card */}
           <Reveal
             delay={160}
-            className="w-full rounded-2xl border bg-white p-5 shadow-2xl transition-shadow duration-300 sm:p-6 md:p-8 lg:max-w-2xl"
+            className="w-full rounded-2xl  bg-white p-5 shadow-2xl transition-shadow duration-300 sm:p-6 md:p-8 lg:max-w-2xl"
             style={{ borderColor: LINE }}
           >
             {submitted ? (

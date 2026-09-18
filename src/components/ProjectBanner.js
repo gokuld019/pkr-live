@@ -32,7 +32,6 @@ const TEXT_CHARCOAL = '#2D3A46'
 const LIGHT_BLUE = '#E8F0F9'
 const LIGHT_BLUE_SOFT = '#F0F6FC'
 
-// Legacy aliases (used throughout) — point to new palette
 const GOLD = DEEP_NAVY
 const GOLD_HOVER = DEEP_NAVY_HOVER
 const GOLD_DARK = DEEP_NAVY_DARK
@@ -239,7 +238,7 @@ function PlotCell({ children, divider = true }) {
 }
 
 /* ==================================================================
-   ENQUIRE MODAL — identical to FloatingWidgets version
+   ENQUIRE MODAL
 ================================================================== */
 function EnquireModal({ open, onClose, presetType = '', projectName = '' }) {
   const INQUIRY_TYPES = ['General Enquiry', 'Gurudev', 'Privana']
@@ -554,8 +553,7 @@ function usePanoramaViewer(containerRef, imageSrc, active) {
   const stateRef = useRef({})
   useEffect(() => {
     if (!active || !imageSrc || !containerRef.current) return
-    const container = containerRef.current
-    let width = container.clientWidth
+    const container = containerRef.current;    let width = container.clientWidth
     let height = container.clientHeight
     const scene = new THREE.Scene()
     const camera = new THREE.PerspectiveCamera(INITIAL_FOV, width / height, 0.1, 1000)
@@ -835,8 +833,15 @@ export default function ProjectBanner({ project }) {
     exit: (dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60, scale: 0.99 }),
   }
 
-  const floorPlanTabs = project?.floorPlanTabs || []
-  const allFloorPlans = project?.floorPlans || []
+  /* ================= FLOOR PLANS — nested blocks support ================= */
+  const floorPlanBlocks = project?.floorPlanBlocks || []
+  const hasFloorPlanBlocks = floorPlanBlocks.length > 0
+  const [activeBlock, setActiveBlock] = useState(0)
+  const currentFloorBlock = hasFloorPlanBlocks ? floorPlanBlocks[activeBlock] : null
+
+  const floorPlanTabs = hasFloorPlanBlocks ? (currentFloorBlock?.tabs || []) : (project?.floorPlanTabs || [])
+  const allFloorPlans = hasFloorPlanBlocks ? (currentFloorBlock?.plans || []) : (project?.floorPlans || [])
+
   const [activeFloorTab, setActiveFloorTab] = useState(0)
   const [activePlanIndex, setActivePlanIndex] = useState(0)
   const [planZoom, setPlanZoom] = useState(false)
@@ -853,6 +858,13 @@ export default function ProjectBanner({ project }) {
   const planCount = activePlans.length
   const selectedPlan = activePlans[activePlanIndex] || activePlans[0]
   const planKey = selectedPlan ? selectedPlan.id || selectedPlan.title : ''
+
+  // Reset unit-type tab when switching blocks
+  useEffect(() => {
+    setActiveFloorTab(0)
+    setActivePlanIndex(0)
+    setPlanZoom(false)
+  }, [activeBlock])
 
   useEffect(() => {
     if (pendingPlanIndex.current !== null) { setActivePlanIndex(pendingPlanIndex.current); pendingPlanIndex.current = null }
@@ -954,28 +966,6 @@ export default function ProjectBanner({ project }) {
                 <AccentOutlineButton href="tel:+919543633333" icon={Phone}>Call Us</AccentOutlineButton>
               </div>
             </FadeUp>
-
-            <FadeUp delay={0.35}>
-              <div className="flex flex-wrap items-center gap-y-4">
-                {highlights.map((h, i) => {
-                  const HIcon = highlightIconMap[h.icon] || Sparkles
-                  const [first, ...rest] = (h.label || '').split(' ')
-                  return (
-                    <div key={i} className="flex items-center">
-                      <div className="flex items-center gap-3 pr-5">
-                        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE }}>
-                          <HIcon className="h-5 w-5" strokeWidth={1.5} style={{ color: DEEP_NAVY }} />
-                        </span>
-                        <p className="m-0 text-[14px] leading-[1.45]" style={{ color: TEXT_CHARCOAL }}>
-                          {first}<br />{rest.join(' ')}
-                        </p>
-                      </div>
-                      {i < highlights.length - 1 && <span className="mr-5 h-12 w-px bg-[#E0E8F0]" />}
-                    </div>
-                  )
-                })}
-              </div>
-            </FadeUp>
           </div>
 
           <FadeUp delay={0.15} className="relative h-full">
@@ -1054,7 +1044,7 @@ export default function ProjectBanner({ project }) {
                         >
                           <TabIcon className={`h-6 w-6 transition-colors duration-300`} style={{ color: isActive ? '#FFFFFF' : DEEP_NAVY }} strokeWidth={1.5} />
                         </span>
-                        <span className={`text-[13px] font-semibold leading-snug ${isActive ? '' : ''}`} style={{ color: isActive ? '#141414' : TEXT_CHARCOAL }}>
+                        <span className={`text-[13px] font-semibold leading-snug`} style={{ color: isActive ? '#141414' : TEXT_CHARCOAL }}>
                           {tab.title}
                         </span>
                         <span className={`h-[2px] w-6 rounded-full transition-colors duration-300`} style={{ backgroundColor: isActive ? DEEP_NAVY : 'transparent' }} />
@@ -1071,20 +1061,6 @@ export default function ProjectBanner({ project }) {
                   <Eyebrow className="mb-4 self-start !bg-transparent !border-0 !px-0 !py-0">{current?.eyebrow}</Eyebrow>
                   <h3 className="mb-3 text-[26px] font-semibold leading-tight text-[#1f2029] md:text-[30px]">{current?.title}</h3>
                   <p className="mb-7 text-[14px] leading-[1.75]" style={{ color: TEXT_CHARCOAL }}>{current?.description}</p>
-
-                  <div className="mt-auto grid grid-cols-3 gap-3">
-                    {(current?.tags || []).map((tag, i) => {
-                      const [l1, ...rest] = tag.split(' ')
-                      return (
-                        <div key={i} className="flex flex-col items-start gap-2.5">
-                          <Sparkles className="h-5 w-5" strokeWidth={1.5} style={{ color: DEEP_NAVY }} />
-                          <p className="m-0 text-[13px] font-semibold leading-snug" style={{ color: DEEP_NAVY }}>
-                            {l1}<br />{rest.join(' ')}
-                          </p>
-                        </div>
-                      )
-                    })}
-                  </div>
                 </div>
               </FadeUp>
 
@@ -1255,7 +1231,7 @@ export default function ProjectBanner({ project }) {
       )}
 
       {/* ================= Floor Plans ================= */}
-      {floorPlanTabs.length > 0 && (
+      {(floorPlanTabs.length > 0 || hasFloorPlanBlocks) && (
         <section ref={floorPlansRef} className="relative w-full overflow-hidden bg-white px-5 py-16 sm:px-8 md:px-10 lg:px-14 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(15,58,107,0.05),transparent_60%)]" />
 
@@ -1297,18 +1273,79 @@ export default function ProjectBanner({ project }) {
             </FadeUp>
 
             <div className="min-w-0">
+              {/* ============ BLOCK SELECTOR (nested mode only) ============ */}
+              {hasFloorPlanBlocks && (
+                <div className="mb-8">
+                  <p className="m-0 mb-3 text-[11px] font-semibold uppercase tracking-[3px]" style={{ color: TEXT_CHARCOAL, opacity: 0.55 }}>
+                    Select Block
+                  </p>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {floorPlanBlocks.map((block, i) => {
+                      const isActive = i === activeBlock
+                      return (
+                        <button
+                          key={block.id || block.label || i}
+                          onClick={() => setActiveBlock(i)}
+                          className={`relative isolate flex items-center gap-2.5 overflow-hidden rounded-2xl border px-6 py-3.5 text-[14.5px] font-semibold transition-colors duration-300 active:scale-[0.98] ${
+                            isActive
+                              ? 'border-transparent text-white shadow-[0_16px_34px_-14px_rgba(15,58,107,0.65)]'
+                              : 'border-[#D5E1ED] bg-[#F7FAFD] text-[#1f2029] hover:border-[#0F3A6B]/40 hover:bg-[#EDF4FB]'
+                          }`}
+                        >
+                          {isActive && (
+                            <motion.span
+                              layoutId="floorPlanBlockBg"
+                              transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                              className="absolute inset-0 -z-10 rounded-2xl"
+                              style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
+                            />
+                          )}
+                          <Building2 className="relative z-[1] h-[18px] w-[18px]" strokeWidth={1.75} />
+                          <span className="relative z-[1]">{block.label}</span>
+                          {block.tag && (
+                            <span
+                              className="relative z-[1] ml-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+                              style={
+                                isActive
+                                  ? { backgroundColor: 'rgba(255,255,255,0.18)', color: '#FFFFFF' }
+                                  : { backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }
+                              }
+                            >
+                              {block.tag}
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* ============ SUB TABS (unit types) ============ */}
               <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-1 rounded-md p-1" style={{ backgroundColor: LIGHT_BLUE }}>
-                  {floorPlanTabs.map((label, i) => (
-                    <button key={label} onClick={() => setActiveFloorTab(i)}
-                      className={`relative whitespace-nowrap rounded-[4px] px-8 py-3 text-[15px] font-medium transition-colors ${activeFloorTab === i ? 'text-white' : 'text-[#5a5a5a] hover:text-[#141414]'}`}>
-                      {activeFloorTab === i && (
-                        <motion.span layoutId="floorPlanTabPill" transition={{ type: 'spring', stiffness: 400, damping: 34 }}
-                          className="absolute inset-0 rounded-[4px] shadow-[0_10px_24px_-12px_rgba(15,58,107,0.6)]" style={{ backgroundColor: DEEP_NAVY }} />
-                      )}
-                      <span className="relative">{label}</span>
-                    </button>
-                  ))}
+                <div className="flex items-center gap-1 overflow-x-auto rounded-md p-1" style={{ backgroundColor: LIGHT_BLUE }}>
+                  {floorPlanTabs.map((label, i) => {
+                    const isActive = activeFloorTab === i
+                    return (
+                      <button
+                        key={`${activeBlock}-${label}`}
+                        onClick={() => setActiveFloorTab(i)}
+                        className={`relative whitespace-nowrap rounded-[4px] px-6 py-3 text-[14.5px] font-semibold transition-colors sm:px-8 sm:text-[15px] ${
+                          isActive ? 'text-white' : 'text-[#4a5a6a] hover:text-[#0F3A6B]'
+                        }`}
+                      >
+                        {isActive && (
+                          <motion.span
+                            layoutId="floorPlanTabPill"
+                            transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                            className="absolute inset-0 rounded-[4px] shadow-[0_10px_24px_-12px_rgba(15,58,107,0.6)]"
+                            style={{ backgroundColor: DEEP_NAVY }}
+                          />
+                        )}
+                        <span className="relative z-[1]">{label}</span>
+                      </button>
+                    )
+                  })}
                 </div>
 
                 {planCount > 0 && (

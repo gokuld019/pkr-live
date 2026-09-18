@@ -25,7 +25,7 @@ export default function AboutStats() {
     <section
       id="about"
       className="relative w-full overflow-hidden bg-cover bg-center bg-no-repeat py-14 sm:py-20 md:py-24 lg:py-30 font-sans"
-      style={{ backgroundImage: "url('/hi.jpeg')" }}
+      style={{ backgroundImage: "url('/hiii.jpeg')" }}
     >
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 md:px-8 lg:px-12">
 

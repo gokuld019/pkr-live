@@ -152,13 +152,13 @@ export default function Footer() {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-6">
+          {/* <div className="grid grid-cols-3 gap-4 sm:flex sm:items-center sm:gap-6">
             <FooterBadge icon={FileText} label={"New\nProjects"} />
             <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
             <FooterBadge icon={Percent} label={"Exclusive\nOffers"} />
             <span className="hidden h-10 w-px bg-neutral-200 sm:block" />
             <FooterBadge icon={BookOpen} label={"Expert\nInsights"} />
-          </div>
+          </div> */}
         </div>
 
         {/* Main footer grid */}

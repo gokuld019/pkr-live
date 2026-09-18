@@ -248,11 +248,6 @@ export default function ClientReviews() {
             </span>
           </div>
 
-          <div
-            className="hidden h-10 w-px md:block"
-            style={{ backgroundColor: LIGHT_BLUE_RING }}
-          />
-
           <div className="flex items-center justify-center gap-6 sm:gap-8 md:justify-start md:gap-3">
             <div className="gs-google-item flex items-center gap-2 sm:gap-3">
               <span
@@ -268,11 +263,6 @@ export default function ClientReviews() {
                 out of 5
               </span>
             </div>
-
-            <div
-              className="hidden h-10 w-px sm:block md:hidden"
-              style={{ backgroundColor: LIGHT_BLUE_RING }}
-            />
 
             <div className="gs-google-item flex flex-col items-center gap-1">
               <div className="flex items-center gap-0.5">
@@ -296,11 +286,6 @@ export default function ClientReviews() {
               </span>
             </div>
           </div>
-
-          <div
-            className="hidden h-10 w-px md:block"
-            style={{ backgroundColor: LIGHT_BLUE_RING }}
-          />
 
           <button
             className="gs-google-item group mx-auto flex w-full max-w-xs items-center justify-center gap-2 rounded-md bg-white px-6 py-3 text-[11px] font-bold tracking-widest transition-all duration-300 hover:-translate-y-0.5 sm:text-xs md:mx-0 md:w-auto"
