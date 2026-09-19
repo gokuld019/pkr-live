@@ -20,45 +20,36 @@ export default function VisionMission() {
   const lineShow = useReveal(lineRef, { amount: "some" });
 
   return (
-    <section ref={root} className="relative w-full overflow-hidden font-sans">
-      {/* Full-bleed background image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/upm.jpeg"
-          alt="Happy homeowners"
-          fill
-          priority
-          className="object-cover object-center"
-        />
-      </div>
+    <section ref={root} className="relative w-full overflow-hidden font-sans bg-white">
 
-      <div className="relative z-10 mx-auto grid min-h-[480px] max-w-[1700px] grid-cols-1 px-5 py-12 sm:min-h-[560px] sm:px-8 sm:py-16 md:px-10 md:py-20 lg:min-h-[700px] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)_minmax(0,0.5fr)] lg:py-0">
-        {/* Left copy */}
-        <div className="relative z-20 flex flex-col justify-center py-4 sm:py-6 lg:py-24">
+      {/* ========== MOBILE LAYOUT: image above, text below ========== */}
+      <div className="flex flex-col lg:hidden">
+        {/* Image block */}
+        <div className="relative h-[280px] w-full sm:h-[360px]">
+          <Image
+            src="/upm.jpeg"
+            alt="Happy homeowners"
+            fill
+            priority
+            className="object-cover object-center"
+          />
+          {/* subtle gradient bottom for blending */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/80 to-transparent" />
+        </div>
 
-          {/* Heading — Deep Navy */}
+        {/* Text block */}
+        <div className="relative z-20 -mt-6 rounded-t-[24px] bg-white px-5 pb-12 pt-8 sm:px-8 sm:pb-16 sm:pt-10">
           <SplitReveal
             text="Driven by Purpose, Built on Promise"
-            className="text-2xl font-bold uppercase leading-[1.2] tracking-tight sm:text-3xl md:text-4xl xl:text-[2.75rem] !text-[#0F3A6B]"
+            className="text-2xl font-bold uppercase leading-[1.2] tracking-tight sm:text-3xl !text-[#0F3A6B]"
           />
 
-          {/* Divider line */}
-          {/* <motion.div
-            ref={lineRef}
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: lineShow ? 1 : 0 }}
-            transition={{ duration: 1, delay: 0.4, ease: EASE }}
-            className="mt-5 h-px w-16 origin-left bg-black/30 sm:mt-6 sm:w-20"
-          /> */}
-
-          {/* Description — Text Charcoal */}
           <WordReveal
             text={DESCRIPTION}
             delay={0.1}
-            className="mt-5 max-w-full text-sm leading-[1.75] sm:mt-6 sm:max-w-md sm:text-base sm:leading-[1.85] !text-[#2D3A46]"
+            className="mt-5 max-w-full text-sm leading-[1.75] sm:mt-6 sm:text-base sm:leading-[1.85] !text-[#2D3A46]"
           />
 
-          {/* CTA Button — Deep Navy, white text, subtle rounded corners */}
           <FadeUp delay={0.2} amount={0.8} className="mt-7 sm:mt-10">
             <Link
               href="/aboutus"
@@ -69,9 +60,49 @@ export default function VisionMission() {
             </Link>
           </FadeUp>
         </div>
+      </div>
 
-        {/* Center column — empty spacer */}
-        <div className="hidden lg:block" />
+      {/* ========== DESKTOP LAYOUT: original full-bleed background ========== */}
+      <div className="relative hidden lg:block">
+        {/* Full-bleed background image */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/upm.jpeg"
+            alt="Happy homeowners"
+            fill
+            priority
+            className="object-cover object-center"
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto grid min-h-[700px] max-w-[1700px] grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)_minmax(0,0.5fr)] px-10 py-0">
+          {/* Left copy */}
+          <div className="relative z-20 flex flex-col justify-center py-24">
+            <SplitReveal
+              text="Driven by Purpose, Built on Promise"
+              className="text-4xl font-bold uppercase leading-[1.2] tracking-tight xl:text-[2.75rem] !text-[#0F3A6B]"
+            />
+
+            <WordReveal
+              text={DESCRIPTION}
+              delay={0.1}
+              className="mt-6 max-w-md text-base leading-[1.85] !text-[#2D3A46]"
+            />
+
+            <FadeUp delay={0.2} amount={0.8} className="mt-10">
+              <Link
+                href="/aboutus"
+                className="group inline-flex items-center justify-start gap-4 rounded-md bg-[#0F3A6B] px-8 py-3.5 text-sm font-semibold tracking-wide text-white shadow-md transition-all duration-300 hover:bg-[#0A2B50] hover:shadow-lg"
+              >
+                Know More
+                <ArrowRight className="h-4 w-4 shrink-0 text-white transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+            </FadeUp>
+          </div>
+
+          {/* Center spacer */}
+          <div />
+        </div>
       </div>
     </section>
   );

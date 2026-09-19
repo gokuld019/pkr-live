@@ -1063,16 +1063,21 @@ export default function FloatingWidgets() {
 
       <EnquireModal open={enquireOpen} onClose={() => setEnquireOpen(false)} presetType={enquirePreset} />
 
-      <div className="fixed bottom-6 right-5 z-[9998] flex flex-col items-end gap-3 mb-15">
+      {/* Floating chat trigger + preview bubble (responsive sizing) */}
+      <div className="fixed bottom-5 right-4 z-[9998] flex flex-col items-end gap-2.5 sm:bottom-6 sm:right-5 sm:gap-3">
         {showPreview && !chatOpen && (
-          <div className="relative flex max-w-[240px] mr-18 mb-[-70] items-center gap-2 rounded-2xl bg-white px-4 py-3 shadow-[0_6px_20px_rgba(0,0,0,0.18)]">
-            <button onClick={() => setShowPreview(false)} aria-label="Dismiss" className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white">
+          <div className="relative flex max-w-[200px] items-center gap-2 rounded-2xl bg-white px-3 py-2 shadow-[0_6px_20px_rgba(0,0,0,0.18)] sm:max-w-[240px] sm:px-4 sm:py-3">
+            <button
+              onClick={() => setShowPreview(false)}
+              aria-label="Dismiss"
+              className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white"
+            >
               <X className="h-3 w-3" strokeWidth={2.5} />
             </button>
             <span className="mt-0.5 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400" />
             <div>
-              <div className="text-sm font-bold" style={{ color: DEEP_NAVY }}>We&apos;re Online!</div>
-              <div className="text-[13px]" style={{ color: TEXT_CHARCOAL }}>How may I assist you today?</div>
+              <div className="text-[12px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>We&apos;re Online!</div>
+              <div className="text-[11px] sm:text-[13px]" style={{ color: TEXT_CHARCOAL }}>How may I assist you today?</div>
             </div>
           </div>
         )}
@@ -1080,10 +1085,10 @@ export default function FloatingWidgets() {
         <button
           aria-label="Open chat assistant"
           onClick={handleChatToggle}
-          className="relative flex h-[62px] w-[62px] items-center justify-center overflow-hidden rounded-full shadow-[0_10px_28px_-6px_rgba(15,58,107,0.55)] ring-[2.5px] ring-white transition-transform hover:scale-105"
+          className="relative flex h-[48px] w-[48px] items-center justify-center overflow-hidden rounded-full shadow-[0_10px_28px_-6px_rgba(15,58,107,0.55)] ring-[2px] ring-white transition-transform hover:scale-105 sm:h-[62px] sm:w-[62px] sm:ring-[2.5px]"
           style={{ background: `linear-gradient(135deg, ${DEEP_NAVY_LIGHT}, ${DEEP_NAVY_DARK})` }}
         >
-          <div className="flex h-[52px] w-[52px] items-center justify-center overflow-hidden rounded-full bg-white">
+          <div className="flex h-[40px] w-[40px] items-center justify-center overflow-hidden rounded-full bg-white sm:h-[52px] sm:w-[52px]">
             <img src={LOGO_URL} alt="Chat" className="h-full w-full object-cover" />
           </div>
         </button>
@@ -1091,7 +1096,7 @@ export default function FloatingWidgets() {
 
       {chatOpen && (
         <div
-          className="fixed bottom-[104px] right-5 z-[9999] flex h-[600px] w-[400px] max-w-[calc(100vw-40px)] max-h-[82vh] flex-col overflow-hidden rounded-[22px] shadow-[0_24px_60px_-16px_rgba(15,58,107,0.35)] ring-1 ring-black/[0.04] max-[480px]:right-3 max-[480px]:bottom-[92px] max-[480px]:w-[calc(100vw-24px)]"
+          className="fixed bottom-[72px] right-4 z-[9999] flex h-[70vh] max-h-[70vh] w-[340px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[22px] shadow-[0_24px_60px_-16px_rgba(15,58,107,0.35)] ring-1 ring-black/[0.04] sm:bottom-[104px] sm:right-5 sm:h-[600px] sm:max-h-[82vh] sm:w-[400px] sm:max-w-[calc(100vw-40px)] max-[480px]:right-3 max-[480px]:bottom-[76px] max-[480px]:w-[calc(100vw-24px)]"
           style={{ backgroundColor: LIGHT_BLUE_SOFT }}
         >
           <div className="relative flex items-center justify-between px-5 py-4" style={{ background: `linear-gradient(135deg, ${DEEP_NAVY_LIGHT} 0%, ${DEEP_NAVY_DARK} 100%)` }}>

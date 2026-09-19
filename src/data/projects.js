@@ -17,6 +17,7 @@ export const projects = [
     tagline: "Thoughtfully planned homes in the heart of Guduvancheri",
     location: "Guduvancheri, Chennai",
     heroImage: "/gurudevv.jpg",
+    heroImageMobile: "/gurudevmob.jpeg",
     aboutImage: "/g.png",
 
     eyebrow: "MORE THAN JUST A HOME",
@@ -64,130 +65,290 @@ export const projects = [
     floorPlansDescription:
       "Smartly designed 1 & 2 BHK apartments with efficient layouts, abundant natural light and optimal space utilisation — available as both East and West facing units.",
     floorPlansCtaLabel: "VIEW ALL PLANS",
-    floorPlansCtaHref: "/projects/gurudev/floor-plans",
-    floorPlanTabs: ["1 BHK", "2 BHK"],
-    floorPlans: [
+    floorPlansCtaHref: "#floor-plans",
+
+    // ---------- Nested Block structure (same UI as Privana) ----------
+    floorPlanBlocks: [
       {
-        id: "1bhk-flat3",
-        image: "/floorplans/1bhk1.webp",
-        title: "1 BHK + 1T · West Facing",
-        area: "425 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-3.pdf",
-        features: [
-          { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Toilet" },
-          { icon: "living", label: "Living Room / Kitchen" },
-        ],
-      },
-      {
-        id: "1bhk-flat4",
-        image: "/floorplans/1bhk2.webp",
-        title: "1 BHK + 1T · West Facing",
-        area: "419 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-4.pdf",
-        features: [
-          { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Toilet" },
-          { icon: "living", label: "Living Room / Kitchen" },
-        ],
-      },
-      {
-        id: "1bhk-flat5",
-        image: "/floorplans/1bhk3.webp",
-        title: "1 BHK + 1T · West Facing",
-        area: "491 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-5.pdf",
-        features: [
-          { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Toilet" },
-          { icon: "living", label: "Living Room / Kitchen" },
-        ],
-      },
-      {
-        id: "1bhk-flat6",
-        image: "/floorplans/1bhk1.webp",
-        title: "1 BHK + 1T · West Facing",
-        area: "391 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-6.pdf",
-        features: [
-          { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Toilet" },
-          { icon: "living", label: "Living Room / Kitchen" },
-        ],
-      },
-      {
-        id: "1bhk-flat8",
-        image: "/floorplans/1bhk2.webp",
-        title: "1 BHK + 1T · East Facing",
-        area: "460 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-8.pdf",
-        features: [
-          { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Toilet" },
-          { icon: "living", label: "Living Room / Kitchen" },
-        ],
-      },
-      {
-        id: "1bhk-flat9",
-        image: "/floorplans/1bhk3.webp",
-        title: "1 BHK + 1T · East Facing",
-        area: "440 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-9.pdf",
-        features: [
-          { icon: "bed", label: "1 Bedroom" },
-          { icon: "bath", label: "1 Toilet" },
-          { icon: "living", label: "Living Room / Kitchen" },
-        ],
-      },
-      {
-        id: "2bhk-flat1",
-        image: "/floorplans/2bhk-1.webp",
-        title: "2 BHK + 2T · East Facing",
-        area: "730 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-1.pdf",
-        features: [
-          { icon: "bed", label: "2 Bedrooms" },
-          { icon: "bath", label: "2 Toilets" },
-          { icon: "living", label: "Living cum Dining" },
-        ],
-      },
-      {
-        id: "2bhk-flat2",
-        image: "/floorplans/2bhk-1.webp",
-        title: "2 BHK + 2T · East Facing",
-        area: "732 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-2.pdf",
-        features: [
-          { icon: "bed", label: "2 Bedrooms" },
-          { icon: "bath", label: "2 Toilets" },
-          { icon: "living", label: "Living cum Dining" },
-        ],
-      },
-      {
-        id: "2bhk-flat10",
-        image: "/floorplans/2bhk-1.webp",
-        title: "2 BHK + 2T · West Facing",
-        area: "730 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-10.pdf",
-        features: [
-          { icon: "bed", label: "2 Bedrooms" },
-          { icon: "bath", label: "2 Toilets" },
-          { icon: "living", label: "Living cum Dining" },
-        ],
-      },
-      {
-        id: "2bhk-flat11",
-        image: "/floorplans/2bhk-1.webp",
-        title: "2 BHK + 2T · West Facing",
-        area: "732 Sq.Ft.",
-        href: "/floor-plans/gurudev/flat-11.pdf",
-        features: [
-          { icon: "bed", label: "2 Bedrooms" },
-          { icon: "bath", label: "2 Toilets" },
-          { icon: "living", label: "Living cum Dining" },
+        id: "gurudev-block-a",
+        label: "Gurudev",
+        tag: "Ready to Move",
+        tabs: ["1 BHK", "2 BHK"],
+        plans: [
+          // ============================
+          // 1 BHK — West Facing
+          // ============================
+          {
+            id: "g-1bhk-1t1",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T1.jpeg",
+            title: "1 BHK + 1T · West Facing",
+            type: "1 BHK",
+            area: "425 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-3.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t2",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T2.jpeg",
+            title: "1 BHK + 1T · West Facing",
+            type: "1 BHK",
+            area: "419 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-4.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t3",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T3.jpeg",
+            title: "1 BHK + 1T · West Facing",
+            type: "1 BHK",
+            area: "491 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-5.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t4",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T4.jpeg",
+            title: "1 BHK + 1T · West Facing",
+            type: "1 BHK",
+            area: "391 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-6.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t5",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T5.jpeg",
+            title: "1 BHK + 1T · West Facing",
+            type: "1 BHK",
+            area: "460 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-7.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t6",
+            image: "/floorplans/gurudev/1bhk1t/1bhk -1T6.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-8.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t7",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T7.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-9.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t8",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T8.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-10.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t9",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T9.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-11.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t10",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T10.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-12.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t11",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T11.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-13.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t12",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T12.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-14.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t13",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T13.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-15.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t14",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T14.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-16.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t15",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T15.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-17.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t16",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T16.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-18.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t17",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T17.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-19.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "g-1bhk-1t18",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T18.jpeg",
+            title: "1 BHK + 1T · East Facing",
+            type: "1 BHK",
+            area: "440 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-20.pdf",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+
+          // ============================
+          // 2 BHK + 2T
+          // ============================
+          {
+            id: "g-2bhk-2t1",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
+            title: "2 BHK + 2T · East Facing",
+            type: "2 BHK",
+            area: "730 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-1.pdf",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "g-2bhk-2t2",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T2.jpeg",
+            title: "2 BHK + 2T · West Facing",
+            type: "2 BHK",
+            area: "732 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-2.pdf",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
         ],
       },
     ],
+
+    // Fallback flat tabs (used only if floorPlanBlocks is removed)
+    floorPlanTabs: [],
+    floorPlans: [],
 
     galleryHeading: ["A Glimpse", "Into Your", "Tomorrow"],
     galleryCtaHref: "#gallery",
@@ -363,8 +524,8 @@ export const projects = [
     tourDescription:
       "Take a virtual tour and explore the spaces, views and lifestyle that await you. Get a real feel of Gurudev from anywhere, anytime.",
     tourCtaLabel: "Start 360° Tour",
-    tourThumbnail: "/gurudevthumb.png", // preview image shown on the page
-    tour360Image: "/360.png",    // equirectangular (2:1) panorama for the viewer
+    tourThumbnail: "/gurudevthumb.png",
+    tour360Image: "/360.png",
     tourUrl: "https://example.com/gurudev-360-tour",
     tourTagline: ["See it,", "Feel it,", "Live it."],
 
@@ -383,8 +544,9 @@ export const projects = [
     name: "Privana",
     tagline: "Modern living, thoughtfully designed for the way you live today",
     location: "Chennai, Tamil Nadu",
-    heroImage: "/priv.jpeg",
-    aboutImage: "/priv1.png",
+    heroImage: "/upprivana.jpeg",
+    heroImageMobile: "/privmob.jpeg",
+    aboutImage: "/privabout.png",
 
     eyebrow: "MORE THAN JUST A HOME",
     heading: ["Designed for a", "Better Way of Life"],
@@ -436,12 +598,10 @@ export const projects = [
       {
         id: "block-a",
         label: "Block A",
-        tag: "Ready to Move",
+        tag: "Under construction",
         tabs: ["Studio", "1 BHK", "2 BHK", "2 BHK + 2T"],
         plans: [
-          // ============================
           // Studio
-          // ============================
           {
             id: "a-studio-105",
             image: "/floorplans/privana/studio/A105.webp",
@@ -495,9 +655,7 @@ export const projects = [
             ],
           },
 
-          // ============================
           // 1 BHK
-          // ============================
           {
             id: "a-1bhk-106",
             image: "/floorplans/privana/A106.webp",
@@ -564,9 +722,7 @@ export const projects = [
             ],
           },
 
-          // ============================
-          // 2 BHK (real images)
-          // ============================
+          // 2 BHK
           {
             id: "a-2bhk-107",
             image: "/floorplans/privana/2bhk/A107.webp",
@@ -659,9 +815,7 @@ export const projects = [
             ],
           },
 
-          // ============================
-          // 2 BHK + 2T (real images)
-          // ============================
+          // 2 BHK + 2T
           {
             id: "a-2bhk2t-101-501",
             image: "/floorplans/privana/2bhk 2t/A101-A501.webp",
@@ -839,9 +993,7 @@ export const projects = [
         tag: "Under Construction",
         tabs: ["1 BHK", "2 BHK 1T", "2 BHK 2T", "3 BHK"],
         plans: [
-          // ============================
-          // 1 BHK (folder: block-b/1bhk)
-          // ============================
+          // 1 BHK
           {
             id: "b-1bhk-106",
             image: "/floorplans/privana/block-b/1bhk/B106.webp",
@@ -1051,9 +1203,7 @@ export const projects = [
             ],
           },
 
-          // ============================
-          // 2 BHK 1T (folder: 2bhk 1t)
-          // ============================
+          // 2 BHK 1T
           {
             id: "b-2bhk1t-102",
             image: "/floorplans/privana/block-b/2bhk1t/B102.webp",
@@ -1120,9 +1270,7 @@ export const projects = [
             ],
           },
 
-          // ============================
-          // 2 BHK 2T (folder: block-b/2bhk2t)
-          // ============================
+          // 2 BHK 2T
           {
             id: "b-2bhk2t-101",
             image: "/floorplans/privana/block-b/2bhk2t/B101.webp",
@@ -1267,9 +1415,7 @@ export const projects = [
             ],
           },
 
-          // ============================
-          // 3 BHK (folder: 3bhk)
-          // ============================
+          // 3 BHK
           {
             id: "b-3bhk-301",
             image: "/floorplans/privana/block-b/3bhk/B104.webp",
@@ -1283,7 +1429,6 @@ export const projects = [
               { icon: "living", label: "Living cum Dining" },
             ],
           },
-
         ],
       },
     ],
@@ -1293,10 +1438,6 @@ export const projects = [
     floorPlans: [],
 
     // ---------- Master Plan (Site Plan + Parking Plan) ----------
-    // 🆕 Each tab now supports:
-    //   video → short thumbnail video shown as preview (autoplay, muted, loop)
-    //   image → full-resolution plan image opened in the lightbox on click
-    // Replace the paths below with your actual files.
     masterPlan: {
       eyebrow: "MASTER PLAN",
       heading: ["Thoughtfully Planned", "Site & Parking Layout"],
@@ -1312,14 +1453,14 @@ export const projects = [
         {
           id: "site",
           label: "Site Plan",
-          video: "/siteplan.mp4",  // 🆕 thumbnail video for Site Plan
-          image: "/siteplan.png",           // full image opened on click
+          video: "/siteplan.mp4",
+          image: "/siteplan.png",
         },
         {
           id: "parking",
           label: "Parking Plan",
-          video: "/parkingplan.mp4",   // 🆕 thumbnail video for Parking Plan
-          image: "/parkingplan.png",              // full image opened on click
+          video: "/parkingplan.mp4",
+          image: "/parkingplan.png",
         },
       ],
     },
@@ -1393,8 +1534,8 @@ export const projects = [
     tourDescription:
       "Take a virtual tour and explore the spaces, views and lifestyle that await you at Privana. Get a real feel of your future home from anywhere, anytime.",
     tourCtaLabel: "Start 360° Tour",
-    tourThumbnail: "/spykathumbnail.png", // preview image shown on the page
-    tour360Image: "/spyka360.jpeg",    // equirectangular (2:1) panorama for the viewer
+    tourThumbnail: "/spykathumbnail.png",
+    tour360Image: "/spyka360.jpeg",
     tourUrl: "https://example.com/privana-360-tour",
     tourTagline: ["See it,", "Feel it,", "Live it."],
 

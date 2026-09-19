@@ -14,18 +14,18 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  */
 const SLIDES = [
   {
-    desktop: "/banners/1.jpeg",
-    mobile: "/banners/mobile/1.jpeg",
+    desktop: "/banners/d1.jpeg",
+    mobile: "/banners/M1.jpeg",
     alt: "Radiance project view 1",
   },
   {
-    desktop: "/banners/2.jpeg",
-    mobile: "/banners/mobile/2.jpeg",
+    desktop: "/banners/d2.jpeg",
+    mobile: "/banners/M2.jpeg",
     alt: "Radiance project view 2",
   },
   {
-    desktop: "/banners/3.jpeg",
-    mobile: "/banners/mobile/3.jpeg",
+    desktop: "/banners/upd3.jpeg",
+    mobile: "/banners/M3.jpeg",
     alt: "Radiance project view 3",
   },
 ];

@@ -10,17 +10,31 @@ const MODEL_IMAGE = "/lineart.png";
 const LOGO_URL = "/logo.jpeg";
 
 const CREAM = "#FBF8F2";
-const GOLD = "#b8860b";
-const GOLD_LIGHT = "#d4a017";
-const GOLD_DARK = "#8f6a08";
-const GOLD_DEEP = "#8A6B2E";
+
+/* Modal palette — same deep navy used by the EnquireModal in
+   project-banner.jsx, so both modals are identical. The GOLD* names
+   are kept as aliases so nothing below needs renaming. */
+const DEEP_NAVY = "#0F3A6B";
+const DEEP_NAVY_HOVER = "#0A2B50";
+const DEEP_NAVY_DARK = "#0A2B50";
+const LIGHT_BLUE_SOFT = "#F0F6FC";
+
+const GOLD = DEEP_NAVY;
+const GOLD_LIGHT = "#4A6FA5";
+const GOLD_DARK = DEEP_NAVY_DARK;
+const GOLD_DEEP = DEEP_NAVY_DARK;
 
 const ENQUIRY_API = "https://api.crazystory.in/api/submit-enquiry";
 const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
 
 const EASE = [0.22, 1, 0.36, 1];
 
-const LINES = ["Crafting Your Perfect", "Space"];
+/* Headline stays on ONE line. It's split into words only so they can
+   stagger in — the row is `whitespace-nowrap`, so it never breaks.
+   Font size is driven by vw (not the container), and the text is about
+   13em wide, so ~5.9vw keeps it inside the viewport at every width
+   while still capping at 4rem on large screens. */
+const HEADLINE_WORDS = ["Crafting", "Your", "Perfect", "Space"];
 
 /* ------------------------------------------------------------------ */
 /*  ENQUIRE MODAL — identical to FloatingWidgets version               */
@@ -128,8 +142,8 @@ function EnquireModal({ open, onClose, presetType }) {
   };
 
   const inputClass = (field) =>
-    `w-full rounded-xl border bg-[#faf8f3] px-4 py-3 text-[14px] text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-[#b8860b]/15 ${
-      fieldErrors[field] ? "border-red-400 focus:border-red-500" : "border-gray-200 focus:border-[#b8860b]"
+    `w-full rounded-xl border bg-[#F7FAFD] px-4 py-3 text-[14px] text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-[#0F3A6B]/15 ${
+      fieldErrors[field] ? "border-red-400 focus:border-red-500" : "border-gray-200 focus:border-[#0F3A6B]"
     }`;
 
   return (
@@ -302,29 +316,30 @@ export default function PromiseHeroBanner() {
 
         {/* Copy block — now centered */}
         <div className="absolute inset-0 z-30 flex items-center justify-center">
-          <div className="w-full px-6 text-center sm:px-12 md:px-16 lg:px-24">
-            <div className="mx-auto max-w-[700px]">
+          <div className="w-full px-4 text-center sm:px-8">
+            <div className="mx-auto max-w-[1200px]">
               <h1
-                className="leading-[1.1] tracking-[-0.01em] sm:leading-[1.05]"
+                className="whitespace-nowrap leading-[1.15] tracking-[-0.01em]"
                 style={{
-                  fontSize: "clamp(2.2rem, 8vw, 4.4rem)",
+                  fontSize: "clamp(1.35rem, 5.9vw, 4rem)",
                   color: CREAM,
                   fontWeight: 300,
                 }}
               >
-                {LINES.map((line, i) => (
+                {HEADLINE_WORDS.map((word, i) => (
                   <motion.span
-                    key={line}
-                    className="block"
+                    key={word}
+                    className="inline-block"
+                    style={{ marginRight: i === HEADLINE_WORDS.length - 1 ? 0 : "0.26em" }}
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{
                       duration: 0.9,
                       ease: EASE,
-                      delay: 0.2 + i * 0.12,
+                      delay: 0.2 + i * 0.09,
                     }}
                   >
-                    {line}
+                    {word}
                   </motion.span>
                 ))}
               </h1>

@@ -63,7 +63,7 @@ const PROJECTS = [
     units: "186 Units",
     completion: "JUN 2028",
     completionDate: "2028-06-30T23:59:59",
-    image: "/PRVANA.png",
+    image: "/uppriv.png",
   },
 ];
 

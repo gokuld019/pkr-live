@@ -353,8 +353,24 @@ export default function ChannelPartnersHero() {
   return (
     <section className={`relative w-full ${figtree.className}`}>
       {/* Hero Image */}
-     <section className="relative flex min-h-[750px] w-full bg-white mt-10" >
-        <div className="relative flex flex-[1.6] items-center justify-center overflow-hidden bg-[#333] bg-cover bg-center"  style={{ backgroundImage: `url(/cp.jpg)`  }} />
+      <section className="relative w-full bg-white">
+        {/* Mobile-only banner — fixed 380 x 700px, centered, across all mobile screens */}
+        <div className="block sm:hidden w-full flex justify-center bg-white">
+          <div
+            className="relative bg-[#333] bg-cover bg-center"
+            style={{ backgroundImage: `url(/cpmob.jpeg)`, width: "380px", height: "700px", maxWidth: "100%" }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
+          </div>
+        </div>
+
+        {/* Tablet & up banner */}
+        <div
+          className="hidden sm:flex relative w-full h-[420px] md:h-[560px] lg:h-[680px] xl:h-[750px] 2xl:h-[860px] bg-[#333] bg-cover bg-center overflow-hidden"
+          style={{ backgroundImage: `url(/cp.jpg)` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent" />
+        </div>
       </section>
 
       {/* Why Partner Section */}
