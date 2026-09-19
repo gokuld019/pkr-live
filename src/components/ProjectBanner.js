@@ -12,7 +12,7 @@ import {
   ShieldCheck, Waves, Landmark, Baby, Gamepad2, Zap, Heart, ShoppingBag, Trees,
   ArrowUpDown, Recycle, Car, Sun, LayoutGrid, ZoomIn, ZoomOut, Toilet, CookingPot,
   Fence, Navigation, Coins, Home, Phone, Navigation2, Move3d, Compass, RefreshCw,
-  Send, Check, AlertTriangle,
+  Send, Check, AlertTriangle, MapPinned, ParkingSquare, PlayCircle, Expand,
 } from 'lucide-react'
 
 const figtree = Figtree({
@@ -155,9 +155,14 @@ function splitPlanTitle(plan) {
   return { config: plan?.config || config, facing: plan?.facing || rest.join(' · ') }
 }
 
+/**
+ * Returns the numeric part of an area string ("1,024 Sq.Ft" -> "1,024").
+ * If the value has no digits at all (empty, "-", "—", "N/A"), returns ''
+ * so the caller can skip rendering instead of showing a stray dash.
+ */
 function parseArea(area = '') {
-  const match = String(area).match(/[\d,.]+/)
-  return match ? match[0] : area
+  const match = String(area).match(/[\d][\d,.]*/)
+  return match ? match[0] : ''
 }
 
 function getPlanRooms(plan) {
@@ -235,6 +240,12 @@ function PlotCell({ children, divider = true }) {
       {children}
     </div>
   )
+}
+
+const masterPlanIconMap = { site: MapPinned, parking: ParkingSquare }
+
+function getMasterPlanIcon(id = '') {
+  return masterPlanIconMap[id] || MapPinned
 }
 
 /* ==================================================================
@@ -575,7 +586,7 @@ function usePanoramaViewer(containerRef, imageSrc, active) {
     let isDragging = false
     let lastX = 0
     let lastY = 0
-    let lon = 0
+    let lon = -90 // Start looking at the center of the image
     let lat = 0
     let targetFov = INITIAL_FOV
     let currentFov = INITIAL_FOV
@@ -659,7 +670,7 @@ function usePanoramaViewer(containerRef, imageSrc, active) {
     window.addEventListener('resize', onResize)
 
     stateRef.current.setZoom = (delta) => { targetFov = Math.max(MIN_FOV, Math.min(MAX_FOV, targetFov + delta)) }
-    stateRef.current.resetZoom = () => { targetFov = INITIAL_FOV; lon = 0; lat = 0 }
+    stateRef.current.resetZoom = () => { targetFov = INITIAL_FOV; lon = -90; lat = 0 }
     stateRef.current.getFov = () => currentFov
 
     return () => {
@@ -719,6 +730,9 @@ function Panorama360Modal({ open, onClose, imageSrc, title, subtitle }) {
           style={{ fontFamily: FONT }}
         >
           <div ref={containerRef} className="absolute inset-0 cursor-grab select-none active:cursor-grabbing" style={{ touchAction: 'none' }} />
+
+          {/* Subtle vignette overlay for modern look */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.4)_100%)]" />
 
           {error && (
             <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-[#0a0a0a] px-6 text-center">
@@ -845,7 +859,6 @@ export default function ProjectBanner({ project }) {
   const [activeFloorTab, setActiveFloorTab] = useState(0)
   const [activePlanIndex, setActivePlanIndex] = useState(0)
   const [planZoom, setPlanZoom] = useState(false)
-  const [likedPlans, setLikedPlans] = useState({})
   const pendingPlanIndex = useRef(null)
   const floorPlansRef = useRef(null)
   const floorPlansInView = useInView(floorPlansRef, { once: true, margin: '-100px' })
@@ -889,6 +902,37 @@ export default function ProjectBanner({ project }) {
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow }
   }, [floorLightboxOpen])
 
+  /* ================= MASTER PLAN — Site Plan / Parking Plan ================= */
+  const masterPlan = project?.masterPlan || null
+  const masterPlanTabs = masterPlan?.tabs?.length ? masterPlan.tabs : []
+  const hasMasterPlan = masterPlanTabs.length > 0
+  const [activeMasterTab, setActiveMasterTab] = useState(0)
+  const [masterZoom, setMasterZoom] = useState(false)
+  const [masterLightboxOpen, setMasterLightboxOpen] = useState(false)
+  const [masterLightboxZoom, setMasterLightboxZoom] = useState(1)
+  const masterPlanRef = useRef(null)
+  const masterPlanInView = useInView(masterPlanRef, { once: true, margin: '-100px' })
+  const currentMasterTab = masterPlanTabs[activeMasterTab]
+
+  const openMasterLightbox = useCallback(() => {
+    setMasterLightboxZoom(1)
+    setMasterLightboxOpen(true)
+  }, [])
+
+  useEffect(() => {
+    if (!masterLightboxOpen) return
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMasterLightboxOpen(false)
+      if (e.key === '+' || e.key === '=') setMasterLightboxZoom((z) => Math.min(4, z + 0.25))
+      if (e.key === '-') setMasterLightboxZoom((z) => Math.max(0.5, z - 0.25))
+      if (e.key === '0') setMasterLightboxZoom(1)
+    }
+    window.addEventListener('keydown', onKey)
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow }
+  }, [masterLightboxOpen])
+
   const plotTabs = project?.plotPricingTabs?.length ? project.plotPricingTabs : DEFAULT_PLOT_TABS
   const plotRows = project?.plotPricing?.length ? project.plotPricing : DEFAULT_PLOT_PRICING
   const [plotFilter, setPlotFilter] = useState('all')
@@ -917,8 +961,11 @@ export default function ProjectBanner({ project }) {
   const factsCount = quickFacts.length
   const lastRowStart = factsCount - (factsCount % 2 === 0 ? 2 : 1)
   const { config: selectedConfig, facing: selectedFacing } = splitPlanTitle(selectedPlan)
-  const panoramaSrc = project.tourImage
-  const tour360Thumbnails = project.tour360Thumbnails?.length ? project.tour360Thumbnails : project.tourImage ? [project.tourImage] : []
+  const selectedPlanArea = parseArea(selectedPlan?.area)
+
+  // ============ 360° TOUR — separate thumbnail + panorama per project ============
+  const panoramaSrc = project.tour360Image || project.tourImage
+  const tourThumbnail = project.tourThumbnail || project.tourImage || project.tour360Image
 
   return (
     <div className={figtree.className} style={{ fontFamily: FONT }}>
@@ -983,14 +1030,14 @@ export default function ProjectBanner({ project }) {
                   return (
                     <div
                       key={i}
-                      className={`flex items-center gap-5 border-b border-[#E8EFF7] py-7 ${isLastRow ? 'sm:border-b-0' : ''} ${i === factsCount - 1 ? 'border-b-0' : ''} ${isRight ? 'sm:pl-6' : 'sm:pr-4'}`}
+                      className={`flex items-start gap-4 border-b border-[#E8EFF7] py-7 ${isLastRow ? 'sm:border-b-0' : ''} ${i === factsCount - 1 ? 'border-b-0' : ''} ${isRight ? 'sm:pl-6' : 'sm:pr-4'}`}
                     >
-                      <span className="flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE }}>
-                        <FactIcon className="h-7 w-7" strokeWidth={1.5} style={{ color: DEEP_NAVY }} />
+                      <span className="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-2xl" style={{ backgroundColor: LIGHT_BLUE }}>
+                        <FactIcon className="h-6 w-6" strokeWidth={1.5} style={{ color: DEEP_NAVY }} />
                       </span>
-                      <div className="min-w-0">
-                        <p className="m-0 mb-1.5 text-[14px]" style={{ color: TEXT_CHARCOAL, opacity: 0.75 }}>{fact.label}</p>
-                        <p className="m-0 break-words text-[16px] font-semibold leading-snug" style={{ color: DEEP_NAVY }}>{fact.value}</p>
+                      <div className="min-w-0 pt-1">
+                        <p className="m-0 mb-1.5 text-[12.5px] font-semibold uppercase tracking-[1.5px]" style={{ color: TEXT_CHARCOAL, opacity: 0.55 }}>{fact.label}</p>
+                        <p className="m-0 break-words text-[17px] font-bold leading-snug" style={{ color: DEEP_NAVY }}>{fact.value}</p>
                       </div>
                     </div>
                   )
@@ -1047,7 +1094,6 @@ export default function ProjectBanner({ project }) {
                         <span className={`text-[13px] font-semibold leading-snug`} style={{ color: isActive ? '#141414' : TEXT_CHARCOAL }}>
                           {tab.title}
                         </span>
-                        <span className={`h-[2px] w-6 rounded-full transition-colors duration-300`} style={{ backgroundColor: isActive ? DEEP_NAVY : 'transparent' }} />
                       </button>
                     )
                   })}
@@ -1066,23 +1112,20 @@ export default function ProjectBanner({ project }) {
 
               <FadeUp delay={0.15}>
                 <div className="relative h-[340px] w-full overflow-hidden rounded-2xl bg-[#1a1a1a] shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] sm:h-[420px] md:h-[480px]">
-                  <AnimatePresence mode="wait">
+                  <AnimatePresence>
                     <motion.img
                       key={`${activeAmenity}-${amenityImgIndex}`}
                       src={current?.gallery?.[amenityImgIndex] || current?.image}
                       alt={current?.title}
-                      initial={{ opacity: 0, scale: 1.02 }}
+                      initial={{ opacity: 0, scale: 1.04 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.5, ease: EASE }}
+                      exit={{ opacity: 0, scale: 1.02 }}
+                      transition={{ duration: 0.6, ease: EASE }}
                       className="absolute inset-0 h-full w-full object-cover"
                     />
                   </AnimatePresence>
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-                  <span className="absolute bottom-5 left-5 rounded-full bg-black/70 px-3 py-1.5 text-[12px] font-semibold tabular-nums text-white backdrop-blur">
-                    {String(amenityImgIndex + 1).padStart(2, '0')} / {String(amenityGalleryCount).padStart(2, '0')}
-                  </span>
                   <span className="absolute bottom-5 right-5 rounded-full bg-black/70 px-4 py-1.5 text-[13px] font-semibold text-white backdrop-blur">{current?.title}</span>
 
                   <IconCircleButton onClick={goPrevAmenityTab} ariaLabel="Previous amenity" variant="light" className="!absolute !left-5 !top-1/2 !-translate-y-1/2 sm:!left-7">
@@ -1418,13 +1461,11 @@ export default function ProjectBanner({ project }) {
                           <h3 className="m-0 text-[24px] font-semibold leading-tight text-[#1f2029] sm:text-[26px]">
                             {selectedFacing || activeTabLabel}
                           </h3>
-                          {selectedPlan?.area && (
-                            <div className="flex items-stretch gap-5">
-                              <span className="w-px bg-[#D5E1ED]" />
-                              <div className="text-right">
-                                <p className="m-0 text-[40px] font-semibold leading-none" style={{ color: DEEP_NAVY }}>{parseArea(selectedPlan.area)}</p>
-                                <p className="m-0 mt-1 text-[13px]" style={{ color: TEXT_CHARCOAL }}>Sq.Ft.</p>
-                              </div>
+                          {/* Area is rendered only when the plan actually has a numeric value,
+                              so an empty/"—" area no longer shows as a stray dash. */}
+                          {selectedPlanArea && (
+                            <div className="text-right">
+                              <p className="m-0 text-[40px] font-semibold leading-none" style={{ color: DEEP_NAVY }}>{selectedPlanArea}</p>
                             </div>
                           )}
                         </div>
@@ -1441,15 +1482,10 @@ export default function ProjectBanner({ project }) {
                           })}
                         </ul>
 
-                        <div className="mt-auto flex items-center gap-4 pt-6">
+                        <div className="mt-auto pt-6">
                           <SolidButton onClick={() => openEnquire(project.name || '', 'Floor Plan')} icon={Download} fullWidth>
                             Download Floor Plan
                           </SolidButton>
-                          <button onClick={() => setLikedPlans((s) => ({ ...s, [planKey]: !s[planKey] }))} aria-label="Save plan"
-                            className="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-md border transition-all duration-300 hover:scale-[1.05] active:scale-95"
-                            style={{ borderColor: `${DEEP_NAVY}80`, color: DEEP_NAVY }}>
-                            <Heart className={`h-5 w-5 transition-colors ${likedPlans[planKey] ? 'fill-current' : ''}`} strokeWidth={1.75} />
-                          </button>
                         </div>
                       </motion.div>
                     </AnimatePresence>
@@ -1492,6 +1528,218 @@ export default function ProjectBanner({ project }) {
                   style={{ cursor: floorLightboxZoom > 1 ? 'grab' : 'default' }}>
                   <motion.img key={planKey} src={selectedPlan?.image3d || selectedPlan?.image} alt={selectedPlan?.title}
                     animate={{ scale: floorLightboxZoom }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    className="max-h-[90vh] max-w-[90vw] select-none object-contain" draggable={false} />
+                </motion.div>
+
+                <p className="absolute bottom-20 left-1/2 -translate-x-1/2 whitespace-nowrap text-[11px] tracking-wide text-white/50">
+                  Scroll to zoom · Drag to pan · ESC to close
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </section>
+      )}
+
+      {/* ================= Master Plan — Site Plan & Parking Plan ================= */}
+      {hasMasterPlan && (
+        <section ref={masterPlanRef} className="relative w-full overflow-hidden bg-white px-5 py-16 sm:px-8 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
+          <div className="pointer-events-none absolute -top-32 -right-32 h-[420px] w-[420px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
+          <div className="relative mx-auto max-w-[1500px]">
+            <div className="mb-10 flex flex-col gap-6 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
+              <div>
+                <FadeUp>
+                  <span className="mb-5 inline-block text-[12px] font-medium uppercase tracking-[3.5px]" style={{ color: DEEP_NAVY }}>
+                    {masterPlan.eyebrow || 'Master Plan'}
+                  </span>
+                </FadeUp>
+
+                <RevealText
+                  as="h2"
+                  text={<>
+                    {masterPlan.heading?.[0] || 'Thoughtfully Planned'}<br />
+                    <span style={{ color: DEEP_NAVY }}>{masterPlan.heading?.[1] || 'Site & Parking Layout'}</span>
+                  </>}
+                  className="mb-4 text-[32px] font-semibold leading-[1.12] tracking-tight text-[#1f2029] md:text-[42px] xl:text-[46px]"
+                  delay={0.1}
+                />
+
+                <FadeUp delay={0.2}>
+                  <p className="max-w-[540px] text-[15px] leading-[1.8]" style={{ color: TEXT_CHARCOAL }}>
+                    {masterPlan.description || 'Every block, driveway and green pocket is planned around ease of movement and open, breathable spaces.'}
+                  </p>
+                </FadeUp>
+              </div>
+
+              {/* Tab buttons with a small silent video preview */}
+              {masterPlanTabs.length > 1 && (
+                <FadeUp delay={0.2}>
+                  <div className="flex flex-wrap items-center gap-3">
+                    {masterPlanTabs.map((tab, i) => {
+                      const isActive = activeMasterTab === i
+                      const TabIcon = getMasterPlanIcon(tab.id)
+                      return (
+                        <button
+                          key={tab.id || tab.label}
+                          onClick={() => { setActiveMasterTab(i); setMasterZoom(false) }}
+                          className={`group relative flex items-center gap-3 overflow-hidden rounded-2xl border px-3 py-2.5 transition-all duration-300 ${
+                            isActive
+                              ? 'border-[#0F3A6B] bg-[#0F3A6B] text-white shadow-[0_16px_34px_-14px_rgba(15,58,107,0.65)]'
+                              : 'border-[#D5E1ED] bg-white text-[#1f2029] hover:border-[#0F3A6B]/40 hover:bg-[#F7FAFD]'
+                          }`}
+                        >
+                          {/* Thumbnail video (autoplay, muted, loop) */}
+                          <span className="relative flex h-12 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-black/10">
+                            {tab.video ? (
+                              <video
+                                src={tab.video}
+                                className="h-full w-full object-cover"
+                                autoPlay
+                                muted
+                                loop
+                                playsInline
+                                preload="metadata"
+                              />
+                            ) : tab.image ? (
+                              <img src={tab.image} alt="" className="h-full w-full object-cover" />
+                            ) : (
+                              <TabIcon className="h-4 w-4" strokeWidth={1.75} />
+                            )}
+                            {/* Soft inner ring instead of a heavy play overlay */}
+                            <span className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-white/25" />
+                          </span>
+
+                          <span className="flex items-center gap-2 pr-1">
+                            <TabIcon className="h-4 w-4" strokeWidth={1.75} />
+                            <span className="text-[14px] font-semibold whitespace-nowrap">{tab.label}</span>
+                          </span>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </FadeUp>
+              )}
+            </div>
+
+            {masterPlan.highlights?.length > 0 && (
+              <FadeUp delay={0.25}>
+                <div className="mb-8 flex flex-wrap gap-3">
+                  {masterPlan.highlights.map((h, i) => (
+                    <div key={i} className="flex items-center gap-2.5 rounded-2xl border border-[#E0E8F0] bg-[#F7FAFD] px-5 py-3">
+                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: DEEP_NAVY }} />
+                      <span className="text-[13px] font-semibold" style={{ color: TEXT_CHARCOAL, opacity: 0.75 }}>{h.label}</span>
+                      <span className="text-[13px] font-bold" style={{ color: DEEP_NAVY }}>{h.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </FadeUp>
+            )}
+
+            {/*
+              Main preview card — the old centre "VIEW" disc is gone.
+              The whole card is now the click target, with a slim glass
+              "Expand plan" pill anchored bottom-right so the layout stays visible.
+            */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }} animate={masterPlanInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, ease: EASE }}
+              onClick={openMasterLightbox}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMasterLightbox() } }}
+              aria-label={`View ${currentMasterTab?.label || 'plan'} full screen`}
+              className="group relative h-[420px] w-full cursor-zoom-in overflow-hidden rounded-[26px] border border-black/[0.04] bg-[#F7FAFD] shadow-[0_30px_70px_-35px_rgba(0,0,0,0.22)] outline-none transition-shadow duration-500 focus-visible:ring-2 focus-visible:ring-[#0F3A6B]/40 sm:h-[520px] md:h-[600px]"
+            >
+              {/* Video / image layer */}
+              {currentMasterTab?.video ? (
+                <video
+                  key={`video-${currentMasterTab?.id || activeMasterTab}`}
+                  src={currentMasterTab.video}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="metadata"
+                />
+              ) : currentMasterTab?.image ? (
+                <img
+                  src={currentMasterTab.image}
+                  alt={currentMasterTab?.label}
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
+                />
+              ) : null}
+
+              {/* Edge-only gradients — the centre of the plan stays clean */}
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/45 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/55 to-transparent" />
+
+              {/* Top-left label */}
+              <span
+                className="pointer-events-none absolute left-6 top-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11.5px] font-bold uppercase tracking-[1.8px] text-white shadow-[0_10px_24px_-12px_rgba(15,58,107,0.7)]"
+                style={{ backgroundColor: DEEP_NAVY }}
+              >
+                {currentMasterTab?.label}
+              </span>
+
+              {/* Sleek glass expand pill — bottom right */}
+              <button
+                onClick={(e) => { e.stopPropagation(); openMasterLightbox() }}
+                aria-label={`View ${currentMasterTab?.label || 'plan'} full screen`}
+                className="absolute bottom-6 right-6 inline-flex items-center gap-2.5 rounded-full border border-white/25 bg-white/10 px-5 py-3 text-[13px] font-semibold tracking-wide text-white backdrop-blur-xl transition-all duration-300 hover:border-white/60 hover:bg-white/20 active:scale-[0.97]"
+              >
+                <Expand className="h-4 w-4" strokeWidth={2} />
+                <span className="hidden sm:inline">Expand Plan</span>
+                <span className="sm:hidden">Expand</span>
+              </button>
+
+              {/* Bottom tab dots */}
+              {masterPlanTabs.length > 1 && (
+                <div className="absolute bottom-8 left-6 flex items-center gap-1.5">
+                  {masterPlanTabs.map((tab, i) => (
+                    <button key={tab.id || tab.label} onClick={(e) => { e.stopPropagation(); setActiveMasterTab(i); setMasterZoom(false) }} aria-label={`Show ${tab.label}`}
+                      className={`h-1.5 rounded-full transition-all duration-500 ${i === activeMasterTab ? 'w-8 bg-white' : 'w-2.5 bg-white/40 hover:bg-white/70'}`} />
+                  ))}
+                </div>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Full-Screen Master Plan Lightbox — shows the actual plan image */}
+          <AnimatePresence>
+            {masterLightboxOpen && currentMasterTab && (
+              <motion.div
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
+                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+                onClick={() => setMasterLightboxOpen(false)}
+                onWheel={(e) => { e.preventDefault(); setMasterLightboxZoom((z) => Math.min(4, Math.max(0.5, z - e.deltaY * 0.0015))) }}
+              >
+                <button onClick={(e) => { e.stopPropagation(); setMasterLightboxOpen(false) }} aria-label="Close"
+                  className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20">
+                  <X className="h-5 w-5" strokeWidth={2} />
+                </button>
+
+                <div className="absolute left-5 top-6 text-[13px] font-semibold uppercase tracking-[1.5px] text-white/70 sm:left-8 sm:top-8">
+                  {currentMasterTab?.label}
+                </div>
+
+                <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/10 px-2 py-2 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => setMasterLightboxZoom((z) => Math.max(0.5, z - 0.25))} aria-label="Zoom out" className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20">
+                    <ZoomOut className="h-5 w-5" strokeWidth={1.75} />
+                  </button>
+                  <span className="min-w-[60px] text-center text-[13px] font-medium tabular-nums text-white">{Math.round(masterLightboxZoom * 100)}%</span>
+                  <button onClick={() => setMasterLightboxZoom((z) => Math.min(4, z + 0.25))} aria-label="Zoom in" className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20">
+                    <ZoomIn className="h-5 w-5" strokeWidth={1.75} />
+                  </button>
+                  <span className="mx-1 h-6 w-px bg-white/20" />
+                  <button onClick={() => setMasterLightboxZoom(1)} aria-label="Reset zoom" className="flex h-10 items-center justify-center rounded-full px-3 text-[12px] font-medium text-white transition hover:bg-white/20">
+                    Reset
+                  </button>
+                </div>
+
+                <motion.div className="flex max-h-full max-w-full items-center justify-center p-4" onClick={(e) => e.stopPropagation()}
+                  drag={masterLightboxZoom > 1} dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.1}
+                  style={{ cursor: masterLightboxZoom > 1 ? 'grab' : 'default' }}>
+                  <motion.img src={currentMasterTab?.image} alt={currentMasterTab?.label}
+                    animate={{ scale: masterLightboxZoom }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                     className="max-h-[90vh] max-w-[90vw] select-none object-contain" draggable={false} />
                 </motion.div>
 
@@ -1648,7 +1896,7 @@ export default function ProjectBanner({ project }) {
       )}
 
       {/* ================= 360 Virtual Tour ================= */}
-      {project.tourImage && (
+      {(tourThumbnail || panoramaSrc) && (
         <section ref={tourRef} className="w-full bg-white px-5 py-16 sm:px-8 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-10 lg:grid-cols-[0.75fr_1.6fr] lg:gap-14">
             <FadeUp>
@@ -1673,32 +1921,29 @@ export default function ProjectBanner({ project }) {
               <motion.div
                 initial={{ opacity: 0, scale: 0.97 }} animate={tourInView ? { opacity: 1, scale: 1 } : {}} transition={{ duration: 0.7, delay: 0.1, ease: EASE }}
                 className="relative h-[300px] w-full overflow-hidden rounded-[28px] shadow-[0_30px_80px_-30px_rgba(0,0,0,0.4)] md:h-[460px]">
-                <img src={project.tourImage} alt={`${project.name} 360 tour`} className="h-full w-full object-cover" />
+                <img src={tourThumbnail} alt={`${project.name} 360 tour`} className="h-full w-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
 
-                <button onClick={() => setTour360Open(true)} aria-label="Open panoramic view"
-                  className="group absolute left-1/2 top-1/2 flex h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-white/50 bg-black/20 text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white hover:bg-black/35 md:h-[128px] md:w-[128px]">
-                  <span className="absolute -inset-[6px] rounded-full border border-white/10" />
-                  <Play className="mb-1 h-5 w-5 fill-white" strokeWidth={0} />
-                  <span className="text-[10px] font-bold tracking-[2.5px]">360°</span>
-                </button>
+                {panoramaSrc && (
+                  <button onClick={() => setTour360Open(true)} aria-label="Open panoramic view"
+                    className="group absolute left-1/2 top-1/2 flex h-[110px] w-[110px] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center rounded-full border border-white/50 bg-black/20 text-white backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-white hover:bg-black/35 md:h-[128px] md:w-[128px]">
+                    <span className="absolute -inset-[6px] rounded-full border border-white/10" />
+                    <Play className="mb-1 h-5 w-5 fill-white" strokeWidth={0} />
+                    <span className="text-[10px] font-bold tracking-[2.5px]">360°</span>
+                  </button>
+                )}
 
                 <div className="absolute bottom-6 left-6 flex items-center gap-2 rounded-full border border-white/20 bg-black/35 px-3.5 py-2 backdrop-blur-md">
                   <Move3d className="h-3.5 w-3.5 text-white/80" strokeWidth={1.75} />
                   <span className="text-[11px] font-semibold uppercase tracking-[1.5px] text-white/85">Panoramic View</span>
                 </div>
-
-                {project.tourTagline?.length > 0 && (
-                  <div className="absolute bottom-6 right-6 text-right leading-tight text-white" style={{ fontFamily: "'Brush Script MT', cursive" }}>
-                    {project.tourTagline.map((line, i) => (<p key={i} className="m-0 text-xl italic md:text-2xl">{line}</p>))}
-                  </div>
-                )}
               </motion.div>
             </div>
           </div>
         </section>
       )}
 
+      {/* Viewer uses the dedicated 360° panorama image, NOT the thumbnail */}
       <Panorama360Modal open={tour360Open} onClose={() => setTour360Open(false)} imageSrc={panoramaSrc} title={project.name} subtitle="Panoramic View" />
 
       <EnquireModal open={enquireOpen} onClose={() => setEnquireOpen(false)} presetType={enquirePreset} projectName={enquireContext} />

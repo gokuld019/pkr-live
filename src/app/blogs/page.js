@@ -2,8 +2,10 @@
 'use client'
 
 import { useRef } from "react";
+import Link from "next/link";
 import { Figtree } from "next/font/google";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
+import { ALL_POSTS } from "@/lib/blogData";
 
 const figtree = Figtree({
   subsets: ["latin"],
@@ -15,39 +17,6 @@ const CREAM = "#FBF8F2";
 const GOLD_DEEP = "#8A6B2E";
 const NAVY = "#0F1C2E";
 const LINE = "#E8DFCB";
-
-const POSTS = [
-  {
-    id: 1,
-    categoryLabel: "Buying Guide",
-    title: "10 Things to Consider Before Buying Your First Home",
-    excerpt:
-      "Buying your first home is a big milestone. Here's a comprehensive guide to help you make the right choice.",
-    date: "Aug 25, 2025",
-    readTime: "5 min read",
-    image: "/blogpage1.png",
-  },
-  {
-    id: 2,
-    categoryLabel: "Home Inspiration",
-    title: "Modern Home Interior Trends for 2025",
-    excerpt:
-      "From minimalist designs to multi-functional spaces, explore the top interior trends shaping modern homes this year.",
-    date: "Aug 18, 2025",
-    readTime: "6 min read",
-    image: "/blogpage2.png",
-  },
-  {
-    id: 3,
-    categoryLabel: "Investment",
-    title: "Why Real Estate Continues to Be a Smart Investment",
-    excerpt:
-      "Despite market fluctuations, real estate remains one of the most reliable wealth-building options. Here's why.",
-    date: "Aug 10, 2025",
-    readTime: "4 min read",
-    image: "/blogpage3.png",
-  },
-];
 
 export default function BlogsPage() {
   const root = useRef(null);
@@ -68,8 +37,8 @@ export default function BlogsPage() {
       <section className="w-full px-4 mt-10 pb-16 sm:px-6 sm:mt-14 md:px-8 lg:px-16">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {POSTS.map((post) => (
-              <BlogCard key={post.id} post={post} />
+            {ALL_POSTS.map((post) => (
+              <BlogCard key={post.slug} post={post} />
             ))}
           </div>
         </div>
@@ -80,7 +49,8 @@ export default function BlogsPage() {
 
 function BlogCard({ post }) {
   return (
-    <div
+    <Link
+      href={`/blogs/${post.slug}`}
       className="rounded-2xl border bg-white overflow-hidden flex flex-col group cursor-pointer transition-shadow hover:shadow-md"
       style={{ borderColor: LINE }}
     >
@@ -96,7 +66,7 @@ function BlogCard({ post }) {
           className="inline-block text-[11px] font-semibold uppercase tracking-wide rounded-full px-3 py-1 mb-3 w-fit"
           style={{ backgroundColor: "#F3ECDA", color: GOLD_DEEP }}
         >
-          {post.categoryLabel}
+          {post.category}
         </span>
         <h3 className="text-base font-bold leading-snug mb-2" style={{ color: NAVY }}>
           {post.title}
@@ -118,7 +88,7 @@ function BlogCard({ post }) {
               {post.readTime}
             </span>
           </div>
-          <button
+          <span
             className="w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-colors group-hover:bg-[#8A6B2E]"
             style={{ borderColor: GOLD_DEEP }}
           >
@@ -126,9 +96,9 @@ function BlogCard({ post }) {
               className="w-3.5 h-3.5 transition-colors group-hover:text-white"
               style={{ color: GOLD_DEEP }}
             />
-          </button>
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

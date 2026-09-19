@@ -30,14 +30,8 @@ export default function AboutUsPage() {
   return (
     <main className={`${figtree.className} min-h-screen relative`}>
       {/* Hero Section */}
-      <section className="w-full">
-        <div className="relative w-full h-[220px] sm:h-[300px] md:h-[420px] lg:h-[780px] flex overflow-hidden rounded-xl sm:rounded-2xl md:rounded-3xl mx-3 mt-3 sm:mx-4 sm:mt-4 md:mx-8 md:mt-8">
-          <div
-            className="flex-[1.7] relative bg-cover bg-center mr-23"
-            style={{ backgroundImage: `url(/a01.jpeg)` }}
-          >
-          </div>
-        </div>
+      <section className="relative flex min-h-[750px] w-full bg-white mt-10" >
+        <div className="relative flex flex-[1.6] items-center justify-center overflow-hidden bg-[#333] bg-cover bg-center"  style={{ backgroundImage: `url(/aboutus.jpg)`  }} />
       </section>
 
       {/* Engineering Your Dream Home Section */}
@@ -176,10 +170,10 @@ export default function AboutUsPage() {
               >
                 Our Vision
               </h2>
-              <div
+              {/* <div
                 className="w-10 h-[3px] rounded-full mb-6"
                 style={{ backgroundColor: DEEP_NAVY }}
-              />
+              /> */}
               <p
                 className="text-[14px] sm:text-[15px] leading-[1.85]"
                 style={{ color: TEXT_CHARCOAL }}
@@ -243,10 +237,10 @@ export default function AboutUsPage() {
               >
                 Our Mission
               </h2>
-              <div
+              {/* <div
                 className="w-10 h-[3px] rounded-full mb-6 lg:ml-auto"
                 style={{ backgroundColor: DEEP_NAVY }}
-              />
+              /> */}
               <p
                 className="text-[14px] sm:text-[15px] leading-[1.85]"
                 style={{ color: TEXT_CHARCOAL }}

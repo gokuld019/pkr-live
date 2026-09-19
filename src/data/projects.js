@@ -1,6 +1,14 @@
 // src/data/projects.js
 // Hardcoded project data for the frontend-only stage.
 // Once the backend is ready, replace this with an API fetch (same shape).
+//
+// 360° TOUR IMAGES (per project):
+//   tourThumbnail → preview image shown on the page (any normal image, e.g. 16:9 / 3:2)
+//   tour360Image  → true equirectangular (2:1) panorama used inside the 360° viewer
+//
+// MASTER PLAN TABS (per project):
+//   video → short thumbnail video shown as preview on the tab & main card
+//   image → full-resolution plan image opened in the lightbox on click
 
 export const projects = [
   {
@@ -8,7 +16,7 @@ export const projects = [
     name: "Gurudev",
     tagline: "Thoughtfully planned homes in the heart of Guduvancheri",
     location: "Guduvancheri, Chennai",
-    heroImage: "/a01.jpeg",
+    heroImage: "/gurudevv.jpg",
     aboutImage: "/g.png",
 
     eyebrow: "MORE THAN JUST A HOME",
@@ -349,12 +357,14 @@ export const projects = [
       { label: "PSBB Millennium School CBSE", distance: "10 mins" },
     ],
 
+    // ---------- 360 Cinematic Tour ----------
     tourEyebrow: "EXPLORE BEFORE YOU BELONG",
     tourHeading: ["Experience Gurudev", "in 360°"],
     tourDescription:
       "Take a virtual tour and explore the spaces, views and lifestyle that await you. Get a real feel of Gurudev from anywhere, anytime.",
     tourCtaLabel: "Start 360° Tour",
-    tourImage: "/360.png",
+    tourThumbnail: "/gurudevthumb.png", // preview image shown on the page
+    tour360Image: "/360.png",    // equirectangular (2:1) panorama for the viewer
     tourUrl: "https://example.com/gurudev-360-tour",
     tourTagline: ["See it,", "Feel it,", "Live it."],
 
@@ -373,7 +383,7 @@ export const projects = [
     name: "Privana",
     tagline: "Modern living, thoughtfully designed for the way you live today",
     location: "Chennai, Tamil Nadu",
-    heroImage: "/privanaban.jpeg",
+    heroImage: "/priv.jpeg",
     aboutImage: "/priv1.png",
 
     eyebrow: "MORE THAN JUST A HOME",
@@ -386,7 +396,7 @@ export const projects = [
     overlayAt: "Privana",
 
     salientFeatures: [
-      "Thoughtfully designed 1, 2 & 3 BHK homes",
+      "Thoughtfully designed Studio, 1 & 2 BHK homes",
       "Multiple blocks with dedicated unit types",
       "Vaastu-compliant layouts with abundant natural light",
       "Close to schools, IT parks, hospitals and retail",
@@ -417,7 +427,7 @@ export const projects = [
 
     floorPlansHeading: ["Homes Tailored", "to Your Needs"],
     floorPlansDescription:
-      "Choose from a range of thoughtfully designed layouts across multiple blocks — from efficient studios to spacious 3 BHK homes, each crafted for comfort and functionality.",
+      "Choose from a range of thoughtfully designed layouts across multiple blocks — from efficient studios to spacious 2 BHK homes, each crafted for comfort and functionality.",
     floorPlansCtaLabel: "VIEW ALL PLANS",
     floorPlansCtaHref: "#floor-plans",
 
@@ -427,8 +437,64 @@ export const projects = [
         id: "block-a",
         label: "Block A",
         tag: "Ready to Move",
-        tabs: ["Studio", "1 BHK", "2 BHK", "2 BHK + 2T", "3 BHK"],
+        tabs: ["Studio", "1 BHK", "2 BHK", "2 BHK + 2T"],
         plans: [
+          // ============================
+          // Studio
+          // ============================
+          {
+            id: "a-studio-105",
+            image: "/floorplans/privana/studio/A105.webp",
+            title: "Studio · Unit A105",
+            type: "Studio",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "Studio Room" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living / Kitchenette" },
+            ],
+          },
+          {
+            id: "a-studio-112",
+            image: "/floorplans/privana/studio/A112.webp",
+            title: "Studio · Unit A112",
+            type: "Studio",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "Studio Room" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living / Kitchenette" },
+            ],
+          },
+          {
+            id: "a-studio-209-509",
+            image: "/floorplans/privana/studio/A209-A509.webp",
+            title: "Studio · Units A209–A509",
+            type: "Studio",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "Studio Room" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living / Kitchenette" },
+            ],
+          },
+          {
+            id: "a-studio-216-516",
+            image: "/floorplans/privana/studio/A216-A516.webp",
+            title: "Studio · Units A216–A516",
+            type: "Studio",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "Studio Room" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living / Kitchenette" },
+            ],
+          },
+
           // ============================
           // 1 BHK
           // ============================
@@ -765,67 +831,23 @@ export const projects = [
               { icon: "living", label: "Living cum Dining" },
             ],
           },
-
-          // ============================
-          // Studio (placeholder)
-          // ============================
-          {
-            id: "a-studio",
-            image: "/floorplans/1bhk1.webp",
-            title: "Studio · Block A",
-            type: "Studio",
-            area: "360 Sq.Ft.",
-            href: "#",
-            features: [
-              { icon: "bed", label: "Studio Room" },
-              { icon: "bath", label: "1 Toilet" },
-              { icon: "living", label: "Living / Kitchenette" },
-            ],
-          },
-
-          // ============================
-          // 3 BHK (placeholder)
-          // ============================
-          {
-            id: "a-3bhk",
-            image: "/floorplans/2bhk-1.webp",
-            title: "3 BHK · Block A",
-            type: "3 BHK",
-            area: "1120 Sq.Ft.",
-            href: "#",
-            features: [
-              { icon: "bed", label: "3 Bedrooms" },
-              { icon: "bath", label: "3 Toilets" },
-              { icon: "living", label: "Living cum Dining" },
-            ],
-          },
         ],
       },
       {
         id: "block-b",
         label: "Block B",
         tag: "Under Construction",
-        tabs: ["Studio", "1 BHK", "2 BHK", "2 BHK + 2T", "3 BHK"],
+        tabs: ["1 BHK", "2 BHK 1T", "2 BHK 2T", "3 BHK"],
         plans: [
+          // ============================
+          // 1 BHK (folder: block-b/1bhk)
+          // ============================
           {
-            id: "b-studio",
-            image: "/floorplans/1bhk1.webp",
-            title: "Studio · West Facing",
-            type: "Studio",
-            area: "380 Sq.Ft.",
-            href: "#",
-            features: [
-              { icon: "bed", label: "Studio Room" },
-              { icon: "bath", label: "1 Toilet" },
-              { icon: "living", label: "Living / Kitchenette" },
-            ],
-          },
-          {
-            id: "b-1bhk",
-            image: "/floorplans/1bhk3.webp",
-            title: "1 BHK · West Facing",
+            id: "b-1bhk-106",
+            image: "/floorplans/privana/block-b/1bhk/B106.webp",
+            title: "1 BHK · Unit B106",
             type: "1 BHK",
-            area: "500 Sq.Ft.",
+            area: "—",
             href: "#",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -834,11 +856,279 @@ export const projects = [
             ],
           },
           {
-            id: "b-2bhk",
-            image: "/floorplans/2bhk-1.webp",
-            title: "2 BHK · East Facing",
-            type: "2 BHK",
-            area: "745 Sq.Ft.",
+            id: "b-1bhk-108",
+            image: "/floorplans/privana/block-b/1bhk/B108.webp",
+            title: "1 BHK · Unit B108",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-109-509",
+            image: "/floorplans/privana/block-b/1bhk/B109TO 509.webp",
+            title: "1 BHK · Units B109–B509",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-110",
+            image: "/floorplans/privana/block-b/1bhk/B110.webp",
+            title: "1 BHK · Unit B110",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-111",
+            image: "/floorplans/privana/block-b/1bhk/B111.webp",
+            title: "1 BHK · Unit B111",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-112",
+            image: "/floorplans/privana/block-b/1bhk/B112.webp",
+            title: "1 BHK · Unit B112",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-114",
+            image: "/floorplans/privana/block-b/1bhk/B114 (2).webp",
+            title: "1 BHK · Unit B114",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-115",
+            image: "/floorplans/privana/block-b/1bhk/B115.webp",
+            title: "1 BHK · Unit B115",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-116",
+            image: "/floorplans/privana/block-b/1bhk/B116.webp",
+            title: "1 BHK · Unit B116",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-208-508",
+            image: "/floorplans/privana/block-b/1bhk/B208-B508.webp",
+            title: "1 BHK · Units B208–B508",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-210-510",
+            image: "/floorplans/privana/block-b/1bhk/B210-510.webp",
+            title: "1 BHK · Units B210–B510",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-211-511",
+            image: "/floorplans/privana/block-b/1bhk/b211-b511.webp",
+            title: "1 BHK · Units B211–B511",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-212-512",
+            image: "/floorplans/privana/block-b/1bhk/B212-B512.webp",
+            title: "1 BHK · Units B212–B512",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-214-514",
+            image: "/floorplans/privana/block-b/1bhk/B214-B514.webp",
+            title: "1 BHK · Units B214–B514",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-215-515",
+            image: "/floorplans/privana/block-b/1bhk/B215-B515.webp",
+            title: "1 BHK · Units B215–B515",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+          {
+            id: "b-1bhk-216-516",
+            image: "/floorplans/privana/block-b/1bhk/B216-B516.webp",
+            title: "1 BHK · Units B216–B516",
+            type: "1 BHK",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "1 Bedroom" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living Room / Kitchen" },
+            ],
+          },
+
+          // ============================
+          // 2 BHK 1T (folder: 2bhk 1t)
+          // ============================
+          {
+            id: "b-2bhk1t-102",
+            image: "/floorplans/privana/block-b/2bhk1t/B102.webp",
+            title: "2 BHK + 1T · Unit B102",
+            type: "2 BHK 1T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk1t-103",
+            image: "/floorplans/privana/block-b/2bhk1t/B103.webp",
+            title: "2 BHK + 1T · Unit B103",
+            type: "2 BHK 1T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk1t-107",
+            image: "/floorplans/privana/block-b/2bhk1t/B107.webp",
+            title: "2 BHK + 1T · Unit B107",
+            type: "2 BHK 1T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk1t-202-502",
+            image: "/floorplans/privana/block-b/2bhk1t/B202-B502.webp",
+            title: "2 BHK + 1T · Units B202–B502",
+            type: "2 BHK 1T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk1t-203-503",
+            image: "/floorplans/privana/block-b/2bhk1t/B203-B503.webp",
+            title: "2 BHK + 1T · Units B203–B503",
+            type: "2 BHK 1T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "1 Toilet" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+
+          // ============================
+          // 2 BHK 2T (folder: block-b/2bhk2t)
+          // ============================
+          {
+            id: "b-2bhk2t-101",
+            image: "/floorplans/privana/block-b/2bhk2t/B101.webp",
+            title: "2 BHK + 2T · Unit B101",
+            type: "2 BHK 2T",
+            area: "—",
             href: "#",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
@@ -847,11 +1137,11 @@ export const projects = [
             ],
           },
           {
-            id: "b-2bhk-2t",
-            image: "/floorplans/2bhk-1.webp",
-            title: "2 BHK + 2T · West Facing",
-            type: "2 BHK + 2T",
-            area: "880 Sq.Ft.",
+            id: "b-2bhk2t-105",
+            image: "/floorplans/privana/block-b/2bhk2t/B105.webp",
+            title: "2 BHK + 2T · Unit B105",
+            type: "2 BHK 2T",
+            area: "—",
             href: "#",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
@@ -860,11 +1150,132 @@ export const projects = [
             ],
           },
           {
-            id: "b-3bhk",
-            image: "/floorplans/2bhk-1.webp",
-            title: "3 BHK · East Facing",
+            id: "b-2bhk2t-113",
+            image: "/floorplans/privana/block-b/2bhk2t/B113.webp",
+            title: "2 BHK + 2T · Unit B113",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-117",
+            image: "/floorplans/privana/block-b/2bhk2t/B117.webp",
+            title: "2 BHK + 2T · Unit B117",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-118",
+            image: "/floorplans/privana/block-b/2bhk2t/B118.webp",
+            title: "2 BHK + 2T · Unit B118",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-119",
+            image: "/floorplans/privana/block-b/2bhk2t/B119.webp",
+            title: "2 BHK + 2T · Unit B119",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-201-501",
+            image: "/floorplans/privana/block-b/2bhk2t/B201-B501.webp",
+            title: "2 BHK + 2T · Units B201–B501",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-213-513",
+            image: "/floorplans/privana/block-b/2bhk2t/B213-B513.webp",
+            title: "2 BHK + 2T · Units B213–B513",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-217-517",
+            image: "/floorplans/privana/block-b/2bhk2t/B217-B517.webp",
+            title: "2 BHK + 2T · Units B217–B517",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-218-518",
+            image: "/floorplans/privana/block-b/2bhk2t/B218-B518.webp",
+            title: "2 BHK + 2T · Units B218–B518",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "b-2bhk2t-219-519",
+            image: "/floorplans/privana/block-b/2bhk2t/B219-B519.webp",
+            title: "2 BHK + 2T · Units B219–B519",
+            type: "2 BHK 2T",
+            area: "—",
+            href: "#",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+
+          // ============================
+          // 3 BHK (folder: 3bhk)
+          // ============================
+          {
+            id: "b-3bhk-301",
+            image: "/floorplans/privana/block-b/3bhk/B104.webp",
+            title: "3 BHK · Unit B301",
             type: "3 BHK",
-            area: "1180 Sq.Ft.",
+            area: "—",
             href: "#",
             features: [
               { icon: "bed", label: "3 Bedrooms" },
@@ -872,6 +1283,7 @@ export const projects = [
               { icon: "living", label: "Living cum Dining" },
             ],
           },
+
         ],
       },
     ],
@@ -880,14 +1292,46 @@ export const projects = [
     floorPlanTabs: [],
     floorPlans: [],
 
+    // ---------- Master Plan (Site Plan + Parking Plan) ----------
+    // 🆕 Each tab now supports:
+    //   video → short thumbnail video shown as preview (autoplay, muted, loop)
+    //   image → full-resolution plan image opened in the lightbox on click
+    // Replace the paths below with your actual files.
+    masterPlan: {
+      eyebrow: "MASTER PLAN",
+      heading: ["Thoughtfully Planned", "Site & Parking Layout"],
+      description:
+        "Every block, driveway and green pocket at Privana is planned around ease of movement, safety and open, breathable spaces. Explore the full site layout and the dedicated parking plan below.",
+      highlights: [
+        { label: "Site Area", value: "3.2 Acres" },
+        { label: "Open Space", value: "55%" },
+        { label: "Blocks", value: "2 (A & B)" },
+        { label: "Covered Parking", value: "140+ Cars" },
+      ],
+      tabs: [
+        {
+          id: "site",
+          label: "Site Plan",
+          video: "/siteplan.mp4",  // 🆕 thumbnail video for Site Plan
+          image: "/siteplan.png",           // full image opened on click
+        },
+        {
+          id: "parking",
+          label: "Parking Plan",
+          video: "/parkingplan.mp4",   // 🆕 thumbnail video for Parking Plan
+          image: "/parkingplan.png",              // full image opened on click
+        },
+      ],
+    },
+
     // ---------- Gallery ----------
     galleryHeading: ["A Glimpse", "Into Your", "Tomorrow"],
     galleryCtaHref: "#gallery",
     galleryFilters: ["All", "Exteriors", "Interiors", "Amenities", "Lifestyle"],
     galleryImages: [
-      { id: "p1", image: "/priv1.png", title: "Privana — Elevation", category: "Exteriors", size: "large" },
-      { id: "p2", image: "/privanaban.jpeg", title: "Privana — Entrance", category: "Exteriors", size: "small" },
-      { id: "p3", image: "/gurudev2.png", title: "Living Spaces", category: "Interiors", size: "small" },
+      { id: "p1", image: "/spyka1.png", title: "Privana — Elevation", category: "Exteriors", size: "large" },
+      { id: "p2", image: "/spyka2.png", title: "Privana — Entrance", category: "Exteriors", size: "small" },
+      { id: "p3", image: "/spyka3.png", title: "Living Spaces", category: "Interiors", size: "small" },
     ],
     gallery: ["/priv1.png", "/privanaban.jpeg", "/gurudev3.png"],
 
@@ -898,7 +1342,6 @@ export const projects = [
       { type: "Studio", count: 20, sizeRange: "360 - 380 sqft" },
       { type: "1 BHK", count: 40, sizeRange: "480 - 500 sqft" },
       { type: "2 BHK", count: 40, sizeRange: "720 - 745 sqft" },
-      { type: "3 BHK", count: 20, sizeRange: "1120 - 1180 sqft" },
     ],
     nearbyLandmarks: [
       { name: "Guduvancheri Railway Station", distance: "5 mins" },
@@ -909,10 +1352,10 @@ export const projects = [
     reraId: "TN/35/Building/0000/2025",
     brochureUrl: "/brochures/privana.pdf",
     quickFacts: [
-      { label: "Type", value: "Studio, 1, 2 & 3 BHK" },
+      { label: "Type", value: "Studio, 1 & 2 BHK" },
       { label: "Units", value: "120" },
       { label: "Floors", value: "Stilt + 5" },
-      { label: "Unit Size Range", value: "360 Sq.ft. - 1180 Sq.ft." },
+      { label: "Unit Size Range", value: "360 Sq.ft. - 880 Sq.ft." },
     ],
 
     specifications: [],
@@ -950,7 +1393,8 @@ export const projects = [
     tourDescription:
       "Take a virtual tour and explore the spaces, views and lifestyle that await you at Privana. Get a real feel of your future home from anywhere, anytime.",
     tourCtaLabel: "Start 360° Tour",
-    tourImage: "/360.png",
+    tourThumbnail: "/spykathumbnail.png", // preview image shown on the page
+    tour360Image: "/spyka360.jpeg",    // equirectangular (2:1) panorama for the viewer
     tourUrl: "https://example.com/privana-360-tour",
     tourTagline: ["See it,", "Feel it,", "Live it."],
 

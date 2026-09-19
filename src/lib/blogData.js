@@ -1,13 +1,17 @@
+// src/lib/blogData.js
 export const ALL_POSTS = [
   {
-    slug: "north-bangalore-growth-corridor",
+    slug: "how-to-plan-your-budget-before-buying-a-new-home",
     category: "REAL ESTATE",
     date: "AUG 12, 2025",
     readTime: "10 MIN READ",
-    title: "Why North Bangalore is the Next Big Growth Corridor",
+    title: "How to Plan Your Budget Before Buying a New Home?",
     excerpt:
       "From infrastructure to lifestyle, explore what makes North Bangalore a preferred choice for homebuyers and investors.",
-    image: "/Blog-1.png",
+    // Thumbnail — used on the /blogs listing page (landscape works best)
+    image: "/uPBlog-1.png",
+    // Hero — used on the detail page (any aspect ratio, no forced crop)
+    heroImage: "/bloghero.png",
     content: `
       <p>North Bangalore has quietly become one of the most talked-about growth corridors in the city, and it's not hard to see why. With the international airport nearby, expanding metro connectivity, and a steady stream of tech parks moving in, the area is attracting both homebuyers and investors in equal measure.</p>
       <p>Infrastructure is the biggest driver here. New expressways and the Peripheral Ring Road have cut travel times dramatically, making it easier to commute to the city center while still enjoying more open, less congested surroundings.</p>
@@ -16,14 +20,15 @@ export const ALL_POSTS = [
     `,
   },
   {
-    slug: "first-time-homebuyer-tips",
+    slug: "why-families-consider-villas-for-long-term-living",
     category: "HOME BUYING",
     date: "AUG 05, 2025",
     readTime: "6 MIN READ",
-    title: "5 Essential Tips for First-Time Homebuyers",
+    title: "Why Families Consider Villas for Long Term Living?",
     excerpt:
       "A complete guide to help you make confident and informed decisions on your first home purchase.",
-    image: "/Blog-2.png",
+    image: "/uPBlog-2.png",
+    heroImage: "/uPBlog-2.png",
     content: `
       <p>Buying your first home is exciting, but it's easy to feel overwhelmed by the number of decisions involved. Here are five things worth getting right from the start.</p>
       <p><strong>1. Know your real budget.</strong> Go beyond the EMI calculator — factor in registration costs, maintenance, and a buffer for unexpected expenses.</p>
@@ -34,14 +39,15 @@ export const ALL_POSTS = [
     `,
   },
   {
-    slug: "real-estate-investment-trends-2025",
+    slug: "common-mistakes-first-time-homebuyers-should-avoid",
     category: "INVESTMENT",
     date: "JUL 28, 2025",
     readTime: "7 MIN READ",
-    title: "Real Estate Investment Trends in 2025",
+    title: "Common Mistakes First-Time Homebuyers Should Avoid",
     excerpt:
       "Discover the key trends shaping the real estate market and where the best opportunities lie.",
-    image: "/Blog-3.png",
+    image: "/uPBlog-3.png",
+    heroImage: "/uPBlog-3.png",
     content: `
       <p>2025 has brought a noticeable shift in how investors approach real estate. Here's what's shaping decisions this year.</p>
       <p>Suburban and peripheral markets continue to outperform city centers in percentage growth, largely driven by infrastructure investment and hybrid work patterns that reduce the need to live close to office hubs.</p>

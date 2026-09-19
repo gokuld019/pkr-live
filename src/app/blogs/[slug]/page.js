@@ -1,3 +1,4 @@
+// src/app/blogs/[slug]/page.js
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -24,12 +25,15 @@ export default async function BlogDetailPage({ params }) {
 
   const related = ALL_POSTS.filter((p) => p.slug !== post.slug).slice(0, 2);
 
+  // Use heroImage if provided, otherwise fall back to the thumbnail
+  const coverImage = post.heroImage || post.image;
+
   return (
-    <main className={figtree.className}>
+    <main className={figtree.className} >
       {/* Top nav / back */}
       <section className="max-w-[760px] mx-auto px-5 sm:px-6 pt-10 sm:pt-16">
         {/* <Link
-          href="/"
+          href="/blogs"
           className="inline-flex items-center gap-2 text-sm font-semibold mb-8 group"
           style={{ color: GOLD_DEEP }}
         >
@@ -68,12 +72,21 @@ export default async function BlogDetailPage({ params }) {
         </div>
       </section>
 
-      {/* Cover image */}
-      {/* <section className="max-w-[900px] mx-auto px-5 sm:px-6 mt-8">
-        <div className="relative w-full h-[220px] sm:h-[340px] md:h-[420px] rounded-2xl overflow-hidden">
-          <Image src={post.image} alt={post.title} fill priority className="object-cover" />
+      {/* Cover image — natural aspect ratio, no cropping */}
+      <section className="max-w-[900px] mx-auto px-5 sm:px-6 mt-8">
+        <div className="relative w-full rounded-2xl overflow-hidden bg-neutral-100">
+          <Image
+            src={coverImage}
+            alt={post.title}
+            width={1600}
+            height={900}
+            priority
+            sizes="(max-width: 768px) 100vw, 900px"
+            className="w-full h-auto object-contain"
+            style={{ display: "block" }}
+          />
         </div>
-      </section> */}
+      </section>
 
       {/* Body */}
       <section className="max-w-[760px] mx-auto px-5 sm:px-6 py-10 sm:py-14">

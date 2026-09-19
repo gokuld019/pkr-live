@@ -46,7 +46,7 @@ const PROJECTS = [
     units: "90 Apartments",
     completion: "DEC 2026",
     completionDate: "2026-12-31T23:59:59",
-    image: "/upGurudev.png",
+    image: "/GURUDEV.png",
   },
   {
     id: 2,
@@ -63,7 +63,7 @@ const PROJECTS = [
     units: "186 Units",
     completion: "JUN 2028",
     completionDate: "2028-06-30T23:59:59",
-    image: "/upPrivana.png",
+    image: "/PRVANA.png",
   },
 ];
 
