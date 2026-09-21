@@ -1266,9 +1266,13 @@ export default function ProjectBanner({ project }) {
             </FadeUp>
           </div>
 
-          <FadeUp delay={0.15} className="relative h-full">
-            <img src={project.aboutImage} alt={project.name || 'Project'} className="h-[260px] w-full rounded-[14px] object-cover shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] sm:h-[440px] sm:rounded-[16px] md:h-[560px] lg:h-full" />
-          </FadeUp>
+         <FadeUp delay={0.15} className="relative h-full">
+  <img 
+    src={project.aboutImage} 
+    alt={project.name || 'Project'} 
+    className="h-auto w-full rounded-[14px] object-contain shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] sm:rounded-[16px]" 
+  />
+</FadeUp>
 
           <FadeUp delay={0.25} amount={0.1} className="h-full">
             <div className="relative flex h-full w-[700px] flex-col justify-center rounded-[18px] border border-[#E0E8F0] bg-white px-4 py-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.18)] sm:rounded-[22px] sm:px-6 sm:py-8 md:px-7 md:py-10">

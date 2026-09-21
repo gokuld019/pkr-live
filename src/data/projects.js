@@ -753,72 +753,71 @@ export const projects = [
     amenitiesCtaLabel: "VIEW ALL AMENITIES",
     amenitiesCtaHref: "#amenities",
     amenities: [
-        {
-        id: "Outdoor Movie Nights",
-        image: "/amenities/privana8.jpeg",
-        title: "Outdoor Movie Nights",
-        tagline: "Future Ready",
-        description:
-          "An open-air screening area where residents gather under the stars to enjoy movies, fostering a warm and connected community spirit.",
-        tags: ["EV Ready", "Parking Bay", "Future Ready"],
-      },
-      {
-        id: "Banquet Hall",
-        image: "/amenities/privana1.png",
-        title: "Banquet Hall",
-        tagline: "Rejuvenate Daily",
-        description:
-          "A sophisticated and spacious venue designed to host memorable celebrations, from grand weddings to intimate gatherings, with elegance and ease.",
-        tags: ["Leisure", "Fitness", "Relaxation"],
-      },
-      {
-        id: "club",
-        image: "/amenities/privana2.png",
-        title: "Club House",
-        tagline: "Gather & Celebrate",
-        description:
-          "A dedicated indoor space for leisure and fun, featuring games like billiards and chess for residents to unwind and connect.",
-        tags: ["Events", "Community", "Social"],
-      },
-      {
-        id: "Gym",
-        image: "/amenities/privana3.png",
-        title: "Gym",
-        tagline: "Play. Learn. Grow.",
-        description:
-          "A fully-equipped space designed to help you stay active, build strength, and reach your fitness goals without leaving the community.",
-        tags: ["Safe Play", "Kid Friendly", "Open Air"],
-      },
-      {
-        id: " Kids' Play Area",
-        image: "/amenities/privana4.png",
-        title: " Kids' Play Area",
-        tagline: "Breathe Easy",
-        description:
-          "A vibrant, safe, and thoughtfully designed indoor space where children can explore, imagine, and play freely.",
-        tags: ["Green Spaces", "Fresh Air", "Calm"],
-      },
-      {
-        id: "Elevators",
-        image: "/amenities/privana5.png",
-        title: "Elevators",
-        tagline: "Move. Recharge.",
-        description:
-          "High-speed, spacious elevators ensuring smooth and effortless access to every floor, making daily commutes comfortable for all residents.",
-        tags: ["Daily Fitness", "Full Loop", "Open Air"],
-      },
-     
-      {
-        id: "Basketball Court",
-        image: "/amenities/privana7.png",
-        title: "Basketball Court",
-        tagline: "Safe & Secure",
-        description:
-          "A well-maintained outdoor court for residents to shoot hoops, stay active, and enjoy friendly matches with neighbours.",
-        tags: ["24/7 Watch", "CCTV", "Peace of Mind"],
-      },
-    
-    ],
+  {
+    id: "Outdoor Movie Nights",
+    image: "/amenities/privana8.jpeg",
+    title: "Outdoor Movie Nights",
+    tagline: "Stories Under The Stars",
+    description:
+      "An open-air screening area where residents gather under the stars to enjoy movies, fostering a warm and connected community spirit.",
+    tags: ["Entertainment", "Community", "Open Air"],
+  },
+  {
+    id: "Banquet Hall",
+    image: "/amenities/privana1.png",
+    title: "Banquet Hall",
+    tagline: "Celebrate In Style",
+    description:
+      "A sophisticated and spacious venue designed to host memorable celebrations, from grand weddings to intimate gatherings, with elegance and ease.",
+    tags: ["Events", "Celebrations", "Elegant"],
+  },
+  {
+    id: "club",
+    image: "/amenities/privana2.png",
+    title: "Club House",
+    tagline: "Gather & Celebrate",
+    description:
+      "A dedicated indoor space for leisure and fun, featuring games like billiards and chess for residents to unwind and connect.",
+    tags: ["Events", "Community", "Social"],
+  },
+  {
+    id: "Gym",
+    image: "/amenities/privana3.png",
+    title: "Gym",
+    tagline: "Stay Fit, Stay Strong",
+    description:
+      "A fully-equipped space designed to help you stay active, build strength, and reach your fitness goals without leaving the community.",
+    tags: ["Fitness", "Strength", "Wellness"],
+  },
+  {
+    id: "Kids' Play Area",
+    image: "/amenities/privana4.png",
+    title: "Kids' Play Area",
+    tagline: "Play. Learn. Grow.",
+    description:
+      "A vibrant, safe, and thoughtfully designed indoor space where children can explore, imagine, and play freely.",
+    tags: ["Safe Play", "Kid Friendly", "Fun"],
+  },
+  {
+    id: "Elevators",
+    image: "/amenities/privana5.png",
+    title: "Elevators",
+    tagline: "Effortless Access",
+    description:
+      "High-speed, spacious elevators ensuring smooth and effortless access to every floor, making daily commutes comfortable for all residents.",
+    tags: ["Convenience", "Safety", "Accessibility"],
+  },
+  {
+    id: "Basketball Court",
+    image: "/amenities/privana7.png",
+    title: "Basketball Court",
+    tagline: "Shoot Hoops & Stay Active",
+    description:
+      "A well-maintained outdoor court for residents to shoot hoops, stay active, and enjoy friendly matches with neighbours.",
+    tags: ["Sports", "Active Lifestyle", "Outdoor"],
+  },
+],
+  
 
     floorPlansHeading: ["Homes Tailored", "to Your Needs"],
     floorPlansDescription:

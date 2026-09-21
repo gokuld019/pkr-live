@@ -360,8 +360,8 @@ export default function ClientReviews() {
             <ArrowRight className="h-5 w-5" style={{ color: DEEP_NAVY }} />
           </button>
 
-          {/* Mobile nav controls */}
-          <div className="mt-5 flex items-center justify-center gap-4 sm:mt-6 xl:hidden">
+          {/* Tablet nav controls (hidden on mobile, replaced by side arrows on xl) */}
+          <div className="mt-5 hidden items-center justify-center gap-4 sm:mt-6 sm:flex xl:hidden">
             <button
               aria-label="Previous"
               className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-md sm:h-10 sm:w-10"
