@@ -294,7 +294,7 @@ export default function ContactPage() {
               Flat A10, Archana Castle, 4/23 Patrick Church Road, St. Thomas Mount, Chennai&nbsp;&ndash;&nbsp;600&nbsp;016, Tamil Nadu, India
             </InfoRow>
             <InfoRow icon="Phone" title="Call Us">
-              +91 95436 33333
+              +91 93810 55555
             </InfoRow>
             <InfoRow icon="Mail" title="Email Us">
               pkr@pkrestates.com

@@ -295,7 +295,7 @@ export default function Footer() {
                   onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
                 >
-                  +91 95436 33333
+                  +91 93810 55555
                 </a>
               </div>
               <div className="flex items-center gap-3">

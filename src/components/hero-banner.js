@@ -30,7 +30,7 @@ const SLIDES = [
   },
 ];
 
-const AUTO_SCROLL_MS = 6000;
+const AUTO_SCROLL_MS = 5000;
 const SWIPE_THRESHOLD = 50;
 const ACCENT = "#0F3A6B";
 
@@ -178,67 +178,7 @@ export default function HeroBanner() {
 
      
 
-      {/* Arrows
-          mobile  → grouped bottom-right (never covers the photo subject)
-          md & up → vertically centered on the left / right edges */}
-      {/* <button
-        type="button"
-        onClick={prev}
-        aria-label="Previous slide"
-        className={`${ARROW_BASE} bottom-5 right-[3.75rem] sm:bottom-7 sm:right-[4.5rem] md:bottom-auto md:right-auto md:left-6 md:top-1/2 md:-translate-y-1/2 md:hover:scale-105 lg:left-10 2xl:left-16`}
-      >
-        <ChevronLeft className={`${ARROW_ICON} group-hover:-translate-x-0.5`} strokeWidth={2.25} />
-      </button>
-
-      <button
-        type="button"
-        onClick={next}
-        aria-label="Next slide"
-        className={`${ARROW_BASE} bottom-5 right-3 sm:bottom-7 sm:right-5 md:bottom-auto md:right-6 md:top-1/2 md:-translate-y-1/2 lg:right-10 2xl:right-16`}
-      >
-        <ChevronRight className={`${ARROW_ICON} group-hover:translate-x-0.5`} strokeWidth={2.25} />
-      </button> */}
-
-      {/* Slide index + progress dashes — bottom-left */}
-      {/* <div className="absolute bottom-6 left-5 z-30 flex items-center gap-3 sm:bottom-8 sm:left-8 sm:gap-4 md:left-12 lg:bottom-12 lg:left-16 2xl:bottom-16 2xl:left-24">
-        <span className="text-[11px] font-semibold tabular-nums tracking-[0.2em] text-white/80 sm:text-xs 2xl:text-sm">
-          {String(active + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
-        </span>
-
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {SLIDES.map((_, i) => {
-            const isActive = i === active;
-            return (
-              <button
-                key={i}
-                type="button"
-                onClick={() => goTo(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                aria-current={isActive}
-                className="relative flex h-6 items-center"
-              >
-                <span
-                  className="relative block h-[3px] overflow-hidden rounded-full bg-white/35 transition-all duration-500"
-                  style={{ width: isActive ? "clamp(28px, 4vw, 48px)" : "clamp(12px, 1.6vw, 18px)" }}
-                >
-                  {isActive && (
-                    <span
-                      key={`p-${active}-${paused}`}
-                      className="hero-progress absolute inset-y-0 left-0 rounded-full"
-                      style={{
-                        backgroundColor: "#FFFFFF",
-                        boxShadow: `0 0 0 0.5px ${ACCENT}`,
-                        width: paused ? "100%" : undefined,
-                        animation: paused ? "none" : `heroProgress ${AUTO_SCROLL_MS}ms linear forwards`,
-                      }}
-                    />
-                  )}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div> */}
+     
     </section>
   );
 }

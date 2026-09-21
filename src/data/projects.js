@@ -753,13 +753,22 @@ export const projects = [
     amenitiesCtaLabel: "VIEW ALL AMENITIES",
     amenitiesCtaHref: "#amenities",
     amenities: [
+        {
+        id: "Outdoor Movie Nights",
+        image: "/amenities/privana8.jpeg",
+        title: "Outdoor Movie Nights",
+        tagline: "Future Ready",
+        description:
+          "An open-air screening area where residents gather under the stars to enjoy movies, fostering a warm and connected community spirit.",
+        tags: ["EV Ready", "Parking Bay", "Future Ready"],
+      },
       {
-        id: "pool",
+        id: "Banquet Hall",
         image: "/amenities/privana1.png",
-        title: "Swimming Pool",
+        title: "Banquet Hall",
         tagline: "Rejuvenate Daily",
         description:
-          "A beautifully designed pool to cool off, swim a few laps or simply unwind at the end of a long day.",
+          "A sophisticated and spacious venue designed to host memorable celebrations, from grand weddings to intimate gatherings, with elegance and ease.",
         tags: ["Leisure", "Fitness", "Relaxation"],
       },
       {
@@ -768,63 +777,47 @@ export const projects = [
         title: "Club House",
         tagline: "Gather & Celebrate",
         description:
-          "A welcoming community space for celebrations, get-togethers and relaxed weekend gatherings with neighbours.",
+          "A dedicated indoor space for leisure and fun, featuring games like billiards and chess for residents to unwind and connect.",
         tags: ["Events", "Community", "Social"],
       },
       {
-        id: "play",
+        id: "Gym",
         image: "/amenities/privana3.png",
-        title: "Children's Play Area",
+        title: "Gym",
         tagline: "Play. Learn. Grow.",
         description:
-          "A cheerful, secure play zone where the little ones can play, explore and grow together.",
+          "A fully-equipped space designed to help you stay active, build strength, and reach your fitness goals without leaving the community.",
         tags: ["Safe Play", "Kid Friendly", "Open Air"],
       },
       {
-        id: "garden",
+        id: " Kids' Play Area",
         image: "/amenities/privana4.png",
-        title: "Landscaped Gardens",
+        title: " Kids' Play Area",
         tagline: "Breathe Easy",
         description:
-          "Lush landscaped greens woven through the community for quiet mornings, fresh air and calm evenings.",
+          "A vibrant, safe, and thoughtfully designed indoor space where children can explore, imagine, and play freely.",
         tags: ["Green Spaces", "Fresh Air", "Calm"],
       },
       {
-        id: "walk",
+        id: "Elevators",
         image: "/amenities/privana5.png",
-        title: "Walking Track",
+        title: "Elevators",
         tagline: "Move. Recharge.",
         description:
-          "A dedicated track for your daily walk, jog or evening stroll, without stepping out of the community.",
+          "High-speed, spacious elevators ensuring smooth and effortless access to every floor, making daily commutes comfortable for all residents.",
         tags: ["Daily Fitness", "Full Loop", "Open Air"],
       },
+     
       {
-        id: "games",
-        image: "/amenities/privana6.png",
-        title: "Indoor Games",
-        tagline: "Unwind Together",
-        description:
-          "A dedicated indoor space for table tennis, carrom and board games, for every age group.",
-        tags: ["Multiple Games", "All Ages", "Indoor"],
-      },
-      {
-        id: "security",
+        id: "Basketball Court",
         image: "/amenities/privana7.png",
-        title: "24/7 Security",
+        title: "Basketball Court",
         tagline: "Safe & Secure",
         description:
-          "Round-the-clock security and surveillance so your family feels safe at every hour.",
+          "A well-maintained outdoor court for residents to shoot hoops, stay active, and enjoy friendly matches with neighbours.",
         tags: ["24/7 Watch", "CCTV", "Peace of Mind"],
       },
-      {
-        id: "ev",
-        image: "/amenities/privana8.png",
-        title: "EV Charging",
-        tagline: "Future Ready",
-        description:
-          "Charging points in the parking area, ready for your electric vehicle today and tomorrow.",
-        tags: ["EV Ready", "Parking Bay", "Future Ready"],
-      },
+    
     ],
 
     floorPlansHeading: ["Homes Tailored", "to Your Needs"],

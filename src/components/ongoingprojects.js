@@ -27,7 +27,7 @@ const geist = Geist({
 const DEEP_NAVY = "#0F3A6B";
 const DEEP_NAVY_HOVER = "#0A2B50";
 const TEXT_CHARCOAL = "#2D3A46";
-const LIGHT_BLUE = "#E8F0F9"; // soft light-blue (matches your second image)
+const LIGHT_BLUE = "#E8F0F9";
 const LIGHT_BLUE_RING = "rgba(15,58,107,0.10)";
 
 const PROJECTS = [
@@ -192,7 +192,6 @@ export default function OurProjects() {
       className={`${geist.className} relative w-full py-9 sm:py-16 md:py-20`}
     >
       <div className="relative mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-10">
-        {/* Section Heading */}
         <div className="gs-head mb-7 text-center sm:mb-14">
           <div className="flex items-center justify-center gap-3">
             <span
@@ -246,25 +245,28 @@ function ProjectCard({ project }) {
   return (
     <div className="gs-card group/card overflow-hidden rounded-2xl bg-white shadow-[0_10px_40px_-14px_rgba(15,58,107,0.25)] transition-shadow duration-300 hover:shadow-[0_18px_50px_-16px_rgba(15,58,107,0.35)]">
       <div className="grid grid-cols-1 sm:grid-cols-2">
-        {/* Image — clickable */}
+        
+        {/* --- IMAGE SECTION - FIXED --- */}
         <Link
           href={href}
           aria-label={`View ${project.name} project details`}
-          className="relative block h-44 overflow-hidden sm:h-full sm:min-h-[320px] md:min-h-[360px]"
+          // Removed fixed height, added flex to center if needed
+          className="relative block w-full overflow-hidden bg-gray-50"
         >
           <Image
             src={project.image}
             alt={project.name}
-            fill
-            className="gs-img object-cover transition-transform duration-500 group-hover/card:scale-[1.04]"
+            // REMOVED: fill
+            // ADDED: width={0} height={0} sizes="100vw" to enable responsive sizing
+            width={0}
+            height={0}
+            sizes="100vw"
+            // CHANGED: object-cover to object-contain
+            // ADDED: w-full h-auto to maintain aspect ratio
+            className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04]"
           />
-          {/* <span
-            className="gs-badge absolute right-0 top-4 rounded-l-md px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-white sm:top-5 sm:px-4 sm:text-xs"
-            style={{ backgroundColor: DEEP_NAVY }}
-          >
-            {project.status}
-          </span> */}
         </Link>
+        {/* --------------------------- */}
 
         {/* Details */}
         <div className="flex flex-col justify-center px-4 py-5 sm:px-6 sm:py-7 md:px-8">
@@ -277,7 +279,6 @@ function ProjectCard({ project }) {
                 {project.category}
               </span>
 
-              {/* Project name — clickable */}
               <h3
                 className="gs-line mt-0.5 text-lg font-semibold tracking-tight sm:mt-1 sm:text-2xl"
                 style={{ color: DEEP_NAVY }}
@@ -380,7 +381,6 @@ function ProjectCard({ project }) {
             </span>
           </div>
 
-          {/* Countdown box — now light blue background */}
           <div
             className="gs-countdown-box mt-3 grid grid-cols-4 overflow-hidden rounded-xl sm:mt-4"
             style={{
@@ -415,7 +415,7 @@ function ProjectCard({ project }) {
           </div>
         </div>
 
-        {/* Actions — compact right-aligned CTA */}
+        {/* Actions */}
         <div className="gs-actions mt-4 flex justify-end sm:mt-7">
           <Link
             href={href}

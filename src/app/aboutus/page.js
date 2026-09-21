@@ -31,14 +31,9 @@ export default function AboutUsPage() {
     <main className={`${figtree.className} min-h-screen relative overflow-x-hidden`}>
       {/*
         ===================== HERO SECTION =====================
-        Separate banner images/crops for mobile vs desktop.
-        - Mobile (<640px): a dedicated portrait/mobile-cropped image (/about-mobile.jpeg),
-          shorter height so it doesn't dominate the first screen.
-        - sm -> up to 2xl: original landscape /about.jpeg, height scales up with viewport.
-        Swap /about-mobile.jpeg for your actual mobile-specific asset.
       */}
       <section className="relative w-full bg-white">
-        {/* Mobile-only banner — fixed 380x700 aspect ratio, scales full-width across all mobile screens */}
+        {/* Mobile-only banner */}
         <div
           className="block sm:hidden relative w-full bg-[#333] bg-cover bg-center"
           style={{ backgroundImage: `url(/gurumob.jpeg)`, aspectRatio: "380 / 700" }}
@@ -56,8 +51,9 @@ export default function AboutUsPage() {
       </section>
 
       {/* ===================== ENGINEERING YOUR DREAM HOME ===================== */}
-      <section className="w-full px-4 py-10 sm:px-6 sm:py-16 md:px-8 md:py-20 lg:px-16 xl:px-20 2xl:px-28 2xl:py-24 overflow-hidden">
+      <section className="w-full px-4 py-10 sm:px-6 sm:py-16 md:px-8 md:py-20 lg:px-16 xl:px-20 2xl:px-28 2xl:py-10 overflow-hidden">
         <div className="max-w-[1680px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1.15fr_0.85fr] gap-7 sm:gap-12 md:gap-10 lg:gap-8 xl:gap-12 items-center">
+          
           {/* Copy block */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-3 sm:mb-5">
@@ -161,15 +157,16 @@ export default function AboutUsPage() {
             })}
           </div>
 
-          {/* Image */}
-          <div className="relative w-full h-[260px] sm:h-[380px] md:h-[420px] lg:h-[500px] xl:h-[560px] 2xl:h-[620px] overflow-hidden rounded-2xl md:col-span-2 lg:col-span-1">
+          {/* Image — FIXED to show full image */}
+          <div className="relative w-full h-auto overflow-hidden rounded-2xl md:col-span-2 lg:col-span-1">
             <img
               src="/a2.png"
               alt="PKR Estates residence"
-              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
           </div>
+
         </div>
       </section>
 
@@ -261,6 +258,7 @@ export default function AboutUsPage() {
       {/* ===================== WHY CHOOSE PKR ESTATES ===================== */}
       <section className="relative w-full overflow-hidden" style={{ backgroundColor: "#fff" }}>
         <div className="relative max-w-[1760px] mx-auto flex flex-col lg:flex-row items-stretch rounded-2xl sm:rounded-3xl overflow-hidden">
+          
           {/* Left: text + features */}
           <div className="flex-1 px-4 py-10 sm:px-6 sm:py-16 md:px-8 md:py-18 lg:px-16 lg:py-20 xl:px-20 xl:py-24 flex flex-col justify-center">
             <div className="mb-6 sm:mb-10">
@@ -316,14 +314,15 @@ export default function AboutUsPage() {
             </div>
           </div>
 
-          {/* Right: building image */}
-          <div className="flex-1 relative min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-0 overflow-hidden">
+          {/* Right: building image — FIXED to show full image */}
+          <div className="flex-1 relative min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-0 overflow-hidden bg-gray-50 flex items-center justify-center">
             <img
               src="/a4.png"
               alt="PKR Estates building"
-              className="w-full h-full object-cover object-bottom transition-transform duration-700 hover:scale-105"
+              className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105"
             />
           </div>
+          
         </div>
       </section>
 

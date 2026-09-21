@@ -140,7 +140,6 @@ export default function OurBlogs() {
       ref={root}
       className={`${geist.className} relative w-full overflow-hidden`}
     >
-      {/* Decorative line art bottom-left */}
       <div className="pointer-events-none absolute -bottom-6 left-0 hidden h-40 w-40 opacity-20 sm:block">
         <Image src="/lineart.png" alt="" fill className="object-contain" />
       </div>
@@ -187,34 +186,30 @@ export default function OurBlogs() {
               ))}
             </h2>
           </div>
-
-          {/* <Link
-            href="/blogs"
-            className="gs-viewall group flex w-full items-center justify-center gap-2 rounded-full px-6 py-3 text-xs font-bold tracking-widest text-white transition-transform duration-300 hover:-translate-y-0.5 sm:w-auto"
-            style={{ backgroundColor: DEEP_NAVY }}
-          >
-            VIEW ALL BLOGS
-            <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-1" />
-          </Link> */}
         </div>
 
         {/* Blog grid */}
         <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
-          {/* Featured */}
+          
+          {/* --- FEATURED POST - FIXED --- */}
           <Link
             href={`/blogs/${FEATURED.slug}`}
             className="gs-card block overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] md:col-span-2 lg:col-span-1"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-              <div className="relative h-48 overflow-hidden sm:h-64 lg:h-64 xl:h-full xl:min-h-[280px]">
+              
+              {/* Image Container */}
+              <div className="relative h-auto overflow-hidden bg-gray-50">
                 <Image
                   src={FEATURED.image}
                   alt={FEATURED.title}
-                  fill
-                  className="gs-img object-cover"
+                  width={0}
+                  height={0}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                <div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-xs font-semibold text-white">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-xs font-semibold text-white pointer-events-none">
                   <Clock className="h-3.5 w-3.5" />
                   {FEATURED.readTime}
                 </div>
@@ -266,19 +261,22 @@ export default function OurBlogs() {
             </div>
           </Link>
 
-          {/* Regular posts */}
+          {/* --- REGULAR POSTS - FIXED --- */}
           {POSTS.map((post) => (
             <Link
               key={post.slug}
               href={`/blogs/${post.slug}`}
               className="gs-card block overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)]"
             >
-              <div className="relative h-44 overflow-hidden sm:h-52">
+              {/* Image Container */}
+              <div className="relative h-auto overflow-hidden bg-gray-50">
                 <Image
                   src={post.image}
                   alt={post.title}
-                  fill
-                  className="gs-img object-cover"
+                  width={0}
+                  height={0}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04]"
                 />
               </div>
 
