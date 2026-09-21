@@ -200,7 +200,7 @@ export default function HeroBanner() {
       </button> */}
 
       {/* Slide index + progress dashes — bottom-left */}
-      <div className="absolute bottom-6 left-5 z-30 flex items-center gap-3 sm:bottom-8 sm:left-8 sm:gap-4 md:left-12 lg:bottom-12 lg:left-16 2xl:bottom-16 2xl:left-24">
+      {/* <div className="absolute bottom-6 left-5 z-30 flex items-center gap-3 sm:bottom-8 sm:left-8 sm:gap-4 md:left-12 lg:bottom-12 lg:left-16 2xl:bottom-16 2xl:left-24">
         <span className="text-[11px] font-semibold tabular-nums tracking-[0.2em] text-white/80 sm:text-xs 2xl:text-sm">
           {String(active + 1).padStart(2, "0")} / {String(SLIDES.length).padStart(2, "0")}
         </span>
@@ -238,7 +238,7 @@ export default function HeroBanner() {
             );
           })}
         </div>
-      </div>
+      </div> */}
     </section>
   );
 }

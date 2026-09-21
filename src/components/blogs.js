@@ -145,18 +145,18 @@ export default function OurBlogs() {
         <Image src="/lineart.png" alt="" fill className="object-contain" />
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1800px] px-5 sm:px-6 md:px-8 lg:px-10 xl:px-12">
+      <div className="relative mx-auto w-full max-w-[1800px] px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12">
         {/* Header */}
-        <div className="gs-head flex flex-col items-center gap-6 text-center">
+        <div className="gs-head flex flex-col items-center gap-4 text-center sm:gap-6">
           <div>
             <span
-              className="gs-eyebrow text-[10px] font-semibold tracking-[0.2em] sm:text-xs sm:tracking-[0.25em]"
+              className="gs-eyebrow text-[9px] font-semibold tracking-[0.18em] sm:text-xs sm:tracking-[0.25em]"
               style={{ color: DEEP_NAVY }}
             >
               OUR BLOGS
             </span>
             <h2
-              className="mt-2 text-[clamp(2.1rem,7vw,3.75rem)] font-bold leading-[1.05]"
+              className="mt-1.5 text-[clamp(1.75rem,6.5vw,3.75rem)] font-bold leading-[1.05] sm:mt-2"
               style={{ color: DEEP_NAVY }}
             >
               {["Insights", "for"].map((w, i) => (
@@ -199,14 +199,14 @@ export default function OurBlogs() {
         </div>
 
         {/* Blog grid */}
-        <div className="mt-9 grid grid-cols-1 gap-5 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
           {/* Featured */}
           <Link
             href={`/blogs/${FEATURED.slug}`}
             className="gs-card block overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] md:col-span-2 lg:col-span-1"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-              <div className="relative h-56 overflow-hidden sm:h-64 lg:h-64 xl:h-full xl:min-h-[280px]">
+              <div className="relative h-48 overflow-hidden sm:h-64 lg:h-64 xl:h-full xl:min-h-[280px]">
                 <Image
                   src={FEATURED.image}
                   alt={FEATURED.title}
@@ -220,16 +220,16 @@ export default function OurBlogs() {
                 </div>
               </div>
 
-              <div className="flex flex-col justify-center px-5 py-6 sm:px-6">
+              <div className="flex flex-col justify-center px-4 py-5 sm:px-6 sm:py-6">
                 <div className="gs-line flex flex-wrap items-center justify-between gap-2">
                   <span
-                    className="rounded-full px-3 py-1 text-[10.5px] font-bold tracking-[0.13em] sm:text-[11px] sm:tracking-[0.15em]"
+                    className="rounded-full px-3 py-1 text-[10px] font-bold tracking-[0.12em] sm:text-[11px] sm:tracking-[0.15em]"
                     style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
                   >
                     {FEATURED.category}
                   </span>
                   <span
-                    className="text-xs"
+                    className="text-[11px] sm:text-xs"
                     style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}
                   >
                     {FEATURED.date}
@@ -237,27 +237,27 @@ export default function OurBlogs() {
                 </div>
 
                 <h3
-                  className="gs-line mt-4 text-xl font-bold leading-snug sm:text-2xl"
+                  className="gs-line mt-3 text-lg font-bold leading-snug sm:mt-4 sm:text-2xl"
                   style={{ color: DEEP_NAVY }}
                 >
                   {FEATURED.title}
                 </h3>
 
                 <p
-                  className="gs-line mt-3 text-sm leading-relaxed"
+                  className="gs-line mt-2 text-[13px] leading-relaxed sm:mt-3 sm:text-sm"
                   style={{ color: TEXT_CHARCOAL }}
                 >
                   {FEATURED.excerpt}
                 </p>
 
-                <div className="gs-line mt-5 pt-4">
+                <div className="gs-line mt-4 pt-3 sm:mt-5 sm:pt-4">
                   <span
-                    className="group flex items-center gap-2 text-sm font-bold"
+                    className="group flex items-center gap-2 text-[13px] font-bold sm:text-sm"
                     style={{ color: DEEP_NAVY }}
                   >
                     Read More
                     <ArrowRight
-                      className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 sm:h-4 sm:w-4"
                       style={{ color: DEEP_NAVY }}
                     />
                   </span>
@@ -273,7 +273,7 @@ export default function OurBlogs() {
               href={`/blogs/${post.slug}`}
               className="gs-card block overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)]"
             >
-              <div className="relative h-48 overflow-hidden sm:h-52">
+              <div className="relative h-44 overflow-hidden sm:h-52">
                 <Image
                   src={post.image}
                   alt={post.title}
@@ -282,16 +282,16 @@ export default function OurBlogs() {
                 />
               </div>
 
-              <div className="px-5 py-6 sm:px-6">
+              <div className="px-4 py-5 sm:px-6 sm:py-6">
                 <div className="gs-line flex flex-wrap items-center justify-between gap-2">
                   <span
-                    className="text-[10.5px] font-bold tracking-[0.13em] sm:text-[11px] sm:tracking-[0.15em]"
+                    className="text-[10px] font-bold tracking-[0.12em] sm:text-[11px] sm:tracking-[0.15em]"
                     style={{ color: DEEP_NAVY }}
                   >
                     {post.category}
                   </span>
                   <span
-                    className="text-xs"
+                    className="text-[11px] sm:text-xs"
                     style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}
                   >
                     {post.date}
@@ -299,27 +299,27 @@ export default function OurBlogs() {
                 </div>
 
                 <h3
-                  className="gs-line mt-3 text-lg font-bold leading-snug sm:text-xl"
+                  className="gs-line mt-2.5 text-base font-bold leading-snug sm:mt-3 sm:text-xl"
                   style={{ color: DEEP_NAVY }}
                 >
                   {post.title}
                 </h3>
 
                 <p
-                  className="gs-line mt-3 text-sm leading-relaxed"
+                  className="gs-line mt-2 text-[13px] leading-relaxed sm:mt-3 sm:text-sm"
                   style={{ color: TEXT_CHARCOAL }}
                 >
                   {post.excerpt}
                 </p>
 
-                <div className="gs-line mt-5 pt-4">
+                <div className="gs-line mt-4 pt-3 sm:mt-5 sm:pt-4">
                   <span
-                    className="group flex items-center gap-2 text-sm font-bold"
+                    className="group flex items-center gap-2 text-[13px] font-bold sm:text-sm"
                     style={{ color: DEEP_NAVY }}
                   >
                     Read More
                     <ArrowRight
-                      className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 sm:h-4 sm:w-4"
                       style={{ color: DEEP_NAVY }}
                     />
                   </span>

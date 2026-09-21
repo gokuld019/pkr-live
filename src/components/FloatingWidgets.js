@@ -34,6 +34,23 @@ const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
 
 const SESSION_STORAGE_KEY = "chatbot_session_id";
 
+// WhatsApp number to redirect to after a successful enquiry submission
+const WHATSAPP_NUMBER = "919381055555"; 
+
+/* ------------------------------------------------------------------ */
+/*  WHATSAPP HELPER                                                    */
+/* ------------------------------------------------------------------ */
+function buildWhatsAppUrl({ name, phone, inquiryType, message }) {
+  const lines = [
+    `Hi PKR Estates, I'm ${name || "a visitor"}.`,
+    inquiryType ? `I'm interested in: ${inquiryType}.` : null,
+    phone ? `My contact number: ${phone}.` : null,
+    message ? `Message: ${message}` : null,
+  ].filter(Boolean);
+  const text = lines.join(" ");
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+}
+
 /* ------------------------------------------------------------------ */
 /*  SESSION ID HELPERS                                                 */
 /* ------------------------------------------------------------------ */
@@ -317,6 +334,17 @@ function EnquireModal({ open, onClose, presetType }) {
 
       setSuccessMessage(data.message || "Your enquiry has been received. Our team will reach out to you shortly.");
       setSubmitting(false); setSubmitted(true);
+
+      // Build the WhatsApp redirect URL from the submitted form data
+      const url = buildWhatsAppUrl({
+        name: payload.full_name,
+        phone: payload.phone,
+        inquiryType: payload.inquiry_type,
+        message: payload.message,
+      });
+
+      // Navigate straight to WhatsApp — no intermediate button/click needed
+      window.location.href = url;
     } catch (err) {
       console.error("Enquiry submit failed:", err);
       setErrorMessage("We couldn't reach the server. Please check your connection and try again.");
@@ -367,9 +395,10 @@ function EnquireModal({ open, onClose, presetType }) {
             </div>
             <h3 className="m-0 text-[18px] font-bold text-gray-800">Thank You!</h3>
             <p className="m-0 max-w-[300px] text-[13.5px] leading-relaxed text-gray-500">{successMessage}</p>
-            <button onClick={onClose} className="mt-3 rounded-full px-6 py-2.5 text-[13.5px] font-bold text-white transition-transform hover:scale-[1.03]" style={{ backgroundColor: DEEP_NAVY }}>
-              Close
-            </button>
+            <p className="m-0 flex items-center gap-2 text-[12px] text-gray-400">
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-500" />
+              Redirecting you to WhatsApp...
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 py-6 sm:px-8">

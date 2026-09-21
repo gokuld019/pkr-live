@@ -19,6 +19,7 @@ import {
   Sprout,
   Building2,
   Star,
+  ChevronRight,
 } from "lucide-react";
 
 if (typeof window !== "undefined") {
@@ -105,20 +106,20 @@ export default function Footer() {
 
   return (
     <footer ref={root} className={`${geist.className} relative w-full overflow-hidden bg-white`}>
-      <div className="relative mx-auto max-w-[1800px] px-5 pt-12 sm:px-6 md:px-8 lg:px-10 lg:pt-14">
+      <div className="relative mx-auto max-w-[1800px] px-4 pt-10 sm:px-6 sm:pt-12 md:px-8 lg:px-10 lg:pt-14">
         {/* Newsletter row */}
-        <div className="ft-newsletter flex flex-col gap-7 border-b border-neutral-200 pb-9 sm:gap-8 sm:pb-10 lg:flex-row lg:items-center lg:justify-between">
+        <div className="ft-newsletter flex flex-col gap-5 border-b border-neutral-200 pb-7 sm:gap-8 sm:pb-10 lg:flex-row lg:items-center lg:justify-between">
           <div className="lg:max-w-md">
             <div className="flex items-center gap-3">
               <span
-                className="text-[11px] font-semibold tracking-[0.2em] sm:text-xs sm:tracking-[0.25em]"
+                className="text-[10px] font-semibold tracking-[0.18em] sm:text-xs sm:tracking-[0.25em]"
                 style={{ color: TEXT_CHARCOAL }}
               >
                 STAY AHEAD
               </span>
             </div>
             <h3
-              className="mt-2 text-xl font-semibold leading-snug sm:text-2xl lg:text-3xl"
+              className="mt-1.5 text-lg font-semibold leading-snug sm:mt-2 sm:text-2xl lg:text-3xl"
               style={{ color: DEEP_NAVY }}
             >
               Get the latest updates
@@ -134,11 +135,11 @@ export default function Footer() {
                 <input
                   type="email"
                   placeholder="Enter your email address"
-                  className="w-full bg-transparent text-sm text-neutral-700 placeholder:text-neutral-400 focus:outline-none"
+                  className="w-full bg-transparent text-[13px] text-neutral-700 placeholder:text-neutral-400 focus:outline-none sm:text-sm"
                 />
               </div>
               <button
-                className="flex flex-shrink-0 items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-colors sm:py-2"
+                className="flex flex-shrink-0 items-center justify-center gap-1.5 rounded-full px-5 py-2.5 text-[13px] font-semibold text-white transition-colors sm:py-2 sm:text-sm"
                 style={{ backgroundColor: DEEP_NAVY }}
                 onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
                 onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
@@ -147,7 +148,7 @@ export default function Footer() {
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>
-            <p className="mt-2 text-xs" style={{ color: TEXT_CHARCOAL, opacity: 0.8 }}>
+            <p className="mt-2 text-[11px] sm:text-xs" style={{ color: TEXT_CHARCOAL, opacity: 0.8 }}>
               Be the first to know. No spam, ever.
             </p>
           </div>
@@ -162,7 +163,7 @@ export default function Footer() {
         </div>
 
         {/* Main footer grid */}
-        <div className="ft-grid grid grid-cols-1 gap-10 py-10 sm:grid-cols-2 sm:py-12 lg:grid-cols-5">
+        <div className="ft-grid grid grid-cols-1 gap-7 py-8 sm:grid-cols-2 sm:gap-10 sm:py-12 lg:grid-cols-5">
           {/* Brand */}
           <div className="flex flex-col items-start sm:col-span-2 lg:col-span-1">
             <Image
@@ -172,11 +173,11 @@ export default function Footer() {
               height={70}
               priority
               style={{ width: "auto", height: "auto" }}
-              className="h-auto w-[140px] object-contain sm:w-[160px]"
+              className="h-auto w-[120px] object-contain sm:w-[160px]"
             />
 
             <div
-              className="mt-4 text-xs font-bold tracking-[0.15em]"
+              className="mt-3 text-[11px] font-bold tracking-[0.13em] sm:mt-4 sm:text-xs sm:tracking-[0.15em]"
               style={{ color: DEEP_NAVY }}
             >
               SPACES FOR A
@@ -185,14 +186,14 @@ export default function Footer() {
             </div>
 
             <p
-              className="mt-4 max-w-xs text-sm leading-relaxed"
+              className="mt-3 max-w-xs text-[13px] leading-relaxed sm:mt-4 sm:text-sm"
               style={{ color: TEXT_CHARCOAL }}
             >
               Creating thoughtfully designed homes and communities that enrich lives,
               today and for generations to come.
             </p>
 
-            <div className="mt-5 flex items-center gap-3">
+            <div className="mt-4 flex items-center gap-3 sm:mt-5">
               <SocialIcon
                 name="facebook"
                 label="Facebook"
@@ -219,33 +220,32 @@ export default function Footer() {
           {/* Explore — mirrors Navbar links */}
           <div>
             <h4
-              className="text-xs font-bold tracking-[0.2em]"
+              className="text-[11px] font-bold tracking-[0.18em] sm:text-xs sm:tracking-[0.2em]"
               style={{ color: DEEP_NAVY }}
             >
               EXPLORE
             </h4>
-            <ul className="mt-5 flex flex-col gap-3">
+            <ul className="mt-4 flex flex-col gap-2.5 sm:mt-5 sm:gap-3">
               {EXPLORE_LINKS.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm transition-colors"
+                    className="group flex items-center text-[13px] transition-colors sm:text-sm"
                     style={{
-                      color: link.isSub ? TEXT_CHARCOAL : TEXT_CHARCOAL,
+                      color: TEXT_CHARCOAL,
                       opacity: link.isSub ? 0.75 : 1,
                     }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.color = link.isSub ? TEXT_CHARCOAL : TEXT_CHARCOAL)
-                    }
+                    onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
                   >
                     {link.isSub && (
-                      <span
-                        className="mr-1.5 inline-block h-1 w-1 -translate-y-[2px] rounded-full align-middle"
-                        style={{ backgroundColor: DEEP_NAVY, opacity: 0.6 }}
+                      <ChevronRight
+                        className="mr-1 h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5"
+                        strokeWidth={2.5}
+                        style={{ color: DEEP_NAVY, opacity: 0.7 }}
                       />
                     )}
-                    {link.label}
+                    <span>{link.label}</span>
                   </Link>
                 </li>
               ))}
@@ -261,20 +261,20 @@ export default function Footer() {
           {/* Get in touch */}
           <div>
             <h4
-              className="text-xs font-bold tracking-[0.2em]"
+              className="text-[11px] font-bold tracking-[0.18em] sm:text-xs sm:tracking-[0.2em]"
               style={{ color: DEEP_NAVY }}
             >
               GET IN TOUCH
             </h4>
 
-            <div className="mt-5 flex flex-col gap-4">
+            <div className="mt-4 flex flex-col gap-3.5 sm:mt-5 sm:gap-4">
               <div className="flex items-start gap-3">
                 <MapPin
                   className="mt-0.5 h-4 w-4 flex-shrink-0"
                   style={{ color: DEEP_NAVY }}
                 />
                 <span
-                  className="text-sm leading-relaxed"
+                  className="text-[13px] leading-relaxed sm:text-sm"
                   style={{ color: TEXT_CHARCOAL }}
                 >
                   Flat A10, Archana Castle,
@@ -290,7 +290,7 @@ export default function Footer() {
                 <Phone className="h-4 w-4 flex-shrink-0" style={{ color: DEEP_NAVY }} />
                 <a
                   href="tel:+919543633333"
-                  className="text-sm transition-colors"
+                  className="text-[13px] transition-colors sm:text-sm"
                   style={{ color: TEXT_CHARCOAL }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
@@ -302,7 +302,7 @@ export default function Footer() {
                 <Mail className="h-4 w-4 flex-shrink-0" style={{ color: DEEP_NAVY }} />
                 <a
                   href="mailto:pkr@pkrestates.com"
-                  className="break-all text-sm transition-colors"
+                  className="break-all text-[13px] transition-colors sm:text-sm"
                   style={{ color: TEXT_CHARCOAL }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
                   onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}
@@ -316,7 +316,7 @@ export default function Footer() {
                   style={{ color: DEEP_NAVY }}
                 />
                 <span
-                  className="text-sm leading-relaxed"
+                  className="text-[13px] leading-relaxed sm:text-sm"
                   style={{ color: TEXT_CHARCOAL }}
                 >
                   Mon – Sat: 9:00 AM – 6:00 PM
@@ -330,7 +330,7 @@ export default function Footer() {
           {/* Let's build */}
           <div className="relative sm:col-span-2 lg:col-span-1">
             <h4
-              className="text-xs font-bold leading-relaxed tracking-[0.2em]"
+              className="text-[11px] font-bold leading-relaxed tracking-[0.18em] sm:text-xs sm:tracking-[0.2em]"
               style={{ color: DEEP_NAVY }}
             >
               LET&apos;S BUILD
@@ -340,7 +340,7 @@ export default function Footer() {
             </h4>
 
             <p
-              className="mt-4 max-w-xs text-sm leading-relaxed"
+              className="mt-3 max-w-xs text-[13px] leading-relaxed sm:mt-4 sm:text-sm"
               style={{ color: TEXT_CHARCOAL }}
             >
               Have a question or want to know more? We&apos;re here to help.
@@ -348,7 +348,7 @@ export default function Footer() {
 
             <Link
               href="/contactus"
-              className="mt-5 inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors"
+              className="mt-4 inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-[13px] font-semibold transition-colors sm:mt-5 sm:text-sm"
               style={{ borderColor: DEEP_NAVY, color: DEEP_NAVY }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = DEEP_NAVY;
@@ -369,11 +369,11 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-neutral-200 bg-white">
         <div
-          className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-3 px-5 py-5 text-center text-xs sm:px-6 sm:text-sm sm:flex-row sm:text-left lg:px-10"
+          className="mx-auto flex max-w-[1800px] flex-col items-center justify-between gap-2.5 px-4 py-4 text-center text-[11px] sm:flex-row sm:gap-3 sm:px-6 sm:py-5 sm:text-sm sm:text-left lg:px-10"
           style={{ color: TEXT_CHARCOAL }}
         >
           <span>© 2026 PKR ESTATES. All rights reserved.</span>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 sm:gap-x-4 sm:gap-y-2">
             <a
               href="#"
               className="transition-colors"
@@ -442,7 +442,7 @@ function SocialIcon({ name, label, href }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="flex h-9 w-9 items-center justify-center rounded-full text-white transition-colors"
+      className="flex h-8 w-8 items-center justify-center rounded-full text-white transition-colors sm:h-9 sm:w-9"
       style={{ backgroundColor: DEEP_NAVY }}
       onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
       onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
@@ -458,17 +458,17 @@ function FooterColumn({ title, links }) {
   return (
     <div>
       <h4
-        className="text-xs font-bold tracking-[0.2em]"
+        className="text-[11px] font-bold tracking-[0.18em] sm:text-xs sm:tracking-[0.2em]"
         style={{ color: DEEP_NAVY }}
       >
         {title}
       </h4>
-      <ul className="mt-5 flex flex-col gap-3">
+      <ul className="mt-4 flex flex-col gap-2.5 sm:mt-5 sm:gap-3">
         {links.map((link) => (
           <li key={link}>
             <a
               href="#"
-              className="text-sm transition-colors"
+              className="text-[13px] transition-colors sm:text-sm"
               style={{ color: TEXT_CHARCOAL }}
               onMouseEnter={(e) => (e.currentTarget.style.color = DEEP_NAVY)}
               onMouseLeave={(e) => (e.currentTarget.style.color = TEXT_CHARCOAL)}

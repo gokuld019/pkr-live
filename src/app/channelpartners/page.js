@@ -367,30 +367,30 @@ export default function ChannelPartnersHero() {
         {/* Tablet & up banner */}
         <div
           className="hidden sm:flex relative w-full h-[420px] md:h-[560px] lg:h-[680px] xl:h-[750px] 2xl:h-[860px] bg-[#333] bg-cover bg-center overflow-hidden"
-          style={{ backgroundImage: `url(/cp.jpg)` }}
+          style={{ backgroundImage: `url(/cp.jpeg)` }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent" />
         </div>
       </section>
 
       {/* Why Partner Section */}
-      <div className="w-full bg-white px-4 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+      <div className="w-full bg-white px-4 py-8 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="max-w-full lg:max-w-lg">
             <Reveal>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 Why Partner With PKR Estates
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-3.5 text-2xl font-semibold leading-tight sm:mb-4 sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
+              <h2 className="mb-3 text-xl font-semibold leading-tight sm:mb-4 sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
                 A Trusted Brand
                 <br className="hidden sm:block" />
                 <span className="sm:hidden"> </span>for a Bigger Tomorrow
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <p className="mb-5 text-sm leading-relaxed sm:mb-6" style={{ color: TEXT_CHARCOAL }}>
+              <p className="mb-4 text-[13px] leading-relaxed sm:mb-6 sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
                 At PKR Estates, our channel partners are more than business
                 associates — they are valued growth partners. With a legacy of
                 quality, transparency, and care, we create opportunities that
@@ -400,7 +400,7 @@ export default function ChannelPartnersHero() {
             <Reveal delay={240}>
               <a
                 href="#partner-form"
-                className="group inline-flex items-center gap-2 rounded-md px-5 py-3 text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg sm:px-6"
+                className="group inline-flex items-center gap-2 rounded-md px-4 py-2.5 text-[13px] font-semibold text-white transition-all duration-300 hover:shadow-lg sm:px-6 sm:py-3 sm:text-sm"
                 style={{ backgroundColor: DEEP_NAVY }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER
@@ -417,15 +417,15 @@ export default function ChannelPartnersHero() {
             </Reveal>
           </div>
 
-          <div className="grid flex-1 grid-cols-2 gap-6 sm:gap-7 md:grid-cols-4 md:gap-8">
+          <div className="grid flex-1 grid-cols-2 gap-5 sm:gap-7 md:grid-cols-4 md:gap-8">
             {features.map((f, i) => (
-              <Reveal key={i} delay={i * 100} className="flex flex-col items-start gap-3 sm:gap-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:h-16 sm:w-16" style={{ backgroundColor: LIGHT_BLUE }}>
+              <Reveal key={i} delay={i * 100} className="flex flex-col items-start gap-2.5 sm:gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:h-16 sm:w-16" style={{ backgroundColor: LIGHT_BLUE }}>
                   {icons[f.icon]}
                 </div>
                 <div>
-                  <h3 className="mb-1 text-[13px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>{f.title}</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: TEXT_CHARCOAL }}>{f.desc}</p>
+                  <h3 className="mb-1 text-[12.5px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>{f.title}</h3>
+                  <p className="text-[11.5px] leading-relaxed sm:text-xs" style={{ color: TEXT_CHARCOAL }}>{f.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -434,31 +434,31 @@ export default function ChannelPartnersHero() {
       </div>
 
       {/* Your Journey as a Partner Section */}
-      <div className="w-full px-4 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16" style={{ backgroundColor: LIGHT_BLUE_SOFT }}>
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+      <div className="w-full px-4 py-8 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16" style={{ backgroundColor: LIGHT_BLUE_SOFT }}>
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="flex-1">
             <Reveal>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 A Simple Process
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-3 text-2xl font-semibold leading-tight sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
+              <h2 className="mb-2.5 text-xl font-semibold leading-tight sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
                 Your Journey as a Partner
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <p className="mb-8 text-sm leading-relaxed sm:mb-10" style={{ color: TEXT_CHARCOAL }}>
+              <p className="mb-6 text-[13px] leading-relaxed sm:mb-10 sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
                 Get started in just a few steps and unlock a world of opportunities.
               </p>
             </Reveal>
 
-            <div className="grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-x-6 sm:gap-y-10 md:grid-cols-4">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6 sm:gap-x-6 sm:gap-y-10 md:grid-cols-4">
               {steps.map((s, i) => (
                 <Reveal key={i} delay={i * 120} className="relative flex flex-col items-start">
-                  <div className="mb-3.5 flex items-center sm:mb-4">
+                  <div className="mb-3 flex items-center sm:mb-4">
                     <div
-                      className="flex h-12 w-12 items-center justify-center rounded-full border-2 text-[13px] font-bold transition-transform duration-300 hover:scale-110 sm:h-14 sm:w-14 sm:text-sm"
+                      className="flex h-11 w-11 items-center justify-center rounded-full border-2 text-[12.5px] font-bold transition-transform duration-300 hover:scale-110 sm:h-14 sm:w-14 sm:text-sm"
                       style={{ borderColor: DEEP_NAVY, color: DEEP_NAVY }}
                     >
                       {s.number}
@@ -467,8 +467,8 @@ export default function ChannelPartnersHero() {
                       <span aria-hidden="true" className="ml-3 hidden md:inline" style={{ color: DEEP_NAVY }}>→</span>
                     )}
                   </div>
-                  <h3 className="mb-1 text-[13px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>{s.title}</h3>
-                  <p className="text-xs leading-relaxed" style={{ color: TEXT_CHARCOAL }}>{s.desc}</p>
+                  <h3 className="mb-1 text-[12.5px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>{s.title}</h3>
+                  <p className="text-[11.5px] leading-relaxed sm:text-xs" style={{ color: TEXT_CHARCOAL }}>{s.desc}</p>
                 </Reveal>
               ))}
             </div>
@@ -476,14 +476,14 @@ export default function ChannelPartnersHero() {
 
           <Reveal
             delay={200}
-            className="flex flex-col items-start border-t pt-8 lg:w-64 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
+            className="flex flex-col items-start border-t pt-6 sm:pt-8 lg:w-64 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
           >
             <div style={{ borderColor: LINE }} className="hidden" />
-            <p className="mb-4 text-xl font-semibold italic leading-tight sm:text-2xl" style={{ color: DEEP_NAVY }}>
+            <p className="mb-3.5 text-lg font-semibold italic leading-tight sm:mb-4 sm:text-2xl" style={{ color: DEEP_NAVY }}>
               More Opportunities Together
             </p>
-            <div className="mb-4 h-px w-10" style={{ backgroundColor: DEEP_NAVY, opacity: 0.4 }} />
-            <p className="text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
+            <div className="mb-3.5 h-px w-10 sm:mb-4" style={{ backgroundColor: DEEP_NAVY, opacity: 0.4 }} />
+            <p className="text-[13px] leading-relaxed sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
               More Homes.
               <br />
               Happier Families.
@@ -495,35 +495,35 @@ export default function ChannelPartnersHero() {
       </div>
 
       {/* Partner Benefits Section */}
-      <div className="w-full bg-white px-4 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
+      <div className="w-full bg-white px-4 py-8 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
           <div className="max-w-full lg:max-w-md">
             <Reveal>
-              <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-widest sm:mb-3 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 Partner Benefits
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-3.5 text-2xl font-semibold leading-tight sm:mb-4 sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
+              <h2 className="mb-3 text-xl font-semibold leading-tight sm:mb-4 sm:text-3xl lg:text-4xl" style={{ color: DEEP_NAVY }}>
                 Everything You Need
                 <br className="hidden sm:block" />
                 <span className="sm:hidden"> </span>to Succeed
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <p className="text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
+              <p className="text-[13px] leading-relaxed sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
                 We provide the right tools, training and support to help you grow faster in real estate.
               </p>
             </Reveal>
           </div>
 
-          <div className="grid flex-1 grid-cols-3 gap-5 sm:gap-6 md:grid-cols-6 md:gap-8">
+          <div className="grid flex-1 grid-cols-3 gap-4 sm:gap-6 md:grid-cols-6 md:gap-8">
             {benefits.map((b, i) => (
               <Reveal key={i} delay={i * 80} className="flex flex-col items-center text-center">
-                <div className="mb-2.5 flex h-14 w-14 items-center justify-center rounded-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:mb-3 sm:h-16 sm:w-16" style={{ backgroundColor: LIGHT_BLUE }}>
+                <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-full transition-transform duration-300 hover:-translate-y-1 hover:shadow-md sm:mb-3 sm:h-16 sm:w-16" style={{ backgroundColor: LIGHT_BLUE }}>
                   {icons[b.icon]}
                 </div>
-                <h3 className="text-[11px] font-bold leading-snug sm:text-xs" style={{ color: DEEP_NAVY }}>{b.title}</h3>
+                <h3 className="text-[10.5px] font-bold leading-snug sm:text-xs" style={{ color: DEEP_NAVY }}>{b.title}</h3>
               </Reveal>
             ))}
           </div>
@@ -533,32 +533,32 @@ export default function ChannelPartnersHero() {
       {/* Let's Grow Together — Enquiry Section */}
       <div
         id="partner-form"
-        className="relative w-full overflow-hidden bg-white px-4 py-14 sm:px-6 sm:py-16 md:px-10 md:py-20 lg:px-16"
+        className="relative w-full overflow-hidden bg-white px-4 py-12 sm:px-6 sm:py-16 md:px-10 md:py-20 lg:px-16"
       >
         {/* Subtle decorative glow */}
         <div className="pointer-events-none absolute -left-32 -top-32 h-72 w-72 rounded-full blur-3xl sm:h-96 sm:w-96" style={{ backgroundColor: 'rgba(15,58,107,0.10)' }} />
         <div className="pointer-events-none absolute -bottom-32 -right-32 h-72 w-72 rounded-full blur-3xl sm:h-96 sm:w-96" style={{ backgroundColor: 'rgba(15,58,107,0.05)' }} />
 
-        <div className="relative mx-auto flex max-w-7xl flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+        <div className="relative mx-auto flex max-w-7xl flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
           {/* Left content */}
           <div className="max-w-full lg:max-w-md">
             <Reveal>
-              <p className="mb-3.5 text-[11px] font-semibold uppercase tracking-widest sm:mb-4 sm:text-xs" style={{ color: DEEP_NAVY }}>
+              <p className="mb-3 text-[10px] font-semibold uppercase tracking-widest sm:mb-4 sm:text-xs" style={{ color: DEEP_NAVY }}>
                 Become a Channel Partner
               </p>
             </Reveal>
             <Reveal delay={80}>
-              <h2 className="mb-4 text-3xl font-semibold leading-tight sm:mb-5 sm:text-4xl lg:text-5xl" style={{ color: DEEP_NAVY }}>
+              <h2 className="mb-3.5 text-[26px] font-semibold leading-tight sm:mb-5 sm:text-4xl lg:text-5xl" style={{ color: DEEP_NAVY }}>
                 Let&apos;s Grow
                 <br />
                 Together
               </h2>
             </Reveal>
             <Reveal delay={160}>
-              <div className="mb-5 h-px w-12 sm:mb-6" style={{ backgroundColor: DEEP_NAVY }} />
+              <div className="mb-4 h-px w-12 sm:mb-6" style={{ backgroundColor: DEEP_NAVY }} />
             </Reveal>
             <Reveal delay={220}>
-              <p className="text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
+              <p className="text-[13px] leading-relaxed sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
                 Share a few details and our experts will reach out to you shortly.
               </p>
             </Reveal>
@@ -567,25 +567,25 @@ export default function ChannelPartnersHero() {
           {/* Right form card */}
           <Reveal
             delay={160}
-            className="w-full rounded-2xl  bg-white p-5 shadow-2xl transition-shadow duration-300 sm:p-6 md:p-8 lg:max-w-2xl"
+            className="w-full rounded-2xl  bg-white p-4 shadow-2xl transition-shadow duration-300 sm:p-6 md:p-8 lg:max-w-2xl"
             style={{ borderColor: LINE }}
           >
             {submitted ? (
               /* ---------------- SUCCESS STATE ---------------- */
-              <div className="flex flex-col items-center gap-4 px-2 py-10 text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE }}>
+              <div className="flex flex-col items-center gap-4 px-2 py-8 text-center sm:py-10">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full sm:h-16 sm:w-16" style={{ backgroundColor: LIGHT_BLUE }}>
                   {icons.check}
                 </div>
-                <h3 className="m-0 text-xl font-semibold" style={{ color: DEEP_NAVY }}>
+                <h3 className="m-0 text-lg font-semibold sm:text-xl" style={{ color: DEEP_NAVY }}>
                   Thank You!
                 </h3>
-                <p className="m-0 max-w-md text-sm leading-relaxed" style={{ color: TEXT_CHARCOAL }}>
+                <p className="m-0 max-w-md text-[13px] leading-relaxed sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
                   {successMessage}
                 </p>
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="mt-3 rounded-xl border bg-white px-6 py-3 text-sm font-semibold transition-all"
+                  className="mt-3 rounded-xl border bg-white px-5 py-2.5 text-[13px] font-semibold transition-all sm:px-6 sm:py-3 sm:text-sm"
                   style={{ borderColor: `${DEEP_NAVY}66`, color: DEEP_NAVY }}
                   onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE)}
                   onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}
@@ -597,13 +597,13 @@ export default function ChannelPartnersHero() {
               /* ---------------- FORM STATE ---------------- */
               <form onSubmit={handleSubmit} noValidate>
                 {errorMessage && (
-                  <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-[13px] leading-snug text-red-700">
+                  <div className="mb-3.5 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-[12.5px] leading-snug text-red-700 sm:mb-4 sm:py-3 sm:text-[13px]">
                     <span className="mt-[1px]">{icons.alert}</span>
                     <span>{errorMessage}</span>
                   </div>
                 )}
 
-                <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-4">
+                <div className="grid gap-3 sm:grid-cols-2 sm:gap-4">
                   {/* Full Name */}
                   <div className={inputWrapperClass("full_name")}>
                     {icons.user}
@@ -614,11 +614,11 @@ export default function ChannelPartnersHero() {
                         placeholder="Full Name *"
                         value={form.full_name}
                         onChange={handleChange("full_name")}
-                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        className="w-full bg-transparent text-[13px] outline-none placeholder-gray-400 sm:text-sm"
                         style={{ color: DEEP_NAVY }}
                       />
                       {fieldErrors.full_name && (
-                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.full_name}</p>
+                        <p className="m-0 mt-0.5 text-[10.5px] text-red-600 sm:text-[11px]">{fieldErrors.full_name}</p>
                       )}
                     </div>
                   </div>
@@ -633,11 +633,11 @@ export default function ChannelPartnersHero() {
                         placeholder="Phone Number *"
                         value={form.phone}
                         onChange={handleChange("phone")}
-                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        className="w-full bg-transparent text-[13px] outline-none placeholder-gray-400 sm:text-sm"
                         style={{ color: DEEP_NAVY }}
                       />
                       {fieldErrors.phone && (
-                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.phone}</p>
+                        <p className="m-0 mt-0.5 text-[10.5px] text-red-600 sm:text-[11px]">{fieldErrors.phone}</p>
                       )}
                     </div>
                   </div>
@@ -652,11 +652,11 @@ export default function ChannelPartnersHero() {
                         placeholder="Email Address *"
                         value={form.email}
                         onChange={handleChange("email")}
-                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        className="w-full bg-transparent text-[13px] outline-none placeholder-gray-400 sm:text-sm"
                         style={{ color: DEEP_NAVY }}
                       />
                       {fieldErrors.email && (
-                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.email}</p>
+                        <p className="m-0 mt-0.5 text-[10.5px] text-red-600 sm:text-[11px]">{fieldErrors.email}</p>
                       )}
                     </div>
                   </div>
@@ -669,14 +669,14 @@ export default function ChannelPartnersHero() {
                         name="profession"
                         value={form.profession}
                         onChange={handleChange("profession")}
-                        className="w-full appearance-none bg-transparent text-sm outline-none"
+                        className="w-full appearance-none bg-transparent text-[13px] outline-none sm:text-sm"
                         style={{ color: form.profession ? DEEP_NAVY : '#9CA3AF' }}
                       >
                         <option value="" disabled>Select Your Profession *</option>
                         {PROFESSIONS.map((p) => (<option key={p} value={p}>{p}</option>))}
                       </select>
                       {fieldErrors.profession && (
-                        <p className="m-0 mt-0.5 text-[11px] text-red-600">{fieldErrors.profession}</p>
+                        <p className="m-0 mt-0.5 text-[10.5px] text-red-600 sm:text-[11px]">{fieldErrors.profession}</p>
                       )}
                     </div>
                   </div>
@@ -691,7 +691,7 @@ export default function ChannelPartnersHero() {
                         placeholder="Select City"
                         value={form.city}
                         onChange={handleChange("city")}
-                        className="w-full bg-transparent text-sm outline-none placeholder-gray-400"
+                        className="w-full bg-transparent text-[13px] outline-none placeholder-gray-400 sm:text-sm"
                         style={{ color: DEEP_NAVY }}
                       />
                     </div>
@@ -706,7 +706,7 @@ export default function ChannelPartnersHero() {
                       rows={2}
                       value={form.about}
                       onChange={handleChange("about")}
-                      className="w-full min-w-0 resize-none bg-transparent text-sm outline-none placeholder-gray-400"
+                      className="w-full min-w-0 resize-none bg-transparent text-[13px] outline-none placeholder-gray-400 sm:text-sm"
                       style={{ color: DEEP_NAVY }}
                     />
                   </div>
@@ -715,7 +715,7 @@ export default function ChannelPartnersHero() {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:mt-6 sm:py-4"
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-[13px] font-semibold text-white shadow-lg transition-all duration-300 hover:brightness-105 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-70 sm:mt-6 sm:py-4 sm:text-sm"
                   style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
                   onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 18px 34px -12px rgba(15,58,107,0.6)')}
                   onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 10px 24px -8px rgba(15,58,107,0.4)')}
@@ -733,7 +733,7 @@ export default function ChannelPartnersHero() {
                   )}
                 </button>
 
-                <p className="mt-4 flex items-center justify-center gap-1.5 text-center text-xs" style={{ color: TEXT_CHARCOAL, opacity: 0.8 }}>
+                <p className="mt-3.5 flex items-center justify-center gap-1.5 text-center text-[11px] sm:mt-4 sm:text-xs" style={{ color: TEXT_CHARCOAL, opacity: 0.8 }}>
                   {icons.shield}
                   We respect your privacy. Your information is safe with us.
                 </p>

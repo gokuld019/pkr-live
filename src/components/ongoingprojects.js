@@ -59,7 +59,7 @@ const PROJECTS = [
     price: "₹20.01 Lacs Onwards*",
     type: "Apartments",
     size: "1.41 Acres",
-    bedrooms: " 1BHK, 2BHK & 3BHK",
+    bedrooms: "Studio, 1 & 2 BHK + 2T",
     units: "186 Units",
     completion: "JUN 2028",
     completionDate: "2028-06-30T23:59:59",
@@ -189,14 +189,14 @@ export default function OurProjects() {
     <section
       ref={root}
       id="projects"
-      className={`${geist.className} relative w-full py-12 sm:py-16 md:py-20`}
+      className={`${geist.className} relative w-full py-9 sm:py-16 md:py-20`}
     >
       <div className="relative mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-10">
         {/* Section Heading */}
-        <div className="gs-head mb-10 text-center sm:mb-14">
+        <div className="gs-head mb-7 text-center sm:mb-14">
           <div className="flex items-center justify-center gap-3">
             <span
-              className="gs-eyebrow-text text-[11px] font-semibold tracking-[0.2em] sm:text-xs sm:tracking-[0.28em]"
+              className="gs-eyebrow-text text-[10.5px] font-semibold tracking-[0.2em] sm:text-xs sm:tracking-[0.28em]"
               style={{ color: DEEP_NAVY }}
             >
               EXPLORE
@@ -204,7 +204,7 @@ export default function OurProjects() {
           </div>
 
           <h2
-            className="mt-3 text-[32px] font-bold tracking-tight sm:mt-4 sm:text-5xl md:text-6xl lg:text-7xl"
+            className="mt-2.5 text-[27px] font-bold tracking-tight sm:mt-4 sm:text-5xl md:text-6xl lg:text-7xl"
             style={{ color: DEEP_NAVY }}
           >
             {["Our", "Projects"].map((word) => (
@@ -221,15 +221,14 @@ export default function OurProjects() {
           </h2>
 
           <p
-            className="gs-sub mx-auto mt-4 max-w-2xl text-sm leading-relaxed sm:mt-5 sm:text-lg"
+            className="gs-sub mx-auto mt-3 max-w-2xl text-[13px] leading-relaxed sm:mt-5 sm:text-lg"
             style={{ color: TEXT_CHARCOAL }}
           >
-            Two ongoing residential communities in Chennai South thoughtfully
-            designed, transparently priced.
+            Creating more than addresses; we shape welcoming spaces where families can begin their next chapter together. 
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 sm:gap-7 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:gap-7 lg:grid-cols-2">
           {PROJECTS.map((project) => (
             <ProjectCard key={project.id} project={project} />
           ))}
@@ -251,7 +250,7 @@ function ProjectCard({ project }) {
         <Link
           href={href}
           aria-label={`View ${project.name} project details`}
-          className="relative block h-52 overflow-hidden sm:h-full sm:min-h-[320px] md:min-h-[360px]"
+          className="relative block h-44 overflow-hidden sm:h-full sm:min-h-[320px] md:min-h-[360px]"
         >
           <Image
             src={project.image}
@@ -268,11 +267,11 @@ function ProjectCard({ project }) {
         </Link>
 
         {/* Details */}
-        <div className="flex flex-col justify-center px-5 py-6 sm:px-6 sm:py-7 md:px-8">
+        <div className="flex flex-col justify-center px-4 py-5 sm:px-6 sm:py-7 md:px-8">
           <div className="flex items-start justify-between gap-4">
             <div className="min-w-0">
               <span
-                className="gs-line text-[10.5px] font-semibold tracking-[0.18em] sm:text-[11px] sm:tracking-[0.22em]"
+                className="gs-line text-[10px] font-semibold tracking-[0.18em] sm:text-[11px] sm:tracking-[0.22em]"
                 style={{ color: DEEP_NAVY }}
               >
                 {project.category}
@@ -280,7 +279,7 @@ function ProjectCard({ project }) {
 
               {/* Project name — clickable */}
               <h3
-                className="gs-line mt-1 text-xl font-semibold tracking-tight sm:text-2xl"
+                className="gs-line mt-0.5 text-lg font-semibold tracking-tight sm:mt-1 sm:text-2xl"
                 style={{ color: DEEP_NAVY }}
               >
                 <Link
@@ -302,28 +301,28 @@ function ProjectCard({ project }) {
                 e.stopPropagation();
                 window.location.href = "tel:+911234567890";
               }}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-0.5 sm:h-10 sm:w-10"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-0.5 sm:h-10 sm:w-10"
               style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
             >
-              <Phone className="h-4 w-4" />
+              <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </button>
           </div>
 
           <p
-            className="gs-line mt-3.5 text-[13.5px] leading-relaxed sm:mt-4 sm:text-[14px]"
+            className="gs-line mt-2.5 text-[12.5px] leading-relaxed sm:mt-4 sm:text-[14px]"
             style={{ color: TEXT_CHARCOAL }}
           >
             {project.address}
           </p>
 
           <div
-            className="gs-line mt-5 text-xs font-medium tracking-wide sm:mt-6"
+            className="gs-line mt-4 text-[11px] font-medium tracking-wide sm:mt-6 sm:text-xs"
             style={{ color: TEXT_CHARCOAL }}
           >
             Starting from
           </div>
           <div
-            className="gs-line mt-1 text-xl font-bold tracking-tight sm:text-2xl md:text-3xl"
+            className="gs-line mt-0.5 text-lg font-bold tracking-tight sm:mt-1 sm:text-2xl md:text-3xl"
             style={{ color: DEEP_NAVY }}
           >
             {project.price}
@@ -332,29 +331,29 @@ function ProjectCard({ project }) {
       </div>
 
       {/* Specs */}
-      <div className="px-5 py-5 sm:px-6 sm:py-6 md:px-8">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-x-6 sm:gap-y-5 md:grid-cols-4">
+      <div className="px-4 py-4 sm:px-6 sm:py-6 md:px-8">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-3 sm:gap-x-6 sm:gap-y-5 md:grid-cols-4">
           {[
             { icon: Building2, label: "TYPE", value: project.type },
             { icon: Ruler, label: "SIZE", value: project.size },
             { icon: BedDouble, label: "BEDROOMS", value: project.bedrooms },
             { icon: Home, label: "UNITS", value: project.units },
           ].map(({ icon: Icon, label, value }) => (
-            <div key={label} className="gs-spec flex items-start gap-2.5">
+            <div key={label} className="gs-spec flex items-start gap-2 sm:gap-2.5">
               <Icon
-                className="mt-0.5 h-5 w-5 shrink-0"
+                className="mt-0.5 h-4 w-4 shrink-0 sm:h-5 sm:w-5"
                 strokeWidth={1.5}
                 style={{ color: DEEP_NAVY }}
               />
               <div className="min-w-0">
                 <div
-                  className="text-[10px] font-semibold tracking-[0.14em]"
+                  className="text-[9.5px] font-semibold tracking-[0.14em] sm:text-[10px]"
                   style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}
                 >
                   {label}
                 </div>
                 <div
-                  className="mt-0.5 text-[13px] font-bold leading-snug sm:text-sm"
+                  className="mt-0.5 text-[12px] font-bold leading-snug sm:text-sm"
                   style={{ color: DEEP_NAVY }}
                 >
                   {value}
@@ -365,16 +364,16 @@ function ProjectCard({ project }) {
         </div>
 
         {/* Countdown */}
-        <div className="mt-6 pt-5 sm:mt-7 sm:pt-6">
-          <div className="flex flex-col gap-1.5 xs:flex-row xs:items-center xs:justify-between sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-4 pt-3 sm:mt-7 sm:pt-6">
+          <div className="flex flex-col gap-1 xs:flex-row xs:items-center xs:justify-between sm:flex-row sm:items-center sm:justify-between sm:gap-1.5">
             <span
-              className="text-[10px] font-semibold tracking-[0.14em] sm:tracking-[0.16em]"
+              className="text-[9.5px] font-semibold tracking-[0.14em] sm:text-[10px] sm:tracking-[0.16em]"
               style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}
             >
               TIME LEFT FOR PROJECT COMPLETION
             </span>
             <span
-              className="text-[11px] font-bold tracking-[0.12em]"
+              className="text-[10.5px] font-bold tracking-[0.12em] sm:text-[11px]"
               style={{ color: DEEP_NAVY }}
             >
               {project.completion}
@@ -383,7 +382,7 @@ function ProjectCard({ project }) {
 
           {/* Countdown box — now light blue background */}
           <div
-            className="gs-countdown-box mt-3.5 grid grid-cols-4 overflow-hidden rounded-xl sm:mt-4"
+            className="gs-countdown-box mt-3 grid grid-cols-4 overflow-hidden rounded-xl sm:mt-4"
             style={{
               backgroundColor: LIGHT_BLUE,
               boxShadow: `inset 0 0 0 1px ${LIGHT_BLUE_RING}`,
@@ -397,16 +396,16 @@ function ProjectCard({ project }) {
             ].map(({ v, l }) => (
               <div
                 key={l}
-                className="gs-count flex flex-col items-center py-3 sm:py-4"
+                className="gs-count flex flex-col items-center py-2.5 sm:py-4"
               >
                 <span
-                  className="text-lg font-bold tabular-nums sm:text-xl md:text-2xl"
+                  className="text-base font-bold tabular-nums sm:text-xl md:text-2xl"
                   style={{ color: DEEP_NAVY }}
                 >
                   {v}
                 </span>
                 <span
-                  className="mt-1 text-[9px] font-semibold tracking-[0.1em] sm:text-[10px] sm:tracking-[0.14em]"
+                  className="mt-0.5 text-[8.5px] font-semibold tracking-[0.1em] sm:mt-1 sm:text-[10px] sm:tracking-[0.14em]"
                   style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}
                 >
                   {l}
@@ -417,10 +416,10 @@ function ProjectCard({ project }) {
         </div>
 
         {/* Actions — compact right-aligned CTA */}
-        <div className="gs-actions mt-6 flex justify-end sm:mt-7">
+        <div className="gs-actions mt-4 flex justify-end sm:mt-7">
           <Link
             href={href}
-            className="group inline-flex items-center gap-2.5 rounded-md px-5 py-2.5 text-[11px] font-bold tracking-[0.14em] text-white shadow-[0_6px_18px_-8px_rgba(15,58,107,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgba(15,58,107,0.85)] active:scale-[0.98] sm:px-6 sm:py-3 sm:text-xs sm:tracking-[0.16em]"
+            className="group inline-flex items-center gap-2 rounded-md px-4 py-2 text-[10.5px] font-bold tracking-[0.14em] text-white shadow-[0_6px_18px_-8px_rgba(15,58,107,0.7)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-8px_rgba(15,58,107,0.85)] active:scale-[0.98] sm:gap-2.5 sm:px-6 sm:py-3 sm:text-xs sm:tracking-[0.16em]"
             style={{ backgroundColor: DEEP_NAVY }}
             onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
             onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}

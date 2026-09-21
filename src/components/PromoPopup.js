@@ -6,14 +6,15 @@ import { useEffect, useState } from "react";
  * PromoPopup
  * -----------
  * Auto-opening promo modal — single full-bleed image, no overlaid text/content.
- * Just drop your ready-made promo graphic in and it displays at native aspect
- * ratio inside a fixed max size.
+ * Uses a separate artwork for mobile (< 768px) and desktop/tablet.
  *
  * EDIT:
- * - IMAGE_URL -> path to your single promo image in /public
+ * - DESKTOP_IMAGE_URL -> desktop/tablet promo image in /public
+ * - MOBILE_IMAGE_URL  -> mobile promo image in /public (ideally portrait)
  */
 
-const IMAGE_URL = "/popup.jpeg";
+const DESKTOP_IMAGE_URL = "/popup.jpeg";
+const MOBILE_IMAGE_URL = "/POP.png";
 
 export default function PromoPopup() {
   const [open, setOpen] = useState(false);
@@ -29,6 +30,15 @@ export default function PromoPopup() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   if (!open) return null;
 
   return (
@@ -42,7 +52,14 @@ export default function PromoPopup() {
           &times;
         </button>
 
-        <img src={IMAGE_URL} alt="Promo offer" className="popup-image" />
+        <picture>
+          <source media="(max-width: 767px)" srcSet={MOBILE_IMAGE_URL} />
+          <img
+            src={DESKTOP_IMAGE_URL}
+            alt="Promo offer"
+            className="popup-image"
+          />
+        </picture>
       </div>
 
       <style jsx>{`
@@ -58,10 +75,11 @@ export default function PromoPopup() {
           padding: 14px;
         }
 
+        /* Mobile (default): modal hugs the portrait image */
         .popup-modal {
           position: relative;
-          width: 1140px;
-          max-width: min(92vw, 1140px);
+          width: fit-content;
+          max-width: 92vw;
           max-height: 85vh;
           border-radius: 10px;
           overflow: hidden;
@@ -71,8 +89,9 @@ export default function PromoPopup() {
 
         .popup-image {
           display: block;
-          width: 100%;
+          width: auto;
           height: auto;
+          max-width: 92vw;
           max-height: 85vh;
           object-fit: contain;
         }
@@ -119,11 +138,16 @@ export default function PromoPopup() {
           }
         }
 
+        /* Tablet / desktop: original wide layout */
         @media (min-width: 768px) {
           .popup-modal {
+            width: 1140px;
+            max-width: min(92vw, 1140px);
             max-height: 90vh;
           }
           .popup-image {
+            width: 100%;
+            max-width: 100%;
             max-height: 90vh;
           }
           .popup-close {
