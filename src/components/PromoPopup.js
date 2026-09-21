@@ -7,10 +7,6 @@ import { useEffect, useState } from "react";
  * -----------
  * Auto-opening promo modal — single full-bleed image, no overlaid text/content.
  * Uses a separate artwork for mobile (< 768px) and desktop/tablet.
- *
- * EDIT:
- * - DESKTOP_IMAGE_URL -> desktop/tablet promo image in /public
- * - MOBILE_IMAGE_URL  -> mobile promo image in /public (ideally portrait)
  */
 
 const DESKTOP_IMAGE_URL = "/popup.jpeg";
@@ -44,12 +40,26 @@ export default function PromoPopup() {
   return (
     <div className="popup-overlay" onClick={() => setOpen(false)}>
       <div className="popup-modal" onClick={(e) => e.stopPropagation()}>
+        
+        {/* UPDATED: Replaced text '&times;' with a perfectly centered SVG icon */}
         <button
           className="popup-close"
           aria-label="Close"
           onClick={() => setOpen(false)}
         >
-          &times;
+          <svg 
+            width="14" 
+            height="14" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2.5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         </button>
 
         <picture>
@@ -75,7 +85,6 @@ export default function PromoPopup() {
           padding: 14px;
         }
 
-        /* Mobile (default): modal hugs the portrait image */
         .popup-modal {
           position: relative;
           width: fit-content;
@@ -100,22 +109,26 @@ export default function PromoPopup() {
           position: absolute;
           top: 10px;
           right: 10px;
-          width: 30px;
-          height: 30px;
+          width: 32px;
+          height: 32px;
           border-radius: 50%;
           border: none;
           background: rgba(255, 255, 255, 0.92);
-          font-size: 19px;
-          line-height: 1;
           cursor: pointer;
           z-index: 2;
           color: #222;
+          
+          /* Flexbox ensures the SVG is perfectly centered */
           display: flex;
           align-items: center;
           justify-content: center;
+          padding: 0;
+          transition: background 0.2s ease, transform 0.2s ease;
         }
+        
         .popup-close:hover {
           background: #fff;
+          transform: scale(1.05);
         }
 
         @media (min-width: 480px) {
@@ -132,13 +145,11 @@ export default function PromoPopup() {
           .popup-close {
             top: 12px;
             right: 13px;
-            width: 32px;
-            height: 32px;
-            font-size: 20px;
+            width: 34px;
+            height: 34px;
           }
         }
 
-        /* Tablet / desktop: original wide layout */
         @media (min-width: 768px) {
           .popup-modal {
             width: 1140px;
@@ -153,9 +164,8 @@ export default function PromoPopup() {
           .popup-close {
             top: 14px;
             right: 16px;
-            width: 34px;
-            height: 34px;
-            font-size: 22px;
+            width: 36px;
+            height: 36px;
           }
         }
       `}</style>
