@@ -11,6 +11,10 @@ const DEEP_NAVY = "#0F3A6B";
 const TEXT_CHARCOAL = "#2D3A46";
 const GOLD = "#B08D3F";
 
+// Separate images for desktop and mobile
+const DESKTOP_IMAGE = "/upm.jpeg";
+const MOBILE_IMAGE = "/mismob.png"; // add this file to /public
+
 const DESCRIPTION =
   "We create thoughtfully planned homes that make ownership more accessible for families. From apartments and villas to plots, PKR Estates builds practical spaces for everyday living. Our housing apartment in Chennai solutions bring comfort, value and purposeful planning together.";
 
@@ -24,14 +28,14 @@ export default function VisionMission() {
 
       {/* ========== MOBILE LAYOUT: image above, text below ========== */}
       <div className="flex flex-col lg:hidden">
-        {/* Image block — centered on mobile */}
+        {/* Image block — dedicated mobile image */}
         <div className="relative mx-auto h-[200px] w-full sm:h-[360px]">
           <Image
-            src="/upm.jpeg"
+            src={MOBILE_IMAGE}
             alt="Happy homeowners"
             fill
             priority
-            sizes="100vw"
+            sizes="(max-width: 1023px) 100vw, 0px"
             className="object-cover object-center"
             style={{ objectPosition: "center center" }}
           />
@@ -69,10 +73,11 @@ export default function VisionMission() {
         {/* Full-bleed background image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/upm.jpeg"
+            src={DESKTOP_IMAGE}
             alt="Happy homeowners"
             fill
             priority
+            sizes="(min-width: 1024px) 100vw, 0px"
             className="object-cover object-center"
           />
         </div>
