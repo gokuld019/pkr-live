@@ -44,7 +44,7 @@ function SlideImage({ slide, priority }) {
     fill: true,
     sizes: "100vw",
     quality: 85,
-    className: "object-cover object-center",
+    className: "object-cover object-top",
   };
 
   const {
@@ -133,9 +133,9 @@ export default function HeroBanner() {
       className={
         "relative isolate w-full overflow-hidden bg-[#0B0B0C] " +
         /* Height scales per breakpoint; max-h keeps it sane on ultra-wide / 4K */
-        "h-[82svh] min-h-[460px] max-h-[900px] " +
+        "h-[100vh] min-h-[460px] max-h-[900px] " +
         "sm:h-[78svh] sm:min-h-[520px] " +
-        "md:h-[85svh] md:min-h-[560px] md:max-h-[1000px] " +
+        "md:h-[90vh] md:min-h-[560px] md:max-h-[1000px] " +
         "lg:h-[100svh] lg:min-h-[620px] lg:max-h-[1100px] " +
         "2xl:max-h-[1300px]"
       }

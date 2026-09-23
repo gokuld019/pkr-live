@@ -189,98 +189,90 @@ export default function OurBlogs() {
         </div>
 
         {/* Blog grid */}
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7 h-[450px]">
-          
-          {/* --- FEATURED POST - FIXED --- */}
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7 lg:h-[450px]">
+
+          {/* --- FEATURED POST (hidden on mobile) --- */}
           <Link
             href={`/blogs/${FEATURED.slug}`}
-            className="gs-card block overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] md:col-span-2 lg:col-span-1"
+            className="gs-card hidden sm:flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] md:col-span-2 lg:col-span-1 lg:h-full"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
-              
-              {/* Image Container */}
-              <div className="relative h-auto overflow-hidden bg-gray-50">
-                <Image
-                  src={FEATURED.image}
-                  alt={FEATURED.title}
-                  width={0}
-                  height={0}
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04]"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-4 left-4 flex items-center gap-1.5 text-xs font-semibold text-white pointer-events-none">
-                  <Clock className="h-3.5 w-3.5" />
-                  {FEATURED.readTime}
-                </div>
-              </div>
+            {/* Image Container */}
+            <div className="relative h-auto shrink-0 overflow-hidden bg-gray-50 lg:h-[45%]">
+              <Image
+                src={FEATURED.image}
+                alt={FEATURED.title}
+                width={0}
+                height={0}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04] lg:h-full lg:object-cover"
+              />
+            </div>
 
-              <div className="flex flex-col justify-center px-4 py-5 sm:px-6 sm:py-6">
-                <div className="gs-line flex flex-wrap items-center justify-between gap-2">
-                  <span
-                    className="rounded-full px-3 py-1 text-[10px] font-bold tracking-[0.12em] sm:text-[11px] sm:tracking-[0.15em]"
-                    style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
-                  >
-                    {FEATURED.category}
-                  </span>
-                  <span
-                    className="text-[11px] sm:text-xs"
-                    style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}
-                  >
-                    {FEATURED.date}
-                  </span>
-                </div>
-
-                <h3
-                  className="gs-line mt-3 text-lg font-bold leading-snug sm:mt-4 sm:text-2xl"
+            <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6 lg:overflow-hidden">
+              <div className="gs-line flex flex-wrap items-center justify-between gap-2">
+                <span
+                  className="text-[10px] font-bold tracking-[0.12em] sm:text-[11px] sm:tracking-[0.15em]"
                   style={{ color: DEEP_NAVY }}
                 >
-                  {FEATURED.title}
-                </h3>
-
-                <p
-                  className="gs-line mt-2 text-[13px] leading-relaxed sm:mt-3 sm:text-sm"
-                  style={{ color: TEXT_CHARCOAL }}
+                  {FEATURED.category}
+                </span>
+                <span
+                  className="text-[11px] sm:text-xs"
+                  style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}
                 >
-                  {FEATURED.excerpt}
-                </p>
+                  {FEATURED.date}
+                </span>
+              </div>
 
-                <div className="gs-line mt-4 pt-3 sm:mt-5 sm:pt-4">
-                  <span
-                    className="group flex items-center gap-2 text-[13px] font-bold sm:text-sm"
+              <h3
+                className="gs-line mt-2.5 text-base font-bold leading-snug sm:mt-3 sm:text-xl"
+                style={{ color: DEEP_NAVY }}
+              >
+                {FEATURED.title}
+              </h3>
+
+              <p
+                className="gs-line mt-2 text-[13px] leading-relaxed sm:mt-3 sm:text-sm line-clamp-3"
+                style={{ color: TEXT_CHARCOAL }}
+              >
+                {FEATURED.excerpt}
+              </p>
+
+              <div className="gs-line mt-4 pt-3 sm:mt-5 sm:pt-4">
+                <span
+                  className="group flex items-center gap-2 text-[13px] font-bold sm:text-sm"
+                  style={{ color: DEEP_NAVY }}
+                >
+                  Read More
+                  <ArrowRight
+                    className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 sm:h-4 sm:w-4"
                     style={{ color: DEEP_NAVY }}
-                  >
-                    Read More
-                    <ArrowRight
-                      className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 sm:h-4 sm:w-4"
-                      style={{ color: DEEP_NAVY }}
-                    />
-                  </span>
-                </div>
+                  />
+                </span>
               </div>
             </div>
           </Link>
 
-          {/* --- REGULAR POSTS - FIXED --- */}
+          {/* --- REGULAR POSTS --- */}
           {POSTS.map((post) => (
             <Link
               key={post.slug}
               href={`/blogs/${post.slug}`}
-              className="gs-card block overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)]"
+              className="gs-card flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] lg:h-full"
             >
               {/* Image Container */}
-              <div className="relative h-auto overflow-hidden bg-gray-50">
+              <div className="relative h-auto shrink-0 overflow-hidden bg-gray-50 lg:h-[45%]">
                 <Image
                   src={post.image}
                   alt={post.title}
                   width={0}
                   height={0}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04]"
+                  className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04] lg:h-full lg:object-cover"
                 />
               </div>
 
-              <div className="px-4 py-5 sm:px-6 sm:py-6">
+              <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6 lg:overflow-hidden">
                 <div className="gs-line flex flex-wrap items-center justify-between gap-2">
                   <span
                     className="text-[10px] font-bold tracking-[0.12em] sm:text-[11px] sm:tracking-[0.15em]"
@@ -304,7 +296,7 @@ export default function OurBlogs() {
                 </h3>
 
                 <p
-                  className="gs-line mt-2 text-[13px] leading-relaxed sm:mt-3 sm:text-sm"
+                  className="gs-line mt-2 text-[13px] leading-relaxed sm:mt-3 sm:text-sm line-clamp-3"
                   style={{ color: TEXT_CHARCOAL }}
                 >
                   {post.excerpt}

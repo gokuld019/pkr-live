@@ -1,4 +1,4 @@
-// src/components/project-banner.jsx
+// src/components/ProjectBanner.js
 'use client'
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
@@ -147,8 +147,6 @@ function planMatchesTab(plan, label) {
 function splitPlanTitle(plan) {
   const title = plan?.title || ''
   const [config, ...rest] = title.split('·').map((s) => s.trim())
-  // `rest` is the unit label (e.g. "Unit 103") and must win over plan.facing,
-  // which is a compass direction used by the facing filter below.
   return { config: plan?.config || config, facing: rest.join(' · ') || plan?.unitLabel || '' }
 }
 
@@ -324,17 +322,9 @@ function getPricingType(project) {
 
 /* ==================================================================
    STICKY SUB-MENU
-   - Pins directly below the main site navbar (add data-site-navbar to it)
-   - Tabs follow the real on-page order of sections
-   - Smooth scrolling, flicker-free active highlight, reading progress
 ================================================================== */
 const pad = (n) => String(n).padStart(2, '0')
 
-/* ------------------------------------------------------------------ */
-/*  Measures where the main site navbar ends, so the sub-menu can sit  */
-/*  directly under it. Handles fixed/sticky navbars, height changes    */
-/*  and navbars that hide/show on scroll.                              */
-/* ------------------------------------------------------------------ */
 function useNavbarOffset(selector, fallback = 0) {
   const [offset, setOffset] = useState(fallback)
 
@@ -394,7 +384,6 @@ function ProjectSubMenu({
   const offsetRef = useRef(navOffset)
   offsetRef.current = navOffset
 
-  // Always follow the real on-page order of sections, whatever order the items arrive in
   const itemsKey = items.map((i) => i.id).join('|')
   const [orderedIds, setOrderedIds] = useState(() => items.map((i) => i.id))
 
@@ -418,13 +407,11 @@ function ProjectSubMenu({
   const [stuck, setStuck] = useState(false)
   const [edges, setEdges] = useState({ left: false, right: false })
 
-  // Progress values live outside React state so scrolling never re-renders the bar
   const sectionProgress = useMotionValue(0)
   const pageProgress = useMotionValue(0)
   const smoothSection = useSpring(sectionProgress, { stiffness: 260, damping: 40, restDelta: 0.001 })
   const smoothPage = useSpring(pageProgress, { stiffness: 200, damping: 40, restDelta: 0.001 })
 
-  /* ---------------- Scroll-spy + progress + stuck state ---------------- */
   useEffect(() => {
     if (!ordered.length) return
     let raf = 0
@@ -440,7 +427,6 @@ function ProjectSubMenu({
         setStuck((prev) => (prev === isStuck ? prev : isStuck))
       }
 
-      // A section becomes active once its top passes a line a little below the bar
       const probe = top + barH + Math.min(window.innerHeight * 0.3, 180)
       const els = ordered.map((i) => document.getElementById(i.id))
 
@@ -481,14 +467,12 @@ function ProjectSubMenu({
     }
   }, [ordered, navOffset, sectionProgress, pageProgress])
 
-  // Expose the combined offset so sections can use scroll-margin-top if needed
   useEffect(() => {
     const h = barRef.current?.offsetHeight || 0
     document.documentElement.style.setProperty('--project-subnav-offset', `${navOffset + h}px`)
     return () => document.documentElement.style.removeProperty('--project-subnav-offset')
   }, [navOffset, stuck])
 
-  /* ---------------- Smooth scroll to a section ---------------- */
   const scrollToSection = useCallback((id) => {
     const el = document.getElementById(id)
     if (!el) return
@@ -497,8 +481,6 @@ function ProjectSubMenu({
     const y = el.getBoundingClientRect().top + window.scrollY - offsetRef.current - barH + 1
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    // Lock the highlight on the clicked tab so it doesn't flicker through
-    // every section it passes during the smooth scroll
     lockRef.current = id
     setActiveId(id)
     clearTimeout(lockTimer.current)
@@ -514,7 +496,6 @@ function ProjectSubMenu({
     window.history.replaceState(null, '', `#${id}`)
   }, [])
 
-  // Deep links: /projects/xyz#price-list lands on the right section
   useEffect(() => {
     const hash = decodeURIComponent(window.location.hash.slice(1))
     if (!hash || !items.some((i) => i.id === hash)) return
@@ -525,7 +506,6 @@ function ProjectSubMenu({
 
   useEffect(() => () => clearTimeout(lockTimer.current), [])
 
-  /* ---------------- Horizontal scroller (mobile / many tabs) ---------------- */
   const updateEdges = useCallback(() => {
     const s = scrollerRef.current
     if (!s) return
@@ -544,11 +524,16 @@ function ProjectSubMenu({
     return () => { s.removeEventListener('scroll', updateEdges); ro.disconnect() }
   }, [updateEdges, ordered.length])
 
-  // Keep the active tab centred in view
   useEffect(() => {
     const s = scrollerRef.current
     const t = tabRefs.current[activeId]
     if (!s || !t) return
+    const tabLeft = t.offsetLeft
+    const tabRight = tabLeft + t.offsetWidth
+    const viewLeft = s.scrollLeft
+    const viewRight = viewLeft + s.clientWidth
+    const fullyVisible = tabLeft >= viewLeft && tabRight <= viewRight
+    if (fullyVisible) return
     const target = t.offsetLeft - s.clientWidth / 2 + t.offsetWidth / 2
     s.scrollTo({ left: Math.max(0, target), behavior: 'smooth' })
   }, [activeId])
@@ -565,12 +550,11 @@ function ProjectSubMenu({
 
   return (
     <>
-      {/* Zero-height marker used to detect when the bar is pinned */}
       <div ref={sentinelRef} aria-hidden="true" className="h-0 w-full" />
 
       <div
         ref={barRef}
-        className="sticky z-40 w-full transition-[top] duration-300 ease-out"
+        className="sticky z-40 w-full"
         style={{ top: navOffset, fontFamily }}
       >
         <div
@@ -581,7 +565,6 @@ function ProjectSubMenu({
           }`}
         >
           <div className="mx-auto flex max-w-[1560px] items-center gap-3 px-2 sm:px-6 lg:px-10">
-            {/* Project name + position, shown once the bar is pinned */}
             <AnimatePresence initial={false}>
               {stuck && projectName && (
                 <motion.div
@@ -623,7 +606,6 @@ function ProjectSubMenu({
               )}
             </AnimatePresence>
 
-            {/* Tabs */}
             <div className="relative min-w-0 flex-1">
               <div className={`pointer-events-none absolute inset-y-0 left-0 z-[2] w-14 bg-gradient-to-r from-white via-white/80 to-transparent transition-opacity duration-300 ${edges.left ? 'opacity-100' : 'opacity-0'}`} />
               <div className={`pointer-events-none absolute inset-y-0 right-0 z-[2] w-14 bg-gradient-to-l from-white via-white/80 to-transparent transition-opacity duration-300 ${edges.right ? 'opacity-100' : 'opacity-0'}`} />
@@ -677,7 +659,6 @@ function ProjectSubMenu({
                             className="absolute inset-0 rounded-full shadow-[0_10px_22px_-10px_rgba(15,58,107,0.8)]"
                             style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
                           >
-                            {/* How far you've read through this section */}
                             <span className="absolute bottom-[4px] left-4 right-4 h-[2px] overflow-hidden rounded-full bg-white/20">
                               <motion.span
                                 className="absolute inset-0 origin-left rounded-full bg-white/85"
@@ -700,7 +681,6 @@ function ProjectSubMenu({
               </nav>
             </div>
 
-            {/* Enquire CTA, shown once the bar is pinned */}
             {onEnquire && (
               <AnimatePresence initial={false}>
                 {stuck && (
@@ -722,7 +702,6 @@ function ProjectSubMenu({
             )}
           </div>
 
-          {/* Overall reading progress across all project sections */}
           <motion.div
             aria-hidden="true"
             className="absolute inset-x-0 -bottom-px h-[2px] origin-left"
@@ -1526,7 +1505,6 @@ export default function ProjectBanner({ project }) {
     [facingCounts],
   )
 
-  // Only worth showing when the block actually has more than one direction.
   const hasFacingFilter = facingOptions.length > 1
 
   const [facingFilter, setFacingFilter] = useState('all')
@@ -1705,8 +1683,6 @@ export default function ProjectBanner({ project }) {
   const panoramaSrc = project.tour360Image || project.tourImage
   const tourThumbnail = project.tourThumbnail || project.tourImage || project.tour360Image
 
-  // Every section on the page, listed in the same order they are rendered below.
-  // The sub-menu also re-sorts by actual DOM position, so it stays correct if sections move.
   const subMenuItems = [
     { id: 'overview', label: 'Overview', icon: Home },
     amenityTabs.length > 0 && { id: 'amenities', label: 'Amenities', icon: Sparkles },
@@ -1740,7 +1716,7 @@ export default function ProjectBanner({ project }) {
         </div>
       </section>
 
-      {/* ================= Sticky Sub-Menu (pins below the main navbar) ================= */}
+      {/* ================= Sticky Sub-Menu ================= */}
       <ProjectSubMenu
         items={subMenuItems}
         projectName={project.name}
@@ -2185,7 +2161,6 @@ export default function ProjectBanner({ project }) {
               <FadeUp delay={0.08}>
                 <div className="mb-5 sm:mb-7">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
-                    {/* Live compass — the needle swings to the selected direction */}
                     <div className="flex items-center gap-2.5 sm:gap-3">
                       <span
                         className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border bg-white sm:h-[46px] sm:w-[46px]"
@@ -2213,7 +2188,6 @@ export default function ProjectBanner({ project }) {
                       </span>
                     </div>
 
-                    {/* Segmented control */}
                     <div
                       className="-mx-4 flex items-center gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
                     >
@@ -2970,8 +2944,8 @@ export default function ProjectBanner({ project }) {
                       <div className="rounded-xl bg-[#F0F6FC] px-2.5 py-2 sm:px-4 sm:py-3">
                         <p className="m-0 text-[10.5px] font-medium sm:text-[12px]" style={{ color: TEXT_CHARCOAL, opacity: 0.65 }}>Starting from</p>
                         <p className="m-0 mt-0.5 text-[15px] font-bold tabular-nums sm:text-[20px]" style={{ color: DEEP_NAVY }}>
-  {formatUnitPrice(2200000)}
-</p>
+                          {formatUnitPrice(2200000)}
+                        </p>
                       </div>
                     </div>
                   )}
