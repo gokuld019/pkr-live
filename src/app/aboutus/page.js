@@ -108,10 +108,10 @@ export default function AboutUsPage() {
           {/* Stat cards */}
           <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:gap-6">
             {[
-              { icon: Award, value: "15", suffix: "+", label: ["YEARS", "OF EXPERIENCE"] },
+              { icon: Award, value: "9", suffix: "+", label: ["YEARS", "OF EXPERIENCE"] },
               { icon: Users, value: "3.2K", suffix: "+", label: ["HAPPY", "HOME OWNERS"] },
               { icon: Building2, value: "50", suffix: "+", label: ["PROJECTS", "DELIVERED"] },
-              { icon: Ruler, value: "5M", suffix: "+", label: ["SQ.FT.", "CONSTRUCTED"] },
+              { icon: Ruler, value: "1L", suffix: "+", label: ["SQ.FT.", "CONSTRUCTED"] },
             ].map((stat, i) => {
               const Icon = stat.icon;
               return (
@@ -160,7 +160,7 @@ export default function AboutUsPage() {
           {/* Image — FIXED to show full image */}
           <div className="relative w-full h-auto overflow-hidden rounded-2xl md:col-span-2 lg:col-span-1">
             <img
-              src="/a2.png"
+              src="/a22.png"
               alt="PKR Estates residence"
               className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105"
             />
@@ -256,7 +256,7 @@ export default function AboutUsPage() {
       </section>
 
       {/* ===================== WHY CHOOSE PKR ESTATES ===================== */}
-      <section className="relative w-full overflow-hidden" style={{ backgroundColor: "#fff" }}>
+      <section className="relative w-full overflow-hidden mb-20" style={{ backgroundColor: "#fff" }}>
         <div className="relative max-w-[1760px] mx-auto flex flex-col lg:flex-row items-stretch rounded-2xl sm:rounded-3xl overflow-hidden">
           
           {/* Left: text + features */}
@@ -317,7 +317,7 @@ export default function AboutUsPage() {
           {/* Right: building image — FIXED to show full image */}
           <div className="flex-1 relative min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-0 overflow-hidden bg-gray-50 flex items-center justify-center">
             <img
-              src="/a4.png"
+              src="/about3.png"
               alt="PKR Estates building"
               className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105"
             />

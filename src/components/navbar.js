@@ -10,20 +10,37 @@ import { Menu, X } from "lucide-react";
 const DEEP_NAVY = "#0F3A6B";
 
 /* Rendered left to right, after the logo. A `projects` array turns an
-   item into a hover dropdown; everything else is a plain link. */
+   item into a hover dropdown; everything else is a plain link.
+   `basePath` controls where each dropdown's project links point —
+   ongoing projects live at /projects/<slug>, completed ones at
+   /projects/completed/<slug>. Defaults to "/projects" when omitted. */
 const navItems = [
   { label: "HOME", href: "/" },
   { label: "ABOUT US", href: "/aboutus" },
   {
     label: "ONGOING PROJECTS",
     href: "#",
+    basePath: "/projects",
     projects: [
       { name: "Gurudev", slug: "gurudev" },
       { name: "Privana", slug: "privana" },
     ],
   },
+  {
+    label: "COMPLETED PROJECTS",
+    href: "#",
+    basePath: "/projects/completed",
+    projects: [
+      { name: "PK's Paradise - T Nagar", slug: "pks-paradise-t-nagar" },
+      { name: "Premavathy Nagar - Maraimalai Nagar", slug: "premavathy-nagar-maraimalai-nagar" },
+      { name: "Little India", slug: "little-india" },
+      { name: "Aditi Gardenz - SP Koil", slug: "aditi-gardenz-sp-koil" },
+      { name: "Aditi Gardenz - Veppampattu", slug: "aditi-gardenz-veppampattu" },
+    ],
+  },
+
   { label: "EMI CALCULATOR", href: "/emicalculator" },
-  { label: "CHANNEL PARTNERS", href: "/channelpartners" },
+  // { label: "CHANNEL PARTNERS", href: "/channelpartners" },
   // { label: "BLOGS", href: "/blogs" },
   { label: "CONTACT US", href: "/contactus" },
 ];
@@ -178,7 +195,7 @@ export default function Navbar() {
                     {item.projects.map((project) => (
                       <li key={project.slug}>
                         <Link
-                          href={`/projects/${project.slug}`}
+                          href={`${item.basePath ?? "/projects"}/${project.slug}`}
                           onClick={closeMobile}
                           className="block py-2 text-[13px] font-semibold text-neutral-600"
                         >
@@ -211,14 +228,15 @@ export default function Navbar() {
   return (
     <>
       {/* FIXED header — stays at the top even if a parent has overflow hidden */}
-      <header
-        ref={headerRef}
-        className={`fixed inset-x-0 top-0 z-[60] w-full border-b bg-white transition-shadow duration-300 ${
-          scrolled
-            ? "border-[#0F3A6B]/12 shadow-[0_4px_16px_rgba(15,58,107,0.10)]"
-            : "border-[#0F3A6B]/10 shadow-[0_1px_4px_rgba(15,58,107,0.05)]"
-        }`}
-      >
+     <header
+  ref={headerRef}
+  data-site-navbar
+  className={`fixed inset-x-0 top-0 z-[60] w-full border-b bg-white transition-shadow duration-300 ${
+    scrolled
+      ? "border-[#0F3A6B]/12 shadow-[0_4px_16px_rgba(15,58,107,0.10)]"
+      : "border-[#0F3A6B]/10 shadow-[0_1px_4px_rgba(15,58,107,0.05)]"
+  }`}
+>
         <nav
           className={`mx-auto flex w-full max-w-[1560px] items-center justify-between gap-4 px-4 transition-[height] duration-300 sm:px-6 md:px-8 lg:px-10 xl:px-12 ${
             scrolled ? "h-[56px] sm:h-[60px] lg:h-[64px]" : "h-[64px] sm:h-[70px] lg:h-[78px]"
@@ -285,7 +303,7 @@ export default function Navbar() {
                         {item.projects.map((project) => (
                           <li key={project.slug}>
                             <Link
-                              href={`/projects/${project.slug}`}
+                              href={`${item.basePath ?? "/projects"}/${project.slug}`}
                               className="block whitespace-nowrap px-5 py-2.5 text-[13px] font-semibold text-neutral-900 transition-colors hover:bg-[#F0F6FC] hover:text-[#0F3A6B]"
                             >
                               {project.name}

@@ -36,7 +36,7 @@ const SOCIAL_LINKS = {
   facebook: "https://www.facebook.com/pkrestates",
   instagram: "https://www.instagram.com/pkrestates",
   linkedin: "https://www.linkedin.com/company/pkrestates",
-  youtube: "https://www.youtube.com/channel/UCqxFo8on9tQNwQq11KNfU2w",
+  youtube: "https://www.youtube.com/@pkrestatesllp",
 };
 
 const SOCIAL_ICONS = {

@@ -9,9 +9,9 @@ const DEEP_NAVY = "#0F3A6B";
 const TEXT_CHARCOAL = "#2D3A46";
 
 const STATS = [
-  { value: "8+", label: ["YEARS OF", "EXCELLENCE"] },
-  { value: "7M+", label: ["SQ.FT. SPACE", "DELIVERED"] },
-  { value: "44+", label: ["LANDMARK", "PROJECTS"] },
+  { value: "9+", label: ["YEARS OF", "EXCELLENCE"] },
+  { value: "1L+", label: ["SQ.FT. SPACE", "DELIVERED"] },
+  { value: "3+", label: ["LANDMARK", "PROJECTS"] },
 ];
 
 const DESCRIPTION =

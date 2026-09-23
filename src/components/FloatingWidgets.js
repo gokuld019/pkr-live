@@ -1,44 +1,70 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import {
   Building2, CheckCircle2, Calculator, Info, Phone, Mail, Globe, MapPin, X,
-  RotateCcw, Send, ChevronRight, Check, AlertTriangle, Home, LayoutGrid,
-  Ruler, Leaf, Hammer, FileText, IndianRupee, Share2, Camera, Play, Building,
-  ShieldCheck, RefreshCw,
+  Send, ChevronRight, Check, AlertTriangle, Home, LayoutGrid, Ruler, Leaf,
+  Hammer, FileText, IndianRupee, Share2, Camera, Play, Building, ShieldCheck,
+  Sparkles, ArrowUp, Plus, SquarePen, Copy, CornerDownLeft, Clock, History,
+  MessageSquare, Trash2,
 } from "lucide-react";
 
-const LOGO_URL = "/logo.jpeg";
+const LOGO_URL = "/3dlogo.png";
+const GREETING_LOGO_URL = "/3dlogo2.png"; // separate image just for the "how can I help?" greeting screen — swap this path independently
 
 // ============ THEME TOKENS ============
 const DEEP_NAVY = "#0F3A6B";
 const DEEP_NAVY_HOVER = "#0A2B50";
 const DEEP_NAVY_DARK = "#0A2B50";
 const DEEP_NAVY_LIGHT = "#4A6FA5";
+const ELECTRIC = "#3B82F6";
+const CYAN = "#22D3EE";
+const VIOLET = "#8B5CF6";
 const TEXT_CHARCOAL = "#2D3A46";
 const LIGHT_BLUE = "#E8F0F9";
 const LIGHT_BLUE_SOFT = "#F0F6FC";
-const LIGHT_BLUE_DEEP = "#D5E1ED";
-const LINE = "#E0E8F0";
-
-// Legacy aliases (kept so nothing else needs renaming)
-const GOLD = DEEP_NAVY;
-const GOLD_LIGHT = DEEP_NAVY_LIGHT;
-const GOLD_DARK = DEEP_NAVY_DARK;
-const INK = "#1c1c1c";
+const LINE = "#E6E9EE";
+const CANVAS = "#FAFAF9";
+const SERIF = 'ui-serif, "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif';
 
 const ENQUIRY_API = "https://api.crazystory.in/api/submit-enquiry";
 const CHATBOT_INIT_API = "https://api.crazystory.in/api/chatbot/init";
 const CHATBOT_CHAT_API = "https://api.crazystory.in/api/chatbot/chat";
+const CHATBOT_HISTORY_API = "https://api.crazystory.in/api/chatbot/history";
 const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
-
 const SESSION_STORAGE_KEY = "chatbot_session_id";
+const SESSIONS_INDEX_KEY = "chatbot_sessions_index"; // localStorage: array of session IDs
+const WHATSAPP_NUMBER = "919381055555";
 
-// WhatsApp number to redirect to after a successful enquiry submission
-const WHATSAPP_NUMBER = "919381055555"; 
+const FORCE_SESSION_ID = null;
 
 /* ------------------------------------------------------------------ */
-/*  WHATSAPP HELPER                                                    */
+/*  GLOBAL ANIMATIONS                                                  */
+/* ------------------------------------------------------------------ */
+const GLOBAL_STYLES = `
+@keyframes pkrFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pkrOverlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pkrPanelIn { from { opacity: 0; transform: translateY(18px) scale(.975); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes pkrSlideInLeft { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes pkrShimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+@keyframes pkrFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.pkr-fade-up { animation: pkrFadeUp .38s cubic-bezier(.22,1,.36,1) both; }
+.pkr-slide-left { animation: pkrSlideInLeft .28s cubic-bezier(.22,1,.36,1) both; }
+.pkr-shimmer-text {
+  background: linear-gradient(90deg, #94A3B8 0%, #0F3A6B 40%, #94A3B8 80%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: pkrShimmer 1.8s linear infinite;
+}
+.pkr-scroll::-webkit-scrollbar { width: 8px; }
+.pkr-scroll::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+.pkr-range { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 99px; background: #E2E8F0; outline: none; }
+.pkr-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #0F3A6B; box-shadow: 0 0 0 4px rgba(15,58,107,.12); cursor: pointer; }
+.pkr-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #0F3A6B; cursor: pointer; }
+`;
+
+/* ------------------------------------------------------------------ */
+/*  HELPERS                                                            */
 /* ------------------------------------------------------------------ */
 function buildWhatsAppUrl({ name, phone, inquiryType, message }) {
   const lines = [
@@ -47,13 +73,9 @@ function buildWhatsAppUrl({ name, phone, inquiryType, message }) {
     phone ? `My contact number: ${phone}.` : null,
     message ? `Message: ${message}` : null,
   ].filter(Boolean);
-  const text = lines.join(" ");
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join(" "))}`;
 }
 
-/* ------------------------------------------------------------------ */
-/*  SESSION ID HELPERS                                                 */
-/* ------------------------------------------------------------------ */
 function generateSessionId() {
   return "sess_" + Date.now() + "_" + Math.random().toString(36).substring(2, 11);
 }
@@ -69,9 +91,57 @@ function getOrCreateSessionId({ forceNew = false } = {}) {
   return fresh;
 }
 
-/* ------------------------------------------------------------------ */
-/*  BOT REPLY FORMATTER                                                */
-/* ------------------------------------------------------------------ */
+function resolveSessionId() {
+  if (FORCE_SESSION_ID) return FORCE_SESSION_ID;
+  return getOrCreateSessionId();
+}
+
+/* -------------------- CLIENT-SIDE SESSION INDEX ------------------- */
+function readSessionsIndex() {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(SESSIONS_INDEX_KEY);
+    if (!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  } catch { return []; }
+}
+
+function writeSessionsIndex(list) {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(SESSIONS_INDEX_KEY, JSON.stringify(list)); } catch { /* noop */ }
+}
+
+function rememberSessionId(sid, extra = {}) {
+  if (!sid) return;
+  const list = readSessionsIndex();
+  const existingIdx = list.findIndex((x) => x.session_id === sid);
+  const entry = {
+    session_id: sid,
+    updated_at: new Date().toISOString(),
+    created_at: existingIdx >= 0 ? list[existingIdx].created_at : new Date().toISOString(),
+    title: extra.title || (existingIdx >= 0 ? list[existingIdx].title : "") || "",
+    total: extra.total ?? (existingIdx >= 0 ? list[existingIdx].total : 0),
+  };
+  if (existingIdx >= 0) list[existingIdx] = { ...list[existingIdx], ...entry };
+  else list.unshift(entry);
+  // Keep newest first, cap at 50
+  list.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+  writeSessionsIndex(list.slice(0, 50));
+}
+
+function forgetSessionId(sid) {
+  const list = readSessionsIndex().filter((x) => x.session_id !== sid);
+  writeSessionsIndex(list);
+}
+
+function timeGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 function parseBotReply(text = "") {
   if (!text) return null;
   const lines = String(text).split("\n");
@@ -83,9 +153,7 @@ function parseBotReply(text = "") {
     while ((match = regex.exec(line)) !== null) {
       if (match.index > lastIndex) parts.push(line.slice(lastIndex, match.index));
       parts.push(
-        <strong key={`b-${lineIdx}-${match.index}`} className="font-bold" style={{ color: DEEP_NAVY }}>
-          {match[1]}
-        </strong>
+        <strong key={`b-${lineIdx}-${match.index}`} className="font-semibold text-slate-900">{match[1]}</strong>
       );
       lastIndex = regex.lastIndex;
     }
@@ -97,6 +165,41 @@ function parseBotReply(text = "") {
       </span>
     );
   });
+}
+
+/* -------------------- TIME FORMATTING HELPERS --------------------- */
+function formatTime(ts) {
+  if (!ts) return "";
+  try {
+    const d = new Date(ts);
+    return d.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true });
+  } catch { return ""; }
+}
+
+function formatDayLabel(ts) {
+  if (!ts) return "Older";
+  const d = new Date(ts);
+  const now = new Date();
+  const startOf = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const dayMs = 86400000;
+  const diff = Math.floor((startOf(now) - startOf(d)) / dayMs);
+
+  if (diff <= 0) return "Today";
+  if (diff === 1) return "Yesterday";
+  if (diff <= 7) return "Previous 7 days";
+  if (diff <= 30) return "Previous 30 days";
+  return "Older";
+}
+
+function groupSessionsByTime(sessions = []) {
+  const order = ["Today", "Yesterday", "Previous 7 days", "Previous 30 days", "Older"];
+  const groups = {};
+  order.forEach((k) => (groups[k] = []));
+  sessions.forEach((s) => {
+    const key = formatDayLabel(s.updated_at || s.created_at || s.timestamp);
+    (groups[key] || groups.Older).push(s);
+  });
+  return order.filter((k) => groups[k].length > 0).map((k) => ({ label: k, items: groups[k] }));
 }
 
 /* ------------------------------------------------------------------ */
@@ -243,8 +346,19 @@ const PROJECTS = {
   },
 };
 
+const PROJECT_TOPIC_META = {
+  overview: { label: "Overview", icon: Home },
+  configuration: { label: "Configuration & Units", icon: LayoutGrid },
+  unitSizes: { label: "Unit Sizes", icon: Ruler },
+  amenities: { label: "Amenities", icon: Leaf },
+  specifications: { label: "Specifications", icon: Hammer },
+  location: { label: "Location & Landmarks", icon: MapPin },
+  rera: { label: "RERA Details", icon: FileText },
+  price: { label: "Pricing", icon: IndianRupee },
+};
+
 /* ------------------------------------------------------------------ */
-/*  EMI CALCULATOR ENGINE                                              */
+/*  EMI ENGINE                                                         */
 /* ------------------------------------------------------------------ */
 function calcEMI(principal, annualRatePct, tenureYears) {
   const P = Number(principal);
@@ -253,13 +367,58 @@ function calcEMI(principal, annualRatePct, tenureYears) {
   if (!P || !r || !n) return { emi: 0, totalPayment: 0, totalInterest: 0 };
   const emi = (P * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
   const totalPayment = emi * n;
-  const totalInterest = totalPayment - P;
-  return { emi, totalPayment, totalInterest };
+  return { emi, totalPayment, totalInterest: totalPayment - P };
 }
 
 function formatINR(num) {
   if (!Number.isFinite(num)) return "—";
   return "₹" + Math.round(num).toLocaleString("en-IN");
+}
+
+/* ------------------------------------------------------------------ */
+/*  AI ORB — logo shown as its own centered image inside a badge       */
+/*  Pass `src` to override the image for a specific spot (e.g. the     */
+/*  greeting screen) without touching the header/launcher logo.        */
+/* ------------------------------------------------------------------ */
+function AIOrb({ size = 32, showLogo = false, bg = true, src }) {
+  const inner = Math.round(size * 0.66); // logo stays smaller than the badge, so it's never stretched edge-to-edge
+  const logoSrc = src || LOGO_URL;
+
+  if (!showLogo) {
+    return (
+      <span
+        className="relative inline-flex shrink-0 items-center justify-center rounded-full"
+        style={{ width: size, height: size, background: DEEP_NAVY }}
+      >
+        <Sparkles className="text-white" style={{ width: size * 0.55, height: size * 0.55 }} strokeWidth={2} />
+      </span>
+    );
+  }
+
+  return (
+    <span
+      className="relative inline-flex shrink-0 items-center justify-center rounded-full"
+      style={{
+        width: size,
+        height: size,
+        background: bg ? "#FFFFFF" : "transparent",
+        boxShadow: bg ? "inset 0 0 0 1px rgba(15,58,107,0.08)" : "none",
+      }}
+    >
+      {/* Logo rendered as its own standalone image, centered within the badge */}
+      <img
+        src={logoSrc}
+        alt="PKR Estates"
+        style={{
+          width: inner,
+          height: inner,
+          objectFit: "contain",
+          display: "block",
+          margin: "auto",
+        }}
+      />
+    </span>
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -275,10 +434,9 @@ function EnquireModal({ open, onClose, presetType }) {
 
   useEffect(() => {
     if (!open) return;
-    document.body.style.overflow = "hidden";
-    const onKey = (e) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+    const onKey = (e) => { if (e.key === "Escape") { e.stopPropagation(); onClose(); } };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
   }, [open, onClose]);
 
   useEffect(() => {
@@ -323,8 +481,7 @@ function EnquireModal({ open, onClose, presetType }) {
           const mapped = {};
           const keyMap = { full_name: "name", email: "email", phone: "phone", inquiry_type: "inquiryType", message: "message" };
           Object.entries(data.errors).forEach(([key, val]) => {
-            const field = keyMap[key] || key;
-            mapped[field] = Array.isArray(val) ? val[0] : String(val);
+            mapped[keyMap[key] || key] = Array.isArray(val) ? val[0] : String(val);
           });
           setFieldErrors(mapped);
         }
@@ -334,17 +491,9 @@ function EnquireModal({ open, onClose, presetType }) {
 
       setSuccessMessage(data.message || "Your enquiry has been received. Our team will reach out to you shortly.");
       setSubmitting(false); setSubmitted(true);
-
-      // Build the WhatsApp redirect URL from the submitted form data
-      const url = buildWhatsAppUrl({
-        name: payload.full_name,
-        phone: payload.phone,
-        inquiryType: payload.inquiry_type,
-        message: payload.message,
+      window.location.href = buildWhatsAppUrl({
+        name: payload.full_name, phone: payload.phone, inquiryType: payload.inquiry_type, message: payload.message,
       });
-
-      // Navigate straight to WhatsApp — no intermediate button/click needed
-      window.location.href = url;
     } catch (err) {
       console.error("Enquiry submit failed:", err);
       setErrorMessage("We couldn't reach the server. Please check your connection and try again.");
@@ -353,55 +502,48 @@ function EnquireModal({ open, onClose, presetType }) {
   };
 
   const inputClass = (field) =>
-  `w-full rounded-xl border-0 bg-[#F0F6FC] px-4 py-3 text-[14px] text-gray-800 outline-none transition-all placeholder:text-gray-400 focus:bg-white focus:ring-2 ${
-    fieldErrors[field]
-      ? "ring-1 ring-red-400 focus:ring-red-500"
-      : "focus:ring-[#0F3A6B]/20"
-  }`;
+    `w-full rounded-xl border bg-white px-4 py-3 text-[14px] text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:ring-4 ${
+      fieldErrors[field] ? "border-red-300 focus:ring-red-100" : "border-slate-200 focus:border-[#0F3A6B] focus:ring-[#0F3A6B]/10"
+    }`;
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-[10001] flex items-center justify-center bg-slate-900/40 px-4 py-8 backdrop-blur-md"
+      style={{ animation: "pkrOverlayIn .2s ease-out" }}
+      onClick={onClose}
+    >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative max-h-full w-full max-w-[460px] overflow-y-auto rounded-[22px] bg-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)]"
-        style={{ animation: "enquireModalIn 0.35s cubic-bezier(0.22,1,0.36,1)" }}
+        className="relative max-h-full w-full max-w-[460px] overflow-y-auto rounded-3xl border border-white/60 bg-white shadow-[0_40px_100px_-30px_rgba(15,58,107,0.5)]"
+        style={{ animation: "pkrPanelIn .35s cubic-bezier(.22,1,.36,1)" }}
       >
-        <style>{`
-          @keyframes enquireModalIn {
-            from { opacity: 0; transform: translateY(16px) scale(0.97); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-          }
-        `}</style>
-
-        <div className="relative px-6 pb-8 pt-7 sm:px-8" style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}>
-          <button onClick={onClose} aria-label="Close" className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25">
-            <X className="h-4 w-4" strokeWidth={2.25} />
-          </button>
+        <div className="flex items-start justify-between px-7 pb-2 pt-7">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow-md">
-              <img src={LOGO_URL} alt="" className="h-full w-full object-cover" />
-            </div>
+            <AIOrb size={40} showLogo />
             <div>
-              <h2 className="m-0 text-[19px] font-bold leading-tight text-white sm:text-[21px]">Let&apos;s Talk</h2>
-              <p className="m-0 mt-0.5 text-[12.5px] text-[#B8CFE8]">We&apos;ll get back to you within 24 hours</p>
+              <h2 className="m-0 text-[22px] font-medium leading-tight text-slate-900" style={{ fontFamily: SERIF }}>Let&apos;s talk</h2>
+              <p className="m-0 mt-0.5 text-[12.5px] text-slate-500">We&apos;ll get back to you within 24 hours</p>
             </div>
           </div>
+          <button onClick={onClose} aria-label="Close" className="flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition hover:bg-slate-100 hover:text-slate-700">
+            <X className="h-4 w-4" strokeWidth={2.25} />
+          </button>
         </div>
 
         {submitted ? (
-          <div className="flex flex-col items-center gap-3 px-6 py-14 text-center sm:px-8">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ backgroundColor: `${DEEP_NAVY}1a` }}>
-              <Check className="h-7 w-7" style={{ color: DEEP_NAVY }} strokeWidth={2.5} />
+          <div className="flex flex-col items-center gap-3 px-7 py-14 text-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50">
+              <Check className="h-7 w-7 text-emerald-600" strokeWidth={2.5} />
             </div>
-            <h3 className="m-0 text-[18px] font-bold text-gray-800">Thank You!</h3>
-            <p className="m-0 max-w-[300px] text-[13.5px] leading-relaxed text-gray-500">{successMessage}</p>
-            <p className="m-0 flex items-center gap-2 text-[12px] text-gray-400">
-              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-500" />
+            <h3 className="m-0 text-[20px] font-medium text-slate-900" style={{ fontFamily: SERIF }}>Thank you!</h3>
+            <p className="m-0 max-w-[300px] text-[13.5px] leading-relaxed text-slate-500">{successMessage}</p>
+            <p className="m-0 flex items-center gap-2 text-[12px] text-slate-400">
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-200 border-t-slate-500" />
               Redirecting you to WhatsApp...
             </p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-6 py-6 sm:px-8">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 px-7 pb-7 pt-4">
             {errorMessage && (
               <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-3 text-[13px] leading-snug text-red-700">
                 <AlertTriangle className="mt-[1px] h-4 w-4 shrink-0" strokeWidth={2} />
@@ -409,67 +551,46 @@ function EnquireModal({ open, onClose, presetType }) {
               </div>
             )}
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] font-semibold text-gray-600">
-                Full Name <span style={{ color: DEEP_NAVY }}>*</span>
-              </label>
-              <input required type="text" name="full_name" placeholder="Enter your name" value={form.name} onChange={handleChange("name")} className={inputClass("name")} style={{ backgroundColor: LIGHT_BLUE_SOFT }} />
-              {fieldErrors.name && <span className="text-[11.5px] text-red-600">{fieldErrors.name}</span>}
-            </div>
+            <Field label="Full name" required error={fieldErrors.name}>
+              <input required type="text" name="full_name" placeholder="Enter your name" value={form.name} onChange={handleChange("name")} className={inputClass("name")} />
+            </Field>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12.5px] font-semibold text-gray-600">
-                  Email <span style={{ color: DEEP_NAVY }}>*</span>
-                </label>
-                <input required type="email" name="email" placeholder="you@email.com" value={form.email} onChange={handleChange("email")} className={inputClass("email")} style={{ backgroundColor: LIGHT_BLUE_SOFT }} />
-                {fieldErrors.email && <span className="text-[11.5px] text-red-600">{fieldErrors.email}</span>}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[12.5px] font-semibold text-gray-600">
-                  Phone <span style={{ color: DEEP_NAVY }}>*</span>
-                </label>
-                <input required type="tel" name="phone" placeholder="+91 00000 00000" value={form.phone} onChange={handleChange("phone")} className={inputClass("phone")} style={{ backgroundColor: LIGHT_BLUE_SOFT }} />
-                {fieldErrors.phone && <span className="text-[11.5px] text-red-600">{fieldErrors.phone}</span>}
-              </div>
+              <Field label="Email" required error={fieldErrors.email}>
+                <input required type="email" name="email" placeholder="you@email.com" value={form.email} onChange={handleChange("email")} className={inputClass("email")} />
+              </Field>
+              <Field label="Phone" required error={fieldErrors.phone}>
+                <input required type="tel" name="phone" placeholder="+91 00000 00000" value={form.phone} onChange={handleChange("phone")} className={inputClass("phone")} />
+              </Field>
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] font-semibold text-gray-600">
-                Inquiry Type <span style={{ color: DEEP_NAVY }}>*</span>
-              </label>
+            <Field label="Inquiry type" required error={fieldErrors.inquiryType}>
               <div className="relative">
-                <select required name="inquiry_type" value={form.inquiryType} onChange={handleChange("inquiryType")} className={`${inputClass("inquiryType")} appearance-none pr-10`} style={{ backgroundColor: LIGHT_BLUE_SOFT }}>
+                <select required name="inquiry_type" value={form.inquiryType} onChange={handleChange("inquiryType")} className={`${inputClass("inquiryType")} appearance-none pr-10`}>
                   <option value="" disabled>Select an option</option>
                   {INQUIRY_TYPES.map((type) => (<option key={type} value={type}>{type}</option>))}
                 </select>
-                <ChevronRight className="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 rotate-90 text-gray-400" strokeWidth={2.25} />
+                <ChevronRight className="pointer-events-none absolute right-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 rotate-90 text-slate-400" strokeWidth={2.25} />
               </div>
-              {fieldErrors.inquiryType && <span className="text-[11.5px] text-red-600">{fieldErrors.inquiryType}</span>}
-            </div>
+            </Field>
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[12.5px] font-semibold text-gray-600">
-                Your Message <span className="font-normal text-gray-400">(optional)</span>
-              </label>
-              <textarea rows={3} name="message" placeholder="Tell us a bit more..." value={form.message} onChange={handleChange("message")} className={`${inputClass("message")} resize-none`} style={{ backgroundColor: LIGHT_BLUE_SOFT }} />
-              {fieldErrors.message && <span className="text-[11.5px] text-red-600">{fieldErrors.message}</span>}
-            </div>
+            <Field label="Message" optional error={fieldErrors.message}>
+              <textarea rows={3} name="message" placeholder="Tell us a bit more..." value={form.message} onChange={handleChange("message")} className={`${inputClass("message")} resize-none`} />
+            </Field>
 
             <button
               type="submit"
               disabled={submitting}
-              className="mt-1 flex items-center justify-center gap-2 rounded-xl py-3.5 text-[14.5px] font-bold text-white shadow-[0_10px_24px_-8px_rgba(15,58,107,0.55)] transition-all hover:shadow-[0_14px_30px_-8px_rgba(15,58,107,0.65)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
-              style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
+              className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-slate-900 py-3.5 text-[14.5px] font-semibold text-white transition-all hover:bg-[#0F3A6B] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {submitting ? (
                 <><span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" />Sending...</>
               ) : (
-                <><Send className="h-4 w-4" strokeWidth={2.25} />Submit Enquiry</>
+                <><Send className="h-4 w-4" strokeWidth={2.25} />Submit enquiry</>
               )}
             </button>
 
-            <p className="m-0 text-center text-[11px] text-gray-400">By submitting, you agree to be contacted by PKR Estates regarding your enquiry.</p>
+            <p className="m-0 text-center text-[11px] text-slate-400">By submitting, you agree to be contacted by PKR Estates regarding your enquiry.</p>
           </form>
         )}
       </div>
@@ -477,87 +598,90 @@ function EnquireModal({ open, onClose, presetType }) {
   );
 }
 
-/* ------------------------------------------------------------------ */
-/*  CHAT UI PRIMITIVES                                                  */
-/* ------------------------------------------------------------------ */
-function BotBubble({ children }) {
+function Field({ label, required, optional, error, children }) {
   return (
-    <div className="max-w-[90%] self-start rounded-2xl rounded-tl-md border bg-white p-3.5 text-[13.5px] leading-relaxed shadow-[0_2px_10px_rgba(15,58,107,0.04)]" style={{ borderColor: LINE, color: TEXT_CHARCOAL }}>
+    <div className="flex flex-col gap-1.5">
+      <label className="text-[12.5px] font-medium text-slate-600">
+        {label} {required && <span className="text-[#0F3A6B]">*</span>}
+        {optional && <span className="font-normal text-slate-400">(optional)</span>}
+      </label>
       {children}
+      {error && <span className="text-[11.5px] text-red-600">{error}</span>}
     </div>
   );
 }
 
-function BotTextBubble({ text }) {
+/* ------------------------------------------------------------------ */
+/*  CHAT PRIMITIVES                                                    */
+/* ------------------------------------------------------------------ */
+function AssistantRow({ children }) {
   return (
-    <div className="max-w-[90%] self-start rounded-2xl rounded-tl-md border bg-white p-3.5 text-[13.5px] leading-relaxed whitespace-pre-wrap shadow-[0_2px_10px_rgba(15,58,107,0.04)]" style={{ borderColor: LINE, color: TEXT_CHARCOAL }}>
-      {parseBotReply(text)}
+    <div className="pkr-fade-up flex gap-3.5">
+      <div className="pt-0.5">
+        <span className="flex h-7 w-7 items-center justify-center rounded-full" style={{ background: DEEP_NAVY }}>
+          <Sparkles className="h-4 w-4 text-white" strokeWidth={2} />
+        </span>
+      </div>
+      <div className="min-w-0 flex-1 text-[15px] leading-7 text-slate-700">{children}</div>
     </div>
   );
 }
 
-function UserBubble({ children }) {
+function UserRow({ children }) {
   return (
-    <div
-      className="max-w-[82%] self-end rounded-2xl rounded-tr-md px-4 py-2.5 text-[13.5px] font-medium text-white shadow-sm"
-      style={{ background: `linear-gradient(135deg, ${DEEP_NAVY_LIGHT}, ${DEEP_NAVY_DARK})` }}
-    >
-      {children}
-    </div>
-  );
-}
-
-function TypingBubble() {
-  return (
-    <div className="max-w-[90%] self-start rounded-2xl rounded-tl-md border bg-white px-4 py-3 shadow-[0_2px_10px_rgba(15,58,107,0.04)]" style={{ borderColor: LINE }}>
-      <div className="flex items-center gap-1.5">
-        <span className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: DEEP_NAVY, animationDelay: "0ms" }} />
-        <span className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: DEEP_NAVY, animationDelay: "150ms" }} />
-        <span className="h-2 w-2 animate-bounce rounded-full" style={{ backgroundColor: DEEP_NAVY, animationDelay: "300ms" }} />
+    <div className="pkr-fade-up flex justify-end">
+      <div className="max-w-[85%] rounded-3xl rounded-br-lg bg-[#EEF2F7] px-4 py-2.5 text-[15px] leading-relaxed text-slate-800">
+        {children}
       </div>
     </div>
   );
 }
 
-function OptionButton({ children, onClick, icon: Icon }) {
+function ThinkingRow() {
+  return (
+    <AssistantRow>
+      <span className="pkr-shimmer-text text-[14.5px] font-medium">Thinking…</span>
+    </AssistantRow>
+  );
+}
+
+function Chip({ children, onClick, icon: Icon, primary = false }) {
   return (
     <button
       onClick={onClick}
-      className="group flex w-full items-center justify-between gap-2 rounded-xl border bg-white px-4 py-3 text-left text-[13.5px] font-semibold shadow-[0_1px_4px_rgba(15,58,107,0.03)] transition-all"
-      style={{ borderColor: LINE, color: DEEP_NAVY }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = DEEP_NAVY
-        e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT
-        e.currentTarget.style.transform = 'translateY(-1px)'
-        e.currentTarget.style.boxShadow = '0 6px 16px -6px rgba(15,58,107,0.35)'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = LINE
-        e.currentTarget.style.backgroundColor = '#FFFFFF'
-        e.currentTarget.style.transform = 'translateY(0)'
-        e.currentTarget.style.boxShadow = '0 1px 4px rgba(15,58,107,0.03)'
-      }}
+      className={`group inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-all active:scale-[0.97] ${
+        primary
+          ? "border-transparent bg-slate-900 text-white hover:bg-[#0F3A6B]"
+          : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50 hover:shadow-sm"
+      }`}
     >
-      <span className="flex items-center gap-2.5">
-        {Icon && (
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
-            <Icon className="h-4 w-4" strokeWidth={2} />
-          </span>
-        )}
-        {children}
-      </span>
-      <ChevronRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-0.5" style={{ color: DEEP_NAVY }} strokeWidth={2.25} />
+      {Icon && <Icon className={`h-3.5 w-3.5 ${primary ? "text-white" : "text-[#0F3A6B]"}`} strokeWidth={2} />}
+      {children}
     </button>
   );
 }
 
-function SectionCard({ title, icon: Icon, children }) {
+function ChipRow({ children }) {
+  return <div className="mt-3 flex flex-wrap gap-2">{children}</div>;
+}
+
+function BackLink({ onClick, children }) {
   return (
-    <div className="rounded-xl border p-3.5" style={{ borderColor: LINE, backgroundColor: LIGHT_BLUE_SOFT }}>
-      <p className="m-0 mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide" style={{ color: DEEP_NAVY }}>
-        {Icon && <Icon className="h-3.5 w-3.5" strokeWidth={2.25} />}
-        {title}
-      </p>
+    <button onClick={onClick} className="mt-3 inline-flex items-center gap-1 text-[12.5px] font-medium text-slate-400 transition hover:text-slate-700">
+      ← {children}
+    </button>
+  );
+}
+
+function Card({ title, icon: Icon, children }) {
+  return (
+    <div className="rounded-2xl border border-slate-200/80 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      {title && (
+        <p className="m-0 mb-2.5 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+          {Icon && <Icon className="h-3.5 w-3.5 text-[#0F3A6B]" strokeWidth={2.25} />}
+          {title}
+        </p>
+      )}
       {children}
     </div>
   );
@@ -565,10 +689,10 @@ function SectionCard({ title, icon: Icon, children }) {
 
 function FactList({ items }) {
   return (
-    <ul className="m-0 list-none space-y-1.5 pl-0">
+    <ul className="m-0 list-none space-y-2 pl-0">
       {items.map((f, i) => (
-        <li key={i} className="flex items-start gap-2 text-[13px]" style={{ color: TEXT_CHARCOAL }}>
-          <Check className="mt-[2px] h-3.5 w-3.5 shrink-0" style={{ color: DEEP_NAVY }} strokeWidth={2.5} />
+        <li key={i} className="flex items-start gap-2.5 text-[14px] leading-6 text-slate-700">
+          <span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: `linear-gradient(135deg, ${CYAN}, ${ELECTRIC})` }} />
           <span>{f}</span>
         </li>
       ))}
@@ -578,14 +702,11 @@ function FactList({ items }) {
 
 function DistanceList({ items }) {
   return (
-    <ul className="m-0 list-none space-y-1">
+    <ul className="m-0 list-none divide-y divide-slate-100 pl-0">
       {items.map((it, i) => (
-        <li key={i} className="flex items-center justify-between gap-3 border-b py-1.5 text-[12.5px] last:border-b-0" style={{ borderColor: LINE }}>
-          <span className="flex items-center gap-1.5" style={{ color: TEXT_CHARCOAL }}>
-            <MapPin className="h-3 w-3 shrink-0 text-gray-400" strokeWidth={2} />
-            {it.label}
-          </span>
-          <span className="whitespace-nowrap font-semibold" style={{ color: DEEP_NAVY }}>{it.distance}</span>
+        <li key={i} className="flex items-center justify-between gap-3 py-2 text-[13.5px]">
+          <span className="text-slate-600">{it.label}</span>
+          <span className="whitespace-nowrap rounded-full bg-slate-100 px-2 py-0.5 text-[12px] font-semibold text-slate-700">{it.distance}</span>
         </li>
       ))}
     </ul>
@@ -593,153 +714,477 @@ function DistanceList({ items }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  EMI CALCULATOR WIDGET (inline in chat)                             */
+/*  EMI CALCULATOR                                                     */
 /* ------------------------------------------------------------------ */
-function EmiCalculatorWidget() {
-  const [principal, setPrincipal] = useState("2500000");
-  const [rate, setRate] = useState("8.5");
-  const [tenure, setTenure] = useState("20");
-  const result = useMemo(() => calcEMI(principal, rate, tenure), [principal, rate, tenure]);
+function SliderRow({ label, value, display, min, max, step, onChange }) {
+  return (
+    <div>
+      <div className="mb-1.5 flex items-center justify-between">
+        <span className="text-[12.5px] font-medium text-slate-500">{label}</span>
+        <input
+          type="number" value={value} step={step} min={min} max={max}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="w-[120px] rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-right text-[13px] font-semibold text-slate-800 outline-none focus:border-[#0F3A6B]"
+          aria-label={label}
+        />
+      </div>
+      <input type="range" className="pkr-range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(Number(e.target.value))} aria-label={`${label} slider`} />
+      {display && <div className="mt-1 text-[11px] text-slate-400">{display}</div>}
+    </div>
+  );
+}
 
-  const inputStyle = { borderColor: LINE, color: DEEP_NAVY };
+function EmiCalculatorWidget() {
+  const [principal, setPrincipal] = useState(2500000);
+  const [rate, setRate] = useState(8.5);
+  const [tenure, setTenure] = useState(20);
+  const result = useMemo(() => calcEMI(principal, rate, tenure), [principal, rate, tenure]);
+  const principalShare = result.totalPayment ? (principal / result.totalPayment) * 100 : 0;
 
   return (
-    <SectionCard title="EMI Calculator" icon={Calculator}>
-      <div className="mb-3 grid grid-cols-1 gap-2.5">
-        <label className="flex flex-col gap-1">
-          <span className="text-[11.5px] font-semibold" style={{ color: TEXT_CHARCOAL }}>Loan Amount (₹)</span>
-          <input type="number" value={principal} onChange={(e) => setPrincipal(e.target.value)}
-            className="w-full rounded-lg border bg-white px-3 py-2 text-[13px] outline-none"
-            style={inputStyle}
-            onFocus={(e) => (e.currentTarget.style.borderColor = DEEP_NAVY)}
-            onBlur={(e) => (e.currentTarget.style.borderColor = LINE)}
-          />
-        </label>
-        <div className="grid grid-cols-2 gap-2.5">
-          <label className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-semibold" style={{ color: TEXT_CHARCOAL }}>Interest (% p.a.)</span>
-            <input type="number" step="0.1" value={rate} onChange={(e) => setRate(e.target.value)}
-              className="w-full rounded-lg border bg-white px-3 py-2 text-[13px] outline-none"
-              style={inputStyle}
-              onFocus={(e) => (e.currentTarget.style.borderColor = DEEP_NAVY)}
-              onBlur={(e) => (e.currentTarget.style.borderColor = LINE)}
-            />
-          </label>
-          <label className="flex flex-col gap-1">
-            <span className="text-[11.5px] font-semibold" style={{ color: TEXT_CHARCOAL }}>Tenure (yrs)</span>
-            <input type="number" value={tenure} onChange={(e) => setTenure(e.target.value)}
-              className="w-full rounded-lg border bg-white px-3 py-2 text-[13px] outline-none"
-              style={inputStyle}
-              onFocus={(e) => (e.currentTarget.style.borderColor = DEEP_NAVY)}
-              onBlur={(e) => (e.currentTarget.style.borderColor = LINE)}
-            />
-          </label>
-        </div>
+    <Card title="EMI Calculator" icon={Calculator}>
+      <div className="space-y-4">
+        <SliderRow label="Loan amount (₹)" value={principal} display={formatINR(principal)} min={200000} max={20000000} step={50000} onChange={setPrincipal} />
+        <SliderRow label="Interest rate (% p.a.)" value={rate} min={5} max={15} step={0.1} onChange={setRate} />
+        <SliderRow label="Tenure (years)" value={tenure} min={1} max={30} step={1} onChange={setTenure} />
       </div>
 
-      <div className="rounded-lg p-3 text-white" style={{ background: `linear-gradient(135deg, ${DEEP_NAVY_LIGHT}, ${DEEP_NAVY_DARK})` }}>
-        <div className="flex items-center justify-between text-[12.5px]">
-          <span className="opacity-90">Monthly EMI</span>
-          <span className="text-[17px] font-bold">{formatINR(result.emi)}</span>
+      <div className="mt-4 rounded-2xl p-4 text-white" style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, #061B33 100%)` }}>
+        <div className="text-[11px] uppercase tracking-[0.1em] text-white/60">Monthly EMI</div>
+        <div className="mt-0.5 text-[28px] font-semibold tracking-tight">{formatINR(result.emi)}</div>
+        <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/15">
+          <div className="h-full rounded-full" style={{ width: `${principalShare}%`, background: `linear-gradient(90deg, ${CYAN}, ${ELECTRIC})` }} />
         </div>
-        <div className="mt-2 flex items-center justify-between text-[11.5px] opacity-90">
-          <span>Total Interest</span>
-          <span className="font-semibold">{formatINR(result.totalInterest)}</span>
-        </div>
-        <div className="mt-1 flex items-center justify-between text-[11.5px] opacity-90">
-          <span>Total Payment</span>
-          <span className="font-semibold">{formatINR(result.totalPayment)}</span>
+        <div className="mt-3 grid grid-cols-2 gap-3 text-[12px]">
+          <div><div className="text-white/60">Total interest</div><div className="font-semibold">{formatINR(result.totalInterest)}</div></div>
+          <div className="text-right"><div className="text-white/60">Total payment</div><div className="font-semibold">{formatINR(result.totalPayment)}</div></div>
         </div>
       </div>
-      <p className="m-0 mt-2 text-[10.5px] text-gray-400">
-        Indicative only. Actual EMI depends on your bank/NBFC's terms, processing fees & credit profile.
+      <p className="m-0 mt-2.5 text-[11px] text-slate-400">
+        Indicative only. Actual EMI depends on your bank/NBFC&apos;s terms, processing fees & credit profile.
       </p>
-    </SectionCard>
+    </Card>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/*  CHAT FLOW ENGINE                                                   */
+/*  HISTORY PANEL                                                      */
 /* ------------------------------------------------------------------ */
-const ROOT_MESSAGE = { role: "bot", kind: "menu" };
+function HistoryPanel({
+  open,
+  onClose,
+  sessions,
+  loading,
+  activeSessionId,
+  onSelect,
+  onNewChat,
+  onDelete,
+}) {
+  if (!open) return null;
+  const groups = groupSessionsByTime(sessions);
 
-const PROJECT_TOPIC_META = {
-  overview: { label: "Overview", icon: Home },
-  configuration: { label: "Configuration & Units", icon: LayoutGrid },
-  unitSizes: { label: "Unit Sizes", icon: Ruler },
-  amenities: { label: "Amenities", icon: Leaf },
-  specifications: { label: "Specifications", icon: Hammer },
-  location: { label: "Location & Landmarks", icon: MapPin },
-  rera: { label: "RERA Details", icon: FileText },
-  price: { label: "Pricing", icon: IndianRupee },
-};
+  return (
+    <div
+      className="absolute inset-0 z-30 flex"
+      style={{ animation: "pkrOverlayIn .18s ease-out" }}
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-slate-900/25 backdrop-blur-[2px]" />
+      <aside
+        onClick={(e) => e.stopPropagation()}
+        className="pkr-slide-left relative z-10 flex h-full w-[86%] max-w-[340px] flex-col border-r border-slate-200/70 bg-white shadow-[20px_0_60px_-30px_rgba(15,23,42,0.35)]"
+      >
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-2">
+            <History className="h-4 w-4 text-[#0F3A6B]" strokeWidth={2.25} />
+            <span className="text-[14px] font-semibold text-slate-900">Chat history</span>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close history"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-200/60 hover:text-slate-800"
+          >
+            <X className="h-4 w-4" strokeWidth={2.25} />
+          </button>
+        </div>
 
-export default function FloatingWidgets() {
+        <div className="px-3 pb-2">
+          <button
+            onClick={onNewChat}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white py-2.5 text-[13.5px] font-semibold text-slate-800 transition hover:border-slate-300 hover:bg-slate-50"
+          >
+            <Plus className="h-4 w-4 text-[#0F3A6B]" strokeWidth={2.25} />
+            New chat
+          </button>
+        </div>
+
+        <div className="pkr-scroll flex-1 overflow-y-auto px-2 pb-3">
+          {loading && (
+            <div className="flex items-center gap-2 px-2 py-4 text-[12.5px] text-slate-400">
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-slate-200 border-t-slate-500" />
+              Loading conversations…
+            </div>
+          )}
+
+          {!loading && sessions.length === 0 && (
+            <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100">
+                <MessageSquare className="h-5 w-5 text-slate-400" strokeWidth={1.75} />
+              </div>
+              <p className="m-0 text-[13px] font-medium text-slate-600">No past conversations</p>
+              <p className="m-0 text-[12px] text-slate-400">Your chats will appear here once you start talking to the assistant.</p>
+            </div>
+          )}
+
+          {!loading && groups.map((group) => (
+            <div key={group.label} className="mb-1">
+              <div className="sticky top-0 z-[1] bg-white/95 px-3 py-2 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-slate-400 backdrop-blur">
+                {group.label}
+              </div>
+              <ul className="m-0 list-none space-y-0.5 p-0">
+                {group.items.map((s) => {
+                  const isActive = s.session_id === activeSessionId;
+                  return (
+                    <li key={s.session_id} className="group/item relative">
+                      <button
+                        onClick={() => onSelect(s.session_id)}
+                        className={`flex w-full items-start gap-2.5 rounded-xl px-3 py-2.5 pr-9 text-left transition ${
+                          isActive ? "bg-[#E8F0F9]" : "hover:bg-slate-100"
+                        }`}
+                      >
+                        <span className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
+                          isActive ? "bg-white text-[#0F3A6B]" : "bg-slate-100 text-slate-500 group-hover/item:bg-white"
+                        }`}>
+                          <MessageSquare className="h-3.5 w-3.5" strokeWidth={2} />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className={`block truncate text-[13.5px] font-medium ${isActive ? "text-[#0F3A6B]" : "text-slate-800"}`}>
+                            {s.title || s.preview || "Untitled chat"}
+                          </span>
+                          <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-slate-400">
+                            <Clock className="h-3 w-3" strokeWidth={2} />
+                            {formatTime(s.updated_at || s.created_at || s.timestamp)}
+                            {typeof s.total === "number" && s.total > 0 && (
+                              <>
+                                <span className="text-slate-300">·</span>
+                                <span>{s.total} messages</span>
+                              </>
+                            )}
+                          </span>
+                        </span>
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onDelete?.(s.session_id); }}
+                        aria-label="Delete chat"
+                        title="Delete"
+                        className="absolute right-1.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-lg text-slate-300 opacity-0 transition group-hover/item:opacity-100 hover:bg-red-50 hover:text-red-500"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" strokeWidth={2} />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-t border-slate-100 px-4 py-3 text-[11px] text-slate-400">
+          Showing your recent chats on this device
+        </div>
+      </aside>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  MAIN COMPONENT                                                     */
+/* ------------------------------------------------------------------ */
+export default function FloatingWidgetsModern() {
   const [chatOpen, setChatOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [enquireOpen, setEnquireOpen] = useState(false);
   const [enquirePreset, setEnquirePreset] = useState("");
-  const [log, setLog] = useState([ROOT_MESSAGE]);
-  const scrollRef = useRef(null);
-
+  const [log, setLog] = useState([]);
   const [chatInput, setChatInput] = useState("");
   const [botConfig, setBotConfig] = useState(null);
   const [botLoading, setBotLoading] = useState(false);
   const [botInitialized, setBotInitialized] = useState(false);
   const [sessionId, setSessionId] = useState(null);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [plusOpen, setPlusOpen] = useState(false);
+  const [isMac, setIsMac] = useState(false);
 
-  useEffect(() => { setShowPreview(true); }, []);
-  useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight; }, [log]);
-  useEffect(() => { if (!chatOpen) return; if (sessionId) return; setSessionId(getOrCreateSessionId()); }, [chatOpen, sessionId]);
+  // History drawer
+  const [historyPanelOpen, setHistoryPanelOpen] = useState(false);
+  const [sessionsList, setSessionsList] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(false);
 
+  const scrollRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const botName = botConfig?.bot_name || "PKR Assistant";
+  const companyName = botConfig?.company_name || COMPANY.name;
+  const isEmpty = log.length === 0;
+
+  /* -------------------- MOUNT: preview + mac detect --------------- */
   useEffect(() => {
-    if (!chatOpen || botInitialized) return;
-    let cancelled = false;
+    const t = setTimeout(() => setShowPreview(true), 1200);
+    setIsMac(typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform));
+    return () => clearTimeout(t);
+  }, []);
 
-    const initChatbot = async () => {
+  /* -------------------- MOUNT: resolve session id once ------------ */
+  useEffect(() => {
+    const sid = resolveSessionId();
+    try { sessionStorage.setItem(SESSION_STORAGE_KEY, sid); } catch { /* noop */ }
+    setSessionId(sid);
+    rememberSessionId(sid);
+    console.log("[Chatbot] Resolved session id:", sid);
+  }, []);
+
+  /* -------------------- Auto-scroll to bottom --------------------- */
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [log]);
+
+  /* -------------------- Lock page scroll + focus composer --------- */
+  useEffect(() => {
+    if (!chatOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const t = setTimeout(() => inputRef.current?.focus(), 250);
+    return () => { document.body.style.overflow = prev; clearTimeout(t); };
+  }, [chatOpen]);
+
+  /* -------------------- Keyboard shortcuts ------------------------ */
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setChatOpen((o) => !o);
+        setShowPreview(false);
+      } else if (e.key === "Escape" && chatOpen && !enquireOpen) {
+        if (historyPanelOpen) setHistoryPanelOpen(false);
+        else if (plusOpen) setPlusOpen(false);
+        else setChatOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [chatOpen, enquireOpen, plusOpen, historyPanelOpen]);
+
+  /* ------------------------------------------------------------------ */
+  /*  HELPER: Map API history messages -> UI log entries                */
+  /* ------------------------------------------------------------------ */
+  const mapHistoryToLog = useCallback((messages = []) => {
+    return messages
+      .map((msg) => {
+        if (msg.role === "user") {
+          return { role: "user", kind: "text", label: msg.message };
+        }
+        if (msg.role === "bot") {
+          return { role: "bot", kind: "text", text: msg.message };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  }, []);
+
+  /* ------------------------------------------------------------------ */
+  /*  1) INIT CONFIG                                                    */
+  /* ------------------------------------------------------------------ */
+  useEffect(() => {
+    if (botInitialized) return;
+    let cancelled = false;
+    (async () => {
       try {
-        setBotLoading(true);
         const res = await fetch(CHATBOT_INIT_API, { headers: { Accept: "application/json" } });
         const data = await res.json();
         if (cancelled) return;
         if (data?.status) {
           setBotConfig(data);
           setBotInitialized(true);
-          if (data.greeting) setLog((l) => [...l, { role: "bot", kind: "text", text: data.greeting }]);
+          console.log("[Chatbot] Init config loaded:", data);
         }
       } catch (err) {
         console.error("Chatbot init failed:", err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [botInitialized]);
+
+  /* ------------------------------------------------------------------ */
+  /*  2) HISTORY FETCH for active session                               */
+  /* ------------------------------------------------------------------ */
+  useEffect(() => {
+    if (!chatOpen || !sessionId) return;
+    if (historyLoaded) return;
+
+    let cancelled = false;
+    (async () => {
+      try {
+        setBotLoading(true);
+        console.log("[Chatbot] Loading history for session:", sessionId);
+
+        const res = await fetch(`${CHATBOT_HISTORY_API}/${sessionId}`, {
+          headers: { Accept: "application/json" },
+        });
+
+        if (!res.ok) {
+          console.warn("[Chatbot] History HTTP error:", res.status);
+          setHistoryLoaded(true);
+          return;
+        }
+
+        const data = await res.json();
+        console.log("[Chatbot] History response:", data);
+
+        if (cancelled) return;
+
+        if (data?.status && Array.isArray(data.messages) && data.messages.length > 0) {
+          const mapped = mapHistoryToLog(data.messages);
+          setLog(mapped);
+
+          const firstUser = data.messages.find((m) => m.role === "user");
+          const lastMsg = data.messages[data.messages.length - 1];
+          rememberSessionId(sessionId, {
+            title: firstUser?.message?.slice(0, 60) || "",
+            total: data.messages.length,
+            updated_at: lastMsg?.timestamp || new Date().toISOString(),
+          });
+        } else {
+          console.log("[Chatbot] No history messages for this session.");
+        }
+        setHistoryLoaded(true);
+      } catch (err) {
+        console.warn("Chat history fetch failed:", err);
+        setHistoryLoaded(true);
       } finally {
         if (!cancelled) setBotLoading(false);
       }
-    };
+    })();
 
-    initChatbot();
     return () => { cancelled = true; };
-  }, [chatOpen, botInitialized]);
+  }, [chatOpen, sessionId, historyLoaded, mapHistoryToLog]);
 
-  const handleChatToggle = () => { setChatOpen((prev) => !prev); setShowPreview(false); };
+  /* ------------------------------------------------------------------ */
+  /*  3) SESSIONS LIST — built from client-side index + per-session     */
+  /*     fetches. Falls back gracefully if the index is empty.          */
+  /* ------------------------------------------------------------------ */
+  const fetchSessionsList = useCallback(async () => {
+    const index = readSessionsIndex();
+    if (index.length === 0) {
+      setSessionsList([]);
+      setSessionsLoading(false);
+      return;
+    }
+
+    setSessionsLoading(true);
+    try {
+      const results = await Promise.all(
+        index.slice(0, 30).map(async (item) => {
+          try {
+            const res = await fetch(`${CHATBOT_HISTORY_API}/${item.session_id}`, {
+              headers: { Accept: "application/json" },
+            });
+            if (!res.ok) return item;
+            const data = await res.json();
+            if (!data?.status || !Array.isArray(data.messages) || data.messages.length === 0) {
+              return { ...item, total: 0 };
+            }
+            const firstUser = data.messages.find((m) => m.role === "user");
+            const lastMsg = data.messages[data.messages.length - 1];
+            return {
+              ...item,
+              title: firstUser?.message?.slice(0, 60) || item.title || "Untitled chat",
+              preview: lastMsg?.message?.slice(0, 80) || "",
+              total: data.messages.length,
+              updated_at: lastMsg?.timestamp || item.updated_at,
+            };
+          } catch {
+            return item;
+          }
+        })
+      );
+
+      const alive = results.filter((r) => (r.total ?? 0) > 0 || r.session_id === sessionId);
+
+      writeSessionsIndex(alive);
+
+      const sorted = alive.sort((a, b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+      setSessionsList(sorted);
+    } catch (err) {
+      console.warn("Failed to build sessions list:", err);
+      setSessionsList(readSessionsIndex());
+    } finally {
+      setSessionsLoading(false);
+    }
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (historyPanelOpen) fetchSessionsList();
+  }, [historyPanelOpen, fetchSessionsList]);
+
+  /* -------------------- Auto-grow composer ------------------------ */
+  useEffect(() => {
+    const el = inputRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 200) + "px";
+  }, [chatInput]);
+
+  const openChat = () => { setChatOpen(true); setShowPreview(false); };
 
   const resetChat = () => {
-    setLog([ROOT_MESSAGE]);
+    setLog([]);
     setChatInput("");
-    setSessionId(getOrCreateSessionId({ forceNew: true }));
+    setHistoryLoaded(false);
+    const fresh = getOrCreateSessionId({ forceNew: true });
+    setSessionId(fresh);
+    rememberSessionId(fresh);
+    console.log("[Chatbot] Started new session:", fresh);
+    inputRef.current?.focus();
+  };
+
+  const loadSession = async (sid) => {
+    if (!sid) return;
+    setHistoryPanelOpen(false);
+    if (sid === sessionId && log.length > 0) return;
+    console.log("[Chatbot] Switching to session:", sid);
+    setLog([]);
+    setHistoryLoaded(false);
+    setSessionId(sid);
+    try { sessionStorage.setItem(SESSION_STORAGE_KEY, sid); } catch { /* noop */ }
+  };
+
+  const deleteSession = (sid) => {
+    forgetSessionId(sid);
+    setSessionsList((prev) => prev.filter((s) => s.session_id !== sid));
+    if (sid === sessionId) resetChat();
   };
 
   const pushUser = (label) => setLog((l) => [...l, { role: "user", kind: "text", label }]);
   const pushBot = (entry) => setLog((l) => [...l, { role: "bot", ...entry }]);
+  const flow = (label, entry) => { setPlusOpen(false); pushUser(label); pushBot(entry); };
 
   const sendChatMessage = async (rawText) => {
     const text = String(rawText ?? "").trim();
     if (!text) return;
-
     let sid = sessionId;
-    if (!sid) { sid = getOrCreateSessionId(); setSessionId(sid); }
+    if (!sid) { sid = resolveSessionId(); setSessionId(sid); rememberSessionId(sid); }
 
     pushUser(text);
     setChatInput("");
     setLog((l) => [...l, { role: "bot", kind: "typing" }]);
-    await new Promise((r) => setTimeout(r, 500));
+
+    const index = readSessionsIndex();
+    const existing = index.find((x) => x.session_id === sid);
+    if (!existing?.title) {
+      rememberSessionId(sid, { title: text.slice(0, 60), total: (existing?.total || 0) + 2 });
+    } else {
+      rememberSessionId(sid, { total: (existing?.total || 0) + 2 });
+    }
 
     try {
       const res = await fetch(CHATBOT_CHAT_API, {
@@ -749,14 +1194,9 @@ export default function FloatingWidgets() {
       });
       let data = null;
       try { data = await res.json(); } catch { data = null; }
-
       setLog((l) => l.filter((e) => e.kind !== "typing"));
-
-      if (res.ok && data?.status && data.reply) {
-        pushBot({ kind: "text", text: data.reply });
-      } else {
-        pushBot({ kind: "text", text: "Sorry, I couldn't process that just now. Please try again or call us at " + COMPANY.phoneDisplay + "." });
-      }
+      if (res.ok && data?.status && data.reply) pushBot({ kind: "text", text: data.reply });
+      else pushBot({ kind: "text", text: "Sorry, I couldn't process that just now. Please try again or call us at " + COMPANY.phoneDisplay + "." });
     } catch (err) {
       console.error("Chat send failed:", err);
       setLog((l) => l.filter((e) => e.kind !== "typing"));
@@ -764,171 +1204,204 @@ export default function FloatingWidgets() {
     }
   };
 
-  const handleInputSubmit = (e) => { e.preventDefault(); sendChatMessage(chatInput); };
-
-  const goOngoingProjects = () => { pushUser("Ongoing Projects"); pushBot({ kind: "projects" }); };
-  const goContactUs = () => { pushUser("Contact Us"); pushBot({ kind: "contact" }); };
-  const goAboutCompany = () => { pushUser("About PKR Estates"); pushBot({ kind: "about-company" }); };
-  const goCompletedProjects = () => { pushUser("Completed Projects"); pushBot({ kind: "completed-projects" }); };
-  const goEmiCalculator = () => { pushUser("EMI Calculator"); pushBot({ kind: "emi" }); };
-
-  const openEnquireFromChat = (type) => { setEnquirePreset(type); setEnquireOpen(true); };
-
-  const selectProject = (projectKey) => {
-    const project = PROJECTS[projectKey];
-    pushUser(project.name);
-    pushBot({ kind: "project-topics", projectKey });
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
+      e.preventDefault();
+      sendChatMessage(chatInput);
+    }
   };
 
-  const selectTopic = (projectKey, topic) => {
-    const meta = PROJECT_TOPIC_META[topic];
-    pushUser(meta.label);
-    pushBot({ kind: "project-detail", projectKey, topic });
-  };
+  const goOngoingProjects = () => flow("Ongoing projects", { kind: "projects" });
+  const goCompletedProjects = () => flow("Completed projects", { kind: "completed-projects" });
+  const goEmiCalculator = () => flow("EMI calculator", { kind: "emi" });
+  const goAboutCompany = () => flow("About PKR Estates", { kind: "about-company" });
+  const goContactUs = () => flow("Contact us", { kind: "contact" });
+  const backToMenu = () => flow("Main menu", { kind: "menu" });
+  const backToProjects = () => flow("Back to projects", { kind: "projects" });
+  const backToTopics = (projectKey) => flow("More about this project", { kind: "project-topics", projectKey });
+  const selectProject = (projectKey) => flow(PROJECTS[projectKey].name, { kind: "project-topics", projectKey });
+  const selectTopic = (projectKey, topic) => flow(PROJECT_TOPIC_META[topic].label, { kind: "project-detail", projectKey, topic });
+  const openEnquireFromChat = useCallback((type) => { setPlusOpen(false); setEnquirePreset(type); setEnquireOpen(true); }, []);
 
-  const backToProjects = () => { pushUser("Back to projects"); pushBot({ kind: "projects" }); };
-  const backToTopics = (projectKey) => { pushUser("More about this project"); pushBot({ kind: "project-topics", projectKey }); };
-  const backToMenu = () => { pushUser("Main menu"); pushBot({ kind: "menu" }); };
+  const SUGGESTIONS = [
+    { icon: Building2, title: "Ongoing projects", desc: "Explore Gurudev & Privana", onClick: goOngoingProjects },
+    { icon: Calculator, title: "EMI calculator", desc: "Estimate your monthly payment", onClick: goEmiCalculator },
+    { icon: CheckCircle2, title: "Completed projects", desc: "Homes we've delivered", onClick: goCompletedProjects },
+    { icon: Info, title: "About PKR Estates", desc: "Our story & promise", onClick: goAboutCompany },
+  ];
 
+  /* ------------------------- TOPIC DETAIL -------------------------- */
   const renderTopicDetail = (project, topic) => {
     switch (topic) {
       case "overview":
-        return (<><p className="m-0 mb-2">{project.overview}</p>{project.salientFeatures && <FactList items={project.salientFeatures} />}</>);
+        return (<div className="space-y-3"><p className="m-0">{project.overview}</p>{project.salientFeatures && <Card><FactList items={project.salientFeatures} /></Card>}</div>);
       case "configuration":
         return (
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {project.configuration.map((block, i) => (
-              <SectionCard key={i} title={`${block.block} · ${block.structure}`} icon={LayoutGrid}>
-                <ul className="m-0 grid grid-cols-2 gap-2">
+              <Card key={i} title={`${block.block} · ${block.structure}`} icon={LayoutGrid}>
+                <div className="grid grid-cols-2 gap-2.5">
                   {block.units.map((u, j) => (
-                    <li key={j} className="rounded-lg bg-white px-2.5 py-2 text-center text-[12.5px] font-semibold shadow-sm" style={{ color: DEEP_NAVY }}>
-                      {u.type}
-                      <div className="text-[15px] font-bold" style={{ color: DEEP_NAVY }}>{u.count}</div>
-                      <div className="text-[10.5px] font-normal text-gray-400">units</div>
-                    </li>
+                    <div key={j} className="rounded-xl bg-slate-50 px-3 py-3 text-center">
+                      <div className="text-[12px] font-medium text-slate-500">{u.type}</div>
+                      <div className="text-[24px] font-semibold tracking-tight text-slate-900">{u.count}</div>
+                      <div className="text-[11px] text-slate-400">units</div>
+                    </div>
                   ))}
-                </ul>
-              </SectionCard>
+                </div>
+              </Card>
             ))}
           </div>
         );
       case "unitSizes":
         return (
-          <div className="space-y-2">
-            {project.unitSizes.map((u, i) => (
-              <div key={i} className="flex items-center justify-between rounded-lg border px-3 py-2.5" style={{ borderColor: LINE, backgroundColor: LIGHT_BLUE_SOFT }}>
-                <span className="flex items-center gap-1.5 text-[13px] font-semibold" style={{ color: DEEP_NAVY }}>
-                  <Ruler className="h-3.5 w-3.5" strokeWidth={2} style={{ color: DEEP_NAVY }} />
-                  {u.type}
-                </span>
-                <div className="text-right text-[12px]">
-                  <div style={{ color: TEXT_CHARCOAL }}>Saleable: <strong>{u.saleable}</strong></div>
-                  <div className="text-gray-400">RERA Carpet: {u.carpet}</div>
-                </div>
-              </div>
-            ))}
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+            <table className="w-full text-left text-[13.5px]">
+              <thead className="bg-slate-50 text-[11px] uppercase tracking-[0.08em] text-slate-500">
+                <tr><th className="px-4 py-2.5 font-semibold">Type</th><th className="px-4 py-2.5 font-semibold">Saleable</th><th className="px-4 py-2.5 font-semibold">RERA carpet</th></tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {project.unitSizes.map((u, i) => (
+                  <tr key={i}>
+                    <td className="px-4 py-3 font-semibold text-slate-900">{u.type}</td>
+                    <td className="px-4 py-3 text-slate-700">{u.saleable}</td>
+                    <td className="px-4 py-3 text-slate-500">{u.carpet}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         );
       case "amenities":
-        return <FactList items={project.amenities} />;
+        return (
+          <div className="flex flex-wrap gap-2">
+            {project.amenities.map((a, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[13px] text-slate-700">
+                <Check className="h-3.5 w-3.5 text-emerald-600" strokeWidth={2.5} />{a}
+              </span>
+            ))}
+          </div>
+        );
       case "specifications":
         return (
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {Object.entries(project.specifications).map(([key, items]) => (
-              <SectionCard key={key} title={key.replace(/([A-Z])/g, " $1")} icon={Hammer}>
-                <FactList items={items} />
-              </SectionCard>
+              <Card key={key} title={key.replace(/([A-Z])/g, " $1")} icon={Hammer}><FactList items={items} /></Card>
             ))}
           </div>
         );
       case "location":
         return (
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             <p className="m-0">{project.location.description}</p>
-            <SectionCard title="Nearby Landmarks" icon={MapPin}><DistanceList items={project.location.landmarks} /></SectionCard>
-            <SectionCard title="Nearby Schools" icon={MapPin}><DistanceList items={project.location.schools} /></SectionCard>
-            <SectionCard title="Nearby Colleges" icon={MapPin}><DistanceList items={project.location.colleges} /></SectionCard>
+            <Card title="Nearby landmarks" icon={MapPin}><DistanceList items={project.location.landmarks} /></Card>
+            <Card title="Nearby schools" icon={MapPin}><DistanceList items={project.location.schools} /></Card>
+            <Card title="Nearby colleges" icon={MapPin}><DistanceList items={project.location.colleges} /></Card>
           </div>
         );
       case "rera":
         return (
-          <SectionCard title="RERA Registration" icon={ShieldCheck}>
-            <p className="m-0 text-[13px]" style={{ color: TEXT_CHARCOAL }}>
-              RERA Number: <strong style={{ color: DEEP_NAVY }}>{project.rera || "Available on request"}</strong>
-            </p>
-            <p className="m-0 mt-2 text-[11.5px] text-gray-400">
-              Please verify RERA details on the official TN RERA portal before making any payment.
-            </p>
-          </SectionCard>
+          <Card title="RERA registration" icon={ShieldCheck}>
+            <div className="flex items-center justify-between gap-3 rounded-xl bg-slate-50 px-3.5 py-3">
+              <code className="text-[14px] font-semibold text-slate-900">{project.rera || "Available on request"}</code>
+              {project.rera && (
+                <button
+                  onClick={() => navigator.clipboard?.writeText(project.rera)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white hover:text-slate-700"
+                  aria-label="Copy RERA number" title="Copy"
+                >
+                  <Copy className="h-4 w-4" strokeWidth={2} />
+                </button>
+              )}
+            </div>
+            <p className="m-0 mt-2.5 text-[12px] text-slate-400">Please verify RERA details on the official TN RERA portal before making any payment.</p>
+          </Card>
         );
       case "price":
         return (
-          <SectionCard title="Pricing" icon={IndianRupee}>
-            <p className="m-0 text-[13px]" style={{ color: TEXT_CHARCOAL }}>{project.priceHint}</p>
-            <button onClick={() => openEnquireFromChat(project.name)}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-[13px] font-bold text-white"
-              style={{ backgroundColor: DEEP_NAVY }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}>
-              <IndianRupee className="h-3.5 w-3.5" strokeWidth={2.25} />
-              Get Current Price List
+          <Card title="Pricing" icon={IndianRupee}>
+            <p className="m-0 text-[14px] text-slate-700">{project.priceHint}</p>
+            <button
+              onClick={() => openEnquireFromChat(project.name)}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-[13.5px] font-semibold text-white transition hover:bg-[#0F3A6B]"
+            >
+              <IndianRupee className="h-3.5 w-3.5" strokeWidth={2.25} />Get current price list
             </button>
-          </SectionCard>
+          </Card>
         );
       default:
         return null;
     }
   };
 
+  /* ------------------------- BOT ENTRIES --------------------------- */
   const renderBotEntry = (entry, idx) => {
     switch (entry.kind) {
-      case "menu":
-        return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>
-              Hello! Welcome to <strong>{botConfig?.company_name || COMPANY.name}</strong> — {botConfig?.tagline || COMPANY.tagline}. How can I help you today?
-            </BotBubble>
-            <OptionButton icon={Building2} onClick={goOngoingProjects}>Ongoing Projects</OptionButton>
-            <OptionButton icon={CheckCircle2} onClick={goCompletedProjects}>Completed Projects</OptionButton>
-            <OptionButton icon={Calculator} onClick={goEmiCalculator}>EMI Calculator</OptionButton>
-            <OptionButton icon={Info} onClick={goAboutCompany}>About PKR Estates</OptionButton>
-            <OptionButton icon={Phone} onClick={goContactUs}>Contact Us</OptionButton>
-          </div>
-        );
-
       case "typing":
-        return <TypingBubble key={idx} />;
+        return <ThinkingRow key={idx} />;
 
       case "text":
-        return <BotTextBubble key={idx} text={entry.text} />;
+        return <AssistantRow key={idx}><div className="whitespace-pre-wrap">{parseBotReply(entry.text)}</div></AssistantRow>;
+
+      case "menu":
+        return (
+          <AssistantRow key={idx}>
+            <p className="m-0">Sure — here&apos;s what I can help you with at <strong className="font-semibold text-slate-900">{companyName}</strong>:</p>
+            <ChipRow>
+              <Chip icon={Building2} onClick={goOngoingProjects}>Ongoing projects</Chip>
+              <Chip icon={CheckCircle2} onClick={goCompletedProjects}>Completed projects</Chip>
+              <Chip icon={Calculator} onClick={goEmiCalculator}>EMI calculator</Chip>
+              <Chip icon={Info} onClick={goAboutCompany}>About us</Chip>
+              <Chip icon={Phone} onClick={goContactUs}>Contact</Chip>
+            </ChipRow>
+          </AssistantRow>
+        );
 
       case "projects":
         return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>We currently have ongoing projects. Which one would you like to explore?</BotBubble>
-            <OptionButton icon={PROJECTS.gurudev.icon} onClick={() => selectProject("gurudev")}>Gurudev — Guduvancheri</OptionButton>
-            <OptionButton icon={PROJECTS.privana.icon} onClick={() => selectProject("privana")}>Privana</OptionButton>
-            <button onClick={backToMenu} className="mt-1 self-start text-[12px] font-semibold hover:underline" style={{ color: DEEP_NAVY }}>← Main menu</button>
-          </div>
+          <AssistantRow key={idx}>
+            <p className="m-0">We currently have two ongoing projects. Which one would you like to explore?</p>
+            <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              {Object.entries(PROJECTS).map(([key, p]) => {
+                const Icon = p.icon;
+                return (
+                  <button
+                    key={key} onClick={() => selectProject(key)}
+                    className="group flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3.5 text-left transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_8px_24px_-12px_rgba(15,58,107,0.35)]"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
+                      <Icon className="h-5 w-5" strokeWidth={1.75} />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-[14px] font-semibold text-slate-900">{p.name}</span>
+                      <span className="block truncate text-[12.5px] text-slate-500">{p.tagline}</span>
+                    </span>
+                    <ChevronRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-600" />
+                  </button>
+                );
+              })}
+            </div>
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
         );
 
       case "project-topics": {
         const project = PROJECTS[entry.projectKey];
         return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>
-              <div className="mb-1 text-[11px] font-bold uppercase tracking-wide" style={{ color: DEEP_NAVY }}>
-                {project.name} · {project.tagline}
-              </div>
-              What would you like to know about <strong>{project.name}</strong>?
-            </BotBubble>
-            {project.faqTopics.map((topic) => {
-              const meta = PROJECT_TOPIC_META[topic];
-              return (<OptionButton key={topic} icon={meta.icon} onClick={() => selectTopic(entry.projectKey, topic)}>{meta.label}</OptionButton>);
-            })}
-            <OptionButton icon={Mail} onClick={() => openEnquireFromChat(project.name)}>Enquire about {project.name}</OptionButton>
-            <button onClick={backToProjects} className="self-start text-[12px] font-semibold hover:underline" style={{ color: DEEP_NAVY }}>← All projects</button>
-          </div>
+          <AssistantRow key={idx}>
+            <p className="m-0">
+              What would you like to know about <strong className="font-semibold text-slate-900">{project.name}</strong>
+              <span className="text-slate-400"> · {project.tagline}</span>?
+            </p>
+            <ChipRow>
+              {project.faqTopics.map((topic) => {
+                const meta = PROJECT_TOPIC_META[topic];
+                return <Chip key={topic} icon={meta.icon} onClick={() => selectTopic(entry.projectKey, topic)}>{meta.label}</Chip>;
+              })}
+              <Chip primary icon={Mail} onClick={() => openEnquireFromChat(project.name)}>Enquire about {project.name}</Chip>
+            </ChipRow>
+            <BackLink onClick={backToProjects}>All projects</BackLink>
+          </AssistantRow>
         );
       }
 
@@ -937,140 +1410,105 @@ export default function FloatingWidgets() {
         const meta = PROJECT_TOPIC_META[entry.topic];
         const MetaIcon = meta.icon;
         return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>
-              <div className="mb-2 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide" style={{ color: DEEP_NAVY }}>
-                <MetaIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
-                {project.name} · {meta.label}
-              </div>
-              {renderTopicDetail(project, entry.topic)}
-            </BotBubble>
-            <div className="flex gap-2">
-              <button onClick={() => backToTopics(entry.projectKey)}
-                className="flex-1 rounded-lg border bg-white px-3 py-2.5 text-[13px] font-semibold transition-colors"
-                style={{ borderColor: LINE, color: TEXT_CHARCOAL }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#FFFFFF')}>
-                ← More topics
-              </button>
-              <button onClick={() => openEnquireFromChat(project.name)}
-                className="flex-1 rounded-lg px-3 py-2.5 text-[13px] font-bold text-white transition-colors"
-                style={{ backgroundColor: DEEP_NAVY }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}>
-                Enquire Now
-              </button>
+          <AssistantRow key={idx}>
+            <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
+              <MetaIcon className="h-3 w-3" strokeWidth={2.25} />{project.name} · {meta.label}
             </div>
-            <button onClick={backToMenu} className="self-start text-[12px] font-semibold hover:underline" style={{ color: DEEP_NAVY }}>← Main menu</button>
-          </div>
+            {renderTopicDetail(project, entry.topic)}
+            <ChipRow>
+              <Chip onClick={() => backToTopics(entry.projectKey)}>More topics</Chip>
+              <Chip primary icon={Mail} onClick={() => openEnquireFromChat(project.name)}>Enquire now</Chip>
+            </ChipRow>
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
         );
       }
 
       case "completed-projects":
         return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>
-              <div className="mb-2">Here are our completed projects:</div>
-              <div className="space-y-2">
-                {COMPANY.completedProjects.map((p, i) => (
-                  <div key={i} className="flex items-start gap-2.5 rounded-lg border px-3 py-2.5" style={{ borderColor: LINE, backgroundColor: LIGHT_BLUE_SOFT }}>
-                    <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
-                      <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={2.25} />
-                    </span>
-                    <div>
-                      <p className="m-0 text-[13px] font-semibold" style={{ color: DEEP_NAVY }}>{p.name}</p>
-                      <p className="m-0 text-[12px] text-gray-500">{p.type}</p>
-                    </div>
+          <AssistantRow key={idx}>
+            <p className="m-0">Here are the projects we&apos;ve completed:</p>
+            <div className="mt-3 space-y-2.5">
+              {COMPANY.completedProjects.map((p, i) => (
+                <div key={i} className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-3.5">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                    <CheckCircle2 className="h-4 w-4" strokeWidth={2} />
+                  </span>
+                  <div>
+                    <p className="m-0 text-[14px] font-semibold text-slate-900">{p.name}</p>
+                    <p className="m-0 text-[13px] text-slate-500">{p.type}</p>
                   </div>
-                ))}
-              </div>
-            </BotBubble>
-            <button onClick={backToMenu} className="self-start text-[12px] font-semibold hover:underline" style={{ color: DEEP_NAVY }}>← Main menu</button>
-          </div>
+                </div>
+              ))}
+            </div>
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
         );
 
       case "about-company":
         return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>
-              <div className="mb-2 flex items-center gap-2.5">
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-white shadow">
-                  <img src={LOGO_URL} alt="" className="h-full w-full object-cover" />
+          <AssistantRow key={idx}>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-3.5">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white ring-1 ring-slate-200">
+                  <img src={LOGO_URL} alt="" className="h-full w-full object-contain" />
                 </div>
                 <div>
-                  <p className="m-0 text-[14px] font-bold" style={{ color: DEEP_NAVY }}>{COMPANY.name}</p>
-                  <p className="m-0 text-[11.5px] text-gray-500">{COMPANY.tagline}</p>
+                  <p className="m-0 text-[15px] font-semibold text-slate-900">{COMPANY.name}</p>
+                  <p className="m-0 text-[12.5px] text-slate-500">{COMPANY.tagline} · Est. {COMPANY.founded}</p>
                 </div>
               </div>
-              <p className="m-0 mb-2 text-[13px]" style={{ color: TEXT_CHARCOAL }}>
-                Founded by <strong>{COMPANY.founder}</strong> in {COMPANY.founded}.
-              </p>
-              <p className="m-0 mb-2">{COMPANY.story}</p>
-            </BotBubble>
-            <SectionCard title="Our Mission" icon={Info}><p className="m-0 text-[13px]" style={{ color: TEXT_CHARCOAL }}>{COMPANY.mission}</p></SectionCard>
-            <SectionCard title="Our Promise" icon={ShieldCheck}><FactList items={COMPANY.promises} /></SectionCard>
-            <div className="flex flex-wrap gap-2">
-              <a href={COMPANY.socials.facebook} target="_blank" rel="noreferrer"
-                className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11.5px] font-semibold transition-colors"
-                style={{ borderColor: LINE, color: DEEP_NAVY }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                <Share2 className="h-3.5 w-3.5" strokeWidth={2} />Facebook
-              </a>
-              <a href={COMPANY.socials.instagram} target="_blank" rel="noreferrer"
-                className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11.5px] font-semibold transition-colors"
-                style={{ borderColor: LINE, color: DEEP_NAVY }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                <Camera className="h-3.5 w-3.5" strokeWidth={2} />Instagram
-              </a>
-              <a href={COMPANY.socials.youtube} target="_blank" rel="noreferrer"
-                className="flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11.5px] font-semibold transition-colors"
-                style={{ borderColor: LINE, color: DEEP_NAVY }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}>
-                <Play className="h-3.5 w-3.5" strokeWidth={2} />YouTube
-              </a>
+              <p className="m-0">Founded by <strong className="font-semibold text-slate-900">{COMPANY.founder}</strong> in {COMPANY.founded}. {COMPANY.story}</p>
+              <Card title="Our mission" icon={Info}><p className="m-0 text-[14px] text-slate-700">{COMPANY.mission}</p></Card>
+              <Card title="Our promise" icon={ShieldCheck}><FactList items={COMPANY.promises} /></Card>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { href: COMPANY.socials.facebook, icon: Share2, label: "Facebook" },
+                  { href: COMPANY.socials.instagram, icon: Camera, label: "Instagram" },
+                  { href: COMPANY.socials.youtube, icon: Play, label: "YouTube" },
+                ].map(({ href, icon: Icon, label }) => (
+                  <a key={label} href={href} target="_blank" rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[12.5px] font-medium text-slate-700 no-underline transition hover:bg-slate-50">
+                    <Icon className="h-3.5 w-3.5 text-[#0F3A6B]" strokeWidth={2} />{label}
+                  </a>
+                ))}
+              </div>
             </div>
-            <button onClick={backToMenu} className="mt-1 self-start text-[12px] font-semibold hover:underline" style={{ color: DEEP_NAVY }}>← Main menu</button>
-          </div>
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
         );
 
       case "emi":
         return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>Plan your home loan — adjust the values below to estimate your monthly EMI.</BotBubble>
+          <AssistantRow key={idx}>
+            <p className="m-0 mb-3">Plan your home loan — drag the sliders to estimate your monthly EMI.</p>
             <EmiCalculatorWidget />
-            <OptionButton icon={Mail} onClick={() => openEnquireFromChat("General Enquiry")}>Talk to a Loan Advisor</OptionButton>
-            <button onClick={backToMenu} className="self-start text-[12px] font-semibold hover:underline" style={{ color: DEEP_NAVY }}>← Main menu</button>
-          </div>
+            <ChipRow><Chip primary icon={Mail} onClick={() => openEnquireFromChat("General Enquiry")}>Talk to a loan advisor</Chip></ChipRow>
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
         );
 
       case "contact":
         return (
-          <div key={idx} className="flex flex-col gap-2.5">
-            <BotBubble>
-              <p className="m-0 mb-2">You can reach {COMPANY.name} at:</p>
-              <p className="m-0 flex items-center gap-1.5 text-[13px]">
-                <Phone className="h-3.5 w-3.5" strokeWidth={2.25} style={{ color: DEEP_NAVY }} />
-                <a href={`tel:${COMPANY.phone.replace(/\s/g, "")}`} className="font-bold" style={{ color: DEEP_NAVY }}>
-                  {botConfig?.contact || COMPANY.phoneDisplay}
-                </a>
-              </p>
-              <p className="m-0 mt-1 flex items-center gap-1.5 text-[13px]">
-                <Globe className="h-3.5 w-3.5" strokeWidth={2.25} style={{ color: DEEP_NAVY }} />
-                <a href={COMPANY.website} target="_blank" rel="noreferrer" className="font-bold" style={{ color: DEEP_NAVY }}>
-                  pkrestates.com
-                </a>
-              </p>
-              <p className="m-0 mt-1 flex items-start gap-1.5 text-[12.5px] text-gray-600">
-                <MapPin className="mt-[2px] h-3.5 w-3.5 shrink-0 text-gray-400" strokeWidth={2} />
-                {COMPANY.address}
-              </p>
-            </BotBubble>
-            <OptionButton icon={Mail} onClick={() => openEnquireFromChat("General Enquiry")}>Submit an Enquiry</OptionButton>
-            <button onClick={backToMenu} className="mt-1 self-start text-[12px] font-semibold hover:underline" style={{ color: DEEP_NAVY }}>← Main menu</button>
-          </div>
+          <AssistantRow key={idx}>
+            <p className="m-0 mb-3">You can reach {COMPANY.name} here:</p>
+            <div className="divide-y divide-slate-100 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <a href={`tel:${COMPANY.phone.replace(/\s/g, "")}`} className="flex items-center gap-3 px-4 py-3 no-underline transition hover:bg-slate-50">
+                <Phone className="h-4 w-4 text-[#0F3A6B]" strokeWidth={2} />
+                <span className="text-[14px] font-semibold text-slate-900">{botConfig?.contact || COMPANY.phoneDisplay}</span>
+              </a>
+              <a href={COMPANY.website} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-4 py-3 no-underline transition hover:bg-slate-50">
+                <Globe className="h-4 w-4 text-[#0F3A6B]" strokeWidth={2} />
+                <span className="text-[14px] font-semibold text-slate-900">pkrestates.com</span>
+              </a>
+              <div className="flex items-start gap-3 px-4 py-3">
+                <MapPin className="mt-1 h-4 w-4 shrink-0 text-slate-400" strokeWidth={2} />
+                <span className="text-[13.5px] text-slate-600">{COMPANY.address}</span>
+              </div>
+            </div>
+            <ChipRow><Chip primary icon={Mail} onClick={() => openEnquireFromChat("General Enquiry")}>Submit an enquiry</Chip></ChipRow>
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
         );
 
       default:
@@ -1078,11 +1516,72 @@ export default function FloatingWidgets() {
     }
   };
 
+  /* ------------------------- COMPOSER ------------------------------ */
+  const composer = (
+    <div className="relative">
+      {plusOpen && (
+        <div className="pkr-fade-up absolute bottom-full left-0 z-10 mb-2 w-60 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.35)]">
+          {[
+            { icon: Building2, label: "Ongoing projects", onClick: goOngoingProjects },
+            { icon: Calculator, label: "EMI calculator", onClick: goEmiCalculator },
+            { icon: Phone, label: "Contact details", onClick: goContactUs },
+            { icon: Mail, label: "Submit an enquiry", onClick: () => openEnquireFromChat("General Enquiry") },
+          ].map(({ icon: Icon, label, onClick }) => (
+            <button key={label} onClick={onClick} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[13.5px] text-slate-700 transition hover:bg-slate-100">
+              <Icon className="h-4 w-4 text-slate-500" strokeWidth={2} />{label}
+            </button>
+          ))}
+        </div>
+      )}
+      <form
+        onSubmit={(e) => { e.preventDefault(); sendChatMessage(chatInput); }}
+        className="rounded-[26px] border border-slate-200 bg-white px-3 pb-2.5 pt-3 shadow-[0_2px_4px_rgba(15,23,42,0.02),0_12px_32px_-16px_rgba(15,58,107,0.25)] transition focus-within:border-slate-300 focus-within:shadow-[0_2px_4px_rgba(15,23,42,0.03),0_16px_40px_-16px_rgba(15,58,107,0.35)]"
+      >
+        <textarea
+          ref={inputRef}
+          rows={1}
+          value={chatInput}
+          onChange={(e) => setChatInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={isEmpty ? "Ask about homes, pricing, location…" : `Reply to ${botName}…`}
+          className="block max-h-[200px] w-full resize-none border-0 bg-transparent px-2 text-[15px] leading-6 text-slate-800 outline-none placeholder:text-slate-400"
+        />
+        <div className="mt-2 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => setPlusOpen((o) => !o)}
+            aria-label="Quick actions"
+            className={`flex h-8 w-8 items-center justify-center rounded-full border transition ${plusOpen ? "rotate-45 border-slate-300 bg-slate-100" : "border-slate-200 hover:bg-slate-50"}`}
+          >
+            <Plus className="h-4 w-4 text-slate-600" strokeWidth={2} />
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="hidden items-center gap-1 text-[11px] text-slate-400 sm:flex">
+              <CornerDownLeft className="h-3 w-3" /> to send
+            </span>
+            <button
+              type="submit"
+              aria-label="Send"
+              disabled={!chatInput.trim()}
+              className="flex h-8 w-8 items-center justify-center rounded-full text-white transition disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
+              style={chatInput.trim() ? { background: `linear-gradient(135deg, ${ELECTRIC}, ${DEEP_NAVY})` } : undefined}
+            >
+              <ArrowUp className="h-4 w-4" strokeWidth={2.5} />
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+
+  /* ------------------------- RENDER -------------------------------- */
   return (
     <>
+      <style>{GLOBAL_STYLES}</style>
+
       <button
         onClick={() => openEnquireFromChat("")}
-        className="fixed top-1/2 right-0 z-[9998] -translate-y-1/2 [writing-mode:sideways-lr] rounded-l-md px-2 py-3.5 text-[12px] font-bold tracking-wider text-white shadow-[-2px_0_8px_rgba(15,58,107,0.25)] antialiased [text-rendering:optimizeLegibility] transition-all no-underline sm:px-3.5  sm:text-[15px] sm:hover:pr-4"
+        className="fixed right-0 top-1/2 z-[9998] -translate-y-1/2 rounded-l-md px-2 py-3.5 text-[12px] font-bold tracking-wider text-white antialiased shadow-[-2px_0_8px_rgba(15,58,107,0.25)] transition-all [writing-mode:sideways-lr] sm:px-3.5 sm:text-[15px] sm:hover:pr-4"
         style={{ backgroundColor: DEEP_NAVY, backfaceVisibility: "hidden", transform: "translateZ(0)" }}
         onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
@@ -1092,103 +1591,154 @@ export default function FloatingWidgets() {
 
       <EnquireModal open={enquireOpen} onClose={() => setEnquireOpen(false)} presetType={enquirePreset} />
 
-      {/* Floating chat trigger + preview bubble (responsive sizing) */}
-      <div className="fixed bottom-5 right-4 z-[9998] flex flex-col items-end gap-2.5 sm:bottom-6 sm:right-5 sm:gap-3">
-        {showPreview && !chatOpen && (
-          <div className="relative flex max-w-[200px] items-center gap-2 rounded-2xl bg-white px-3 py-2 shadow-[0_6px_20px_rgba(0,0,0,0.18)] sm:max-w-[240px] sm:px-4 sm:py-3">
-            <button
-              onClick={() => setShowPreview(false)}
-              aria-label="Dismiss"
-              className="absolute -left-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white"
-            >
-              <X className="h-3 w-3" strokeWidth={2.5} />
-            </button>
-            <span className="mt-0.5 inline-block h-2 w-2 flex-shrink-0 rounded-full bg-green-400" />
-            <div>
-              <div className="text-[12px] font-bold sm:text-sm" style={{ color: DEEP_NAVY }}>We&apos;re Online!</div>
-              <div className="text-[11px] sm:text-[13px]" style={{ color: TEXT_CHARCOAL }}>How may I assist you today?</div>
+      {!chatOpen && (
+        <div className="fixed bottom-5 left-1/2 z-[9998] flex -translate-x-1/2 flex-col items-center gap-2 sm:bottom-6">
+          {showPreview && (
+            <div className="pkr-fade-up relative flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/90 py-1.5 pl-2 pr-8 text-[12.5px] text-slate-600 shadow-lg backdrop-blur">
+              <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+              We&apos;re online — ask me anything
+              <button onClick={() => setShowPreview(false)} aria-label="Dismiss" className="absolute right-1.5 flex h-5 w-5 items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                <X className="h-3 w-3" strokeWidth={2.5} />
+              </button>
             </div>
-          </div>
-        )}
-
-        <button
-          aria-label="Open chat assistant"
-          onClick={handleChatToggle}
-          className="relative flex h-[48px] w-[48px] items-center justify-center overflow-hidden rounded-full shadow-[0_10px_28px_-6px_rgba(15,58,107,0.55)] ring-[2px] ring-white transition-transform hover:scale-105 sm:h-[62px] sm:w-[62px] sm:ring-[2.5px]"
-          style={{ background: `linear-gradient(135deg, ${DEEP_NAVY_LIGHT}, ${DEEP_NAVY_DARK})` }}
-        >
-          <div className="flex h-[40px] w-[40px] items-center justify-center overflow-hidden rounded-full bg-white sm:h-[52px] sm:w-[52px]">
-            <img src={LOGO_URL} alt="Chat" className="h-full w-full object-cover" />
-          </div>
-        </button>
-      </div>
+          )}
+          <button
+            onClick={openChat}
+            aria-label="Open AI assistant"
+            className="group relative flex items-center gap-3 rounded-full border border-white/10 bg-[#0B1C33] py-2 pl-2 pr-4 shadow-[0_18px_40px_-12px_rgba(15,58,107,0.55)] transition-all hover:-translate-y-0.5 hover:border-white/20 hover:bg-[#0E2340] hover:shadow-[0_22px_48px_-12px_rgba(15,58,107,0.65)] active:translate-y-0 active:scale-[0.98] sm:pr-5"
+          >
+            <span style={{ animation: "pkrFloat 3s ease-in-out infinite" }}>
+              <AIOrb size={34} showLogo />
+            </span>
+            <span className="flex flex-col items-start leading-tight">
+              <span className="text-[13.5px] font-semibold text-white sm:text-[14px]">Ask PKR AI</span>
+              <span className="text-[11px] text-white/55">Homes, pricing & more</span>
+            </span>
+            <kbd className="ml-1 hidden rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 font-sans text-[11px] text-white/60 sm:inline-block">
+              {isMac ? "⌘" : "Ctrl"} K
+            </kbd>
+          </button>
+        </div>
+      )}
 
       {chatOpen && (
         <div
-          className="fixed bottom-[72px] right-4 z-[9999] flex h-[70vh] max-h-[70vh] w-[340px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[22px] shadow-[0_24px_60px_-16px_rgba(15,58,107,0.35)] ring-1 ring-black/[0.04] sm:bottom-[104px] sm:right-5 sm:h-[600px] sm:max-h-[82vh] sm:w-[400px] sm:max-w-[calc(100vw-40px)] max-[480px]:right-3 max-[480px]:bottom-[76px] max-[480px]:w-[calc(100vw-24px)]"
-          style={{ backgroundColor: LIGHT_BLUE_SOFT }}
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/30 backdrop-blur-md sm:p-6"
+          style={{ animation: "pkrOverlayIn .25s ease-out" }}
+          onClick={() => setChatOpen(false)}
         >
-          <div className="relative flex items-center justify-between px-5 py-4" style={{ background: `linear-gradient(135deg, ${DEEP_NAVY_LIGHT} 0%, ${DEEP_NAVY_DARK} 100%)` }}>
-            <div className="flex items-center gap-3">
-              <div className="flex h-[38px] w-[38px] items-center justify-center overflow-hidden rounded-full bg-white shadow-md">
-                <img src={LOGO_URL} alt="" className="h-full w-full object-cover" />
-              </div>
-              <div>
-                <div className="text-[14px] font-bold text-white tracking-wide">
-                  {botConfig?.bot_name || "PKR Estates Assistant"}
-                </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-[#B8CFE8]">
-                  <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-400 shadow-[0_0_6px_rgba(74,222,128,0.8)]" />
-                  Active now
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={resetChat} aria-label="Restart chat" title="Restart" className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25">
-                <RotateCcw className="h-3.5 w-3.5" strokeWidth={2.25} />
-              </button>
-              <button onClick={() => setChatOpen(false)} aria-label="Close chat" className="flex h-[28px] w-[28px] items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25">
-                <X className="h-4 w-4" strokeWidth={2.25} />
-              </button>
-            </div>
-          </div>
-
-          <div ref={scrollRef} className="flex flex-1 flex-col gap-2.5 overflow-y-auto px-4 py-4" style={{ scrollbarWidth: "thin" }}>
-            {log.map((entry, idx) =>
-              entry.role === "user" ? (
-                <div key={idx} className="flex justify-end"><UserBubble>{entry.label}</UserBubble></div>
-              ) : (
-                renderBotEntry(entry, idx)
-              )
-            )}
-            {botLoading && <TypingBubble />}
-          </div>
-
-          <form onSubmit={handleInputSubmit} className="flex items-center gap-2 border-t bg-white/60 px-3.5 py-3" style={{ borderColor: LINE }}>
-            <input
-              type="text"
-              value={chatInput}
-              onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Message PKR..."
-              className="flex-1 rounded-full border bg-white px-4 py-2.5 text-[13px] outline-none"
-              style={{ borderColor: LINE, color: DEEP_NAVY }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = DEEP_NAVY)}
-              onBlur={(e) => (e.currentTarget.style.borderColor = LINE)}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${botName} chat`}
+            onClick={(e) => { e.stopPropagation(); if (plusOpen) setPlusOpen(false); }}
+            className="relative flex h-full w-full flex-col overflow-hidden sm:h-[88vh] sm:max-h-[860px] sm:max-w-[820px] sm:rounded-[28px] sm:border sm:border-white/70 sm:shadow-[0_50px_120px_-30px_rgba(15,23,42,0.55)]"
+            style={{ backgroundColor: CANVAS, animation: "pkrPanelIn .4s cubic-bezier(.22,1,.36,1)" }}
+          >
+            <div
+              className="pointer-events-none absolute -top-40 left-1/2 h-80 w-[640px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
+              style={{ background: `radial-gradient(closest-side, ${CYAN}33, ${ELECTRIC}22, transparent)` }}
             />
-            <button
-              type="submit"
-              aria-label="Send"
-              disabled={!chatInput.trim()}
-              className="flex h-[38px] w-[38px] items-center justify-center rounded-full text-white transition disabled:cursor-not-allowed disabled:opacity-50"
-              style={{ backgroundColor: DEEP_NAVY }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
-            >
-              <Send className="h-4 w-4" strokeWidth={2.25} />
-            </button>
-          </form>
-          <div className="pb-2.5 pt-1.5 text-center text-[10px] font-medium tracking-wide text-gray-400">
-            Powered by {botConfig?.company_name || COMPANY.name}
+
+            <HistoryPanel
+              open={historyPanelOpen}
+              onClose={() => setHistoryPanelOpen(false)}
+              sessions={sessionsList}
+              loading={sessionsLoading}
+              activeSessionId={sessionId}
+              onSelect={loadSession}
+              onNewChat={() => { setHistoryPanelOpen(false); resetChat(); }}
+              onDelete={deleteSession}
+            />
+
+            <header className="relative z-[1] flex items-center justify-between px-4 py-3 sm:px-5">
+              <div className="flex items-center gap-2.5">
+                <AIOrb size={26} showLogo />
+                <div className="leading-tight">
+                  <div className="text-[14px] font-semibold text-slate-900">{botName}</div>
+                  <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    {companyName}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setHistoryPanelOpen(true)}
+                  title="Chat history"
+                  aria-label="Chat history"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-200/60 hover:text-slate-800"
+                >
+                  <History className="h-[18px] w-[18px]" strokeWidth={2} />
+                </button>
+                {!isEmpty && (
+                  <button onClick={resetChat} title="New chat" className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[12.5px] font-medium text-slate-500 transition hover:bg-slate-200/60 hover:text-slate-800">
+                    <SquarePen className="h-4 w-4" strokeWidth={2} />
+                    <span className="hidden sm:inline">New chat</span>
+                  </button>
+                )}
+                <button onClick={() => setChatOpen(false)} aria-label="Close" className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-200/60 hover:text-slate-800">
+                  <X className="h-[18px] w-[18px]" strokeWidth={2} />
+                </button>
+              </div>
+            </header>
+
+            {isEmpty ? (
+              <div className="pkr-scroll relative z-[1] flex flex-1 flex-col items-center justify-center overflow-y-auto px-4 pb-6 sm:px-8">
+                <div className="w-full max-w-[640px]">
+                  <div className="pkr-fade-up mb-8 flex flex-col items-center text-center">
+                    {/* <AIOrb size={64} showLogo bg={false} src={GREETING_LOGO_URL} /> */}
+                    <h1 className="m-0 mt-5 text-[30px] font-normal leading-tight tracking-tight text-slate-900 sm:text-[38px]" style={{ fontFamily: SERIF }}>
+                      {timeGreeting()}, how can I help?
+                    </h1>
+                    <p className="m-0 mt-2 max-w-[460px] text-[14px] text-slate-500">
+                      {botLoading
+                        ? <span className="pkr-shimmer-text font-medium">Connecting to assistant…</span>
+                        : (botConfig?.greeting ? parseBotReply(botConfig.greeting) : `Your guide to ${COMPANY.name} — ${COMPANY.tagline.toLowerCase()}.`)}
+                    </p>
+                  </div>
+
+                  <div className="pkr-fade-up" style={{ animationDelay: "80ms" }}>{composer}</div>
+
+                  <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                    {SUGGESTIONS.map(({ icon: Icon, title, desc, onClick }, i) => (
+                      <button
+                        key={title} onClick={onClick}
+                        className="pkr-fade-up group flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/70 p-3.5 text-left backdrop-blur transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white hover:shadow-[0_10px_30px_-15px_rgba(15,58,107,0.35)]"
+                        style={{ animationDelay: `${140 + i * 50}ms` }}
+                      >
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-[#0F3A6B] transition group-hover:bg-[#E8F0F9]">
+                          <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-[13.5px] font-semibold text-slate-800">{title}</span>
+                          <span className="block truncate text-[12px] text-slate-500">{desc}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div ref={scrollRef} className="pkr-scroll relative z-[1] flex-1 overflow-y-auto">
+                  <div className="mx-auto flex w-full max-w-[680px] flex-col gap-7 px-4 pb-8 pt-4 sm:px-6">
+                    {log.map((entry, idx) =>
+                      entry.role === "user"
+                        ? <UserRow key={idx}>{entry.label}</UserRow>
+                        : renderBotEntry(entry, idx)
+                    )}
+                  </div>
+                </div>
+                <div className="relative z-[1] mx-auto w-full max-w-[720px] px-3 pb-3 sm:px-6 sm:pb-4">
+                  <div className="pointer-events-none absolute -top-8 left-0 right-0 h-8" style={{ background: `linear-gradient(to bottom, transparent, ${CANVAS})` }} />
+                  {composer}
+                  <p className="m-0 mt-2 text-center text-[11px] text-slate-400">
+                    {botName} can make mistakes. Please verify pricing & RERA details with our team.
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

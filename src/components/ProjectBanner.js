@@ -1,8 +1,8 @@
 // src/components/project-banner.jsx
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { motion, useInView, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
 import { Figtree } from 'next/font/google'
 import * as THREE from 'three'
 import {
@@ -13,7 +13,7 @@ import {
   ArrowUpDown, Recycle, Car, Sun, LayoutGrid, ZoomIn, ZoomOut, Toilet, CookingPot,
   Fence, Navigation, Coins, Home, Phone, Navigation2, Move3d, Compass, RefreshCw,
   Send, Check, AlertTriangle, MapPinned, ParkingSquare, Expand, Grid3x3, ChevronDown, ChevronUp,
-  ExternalLink,
+  ExternalLink, Images,
 } from 'lucide-react'
 
 const figtree = Figtree({
@@ -36,7 +36,6 @@ const LIGHT_BLUE_SOFT = '#F0F6FC'
 const LOGO_URL = '/logo.jpeg'
 const ENQUIRY_API = 'https://api.crazystory.in/api/submit-enquiry'
 
-// WhatsApp number to redirect to after a successful enquiry submission
 const WHATSAPP_NUMBER = '919381055555'
 
 /* ------------------------------------------------------------------ */
@@ -54,7 +53,6 @@ function buildWhatsAppUrl({ name, phone, inquiryType, message, projectName }) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`
 }
 
-// Mobile banner is a dedicated 380 x 700 artwork
 const MOBILE_BANNER_W = 380
 const MOBILE_BANNER_H = 700
 
@@ -86,7 +84,6 @@ function getFactIcon(label = '') {
   return Building2
 }
 
-// Icon used on the Master Plan tabs (Site Plan / Parking Plan / ...)
 function getMasterPlanIcon(id = '') {
   const l = String(id).toLowerCase()
   if (l.includes('park')) return ParkingSquare
@@ -150,7 +147,73 @@ function planMatchesTab(plan, label) {
 function splitPlanTitle(plan) {
   const title = plan?.title || ''
   const [config, ...rest] = title.split('·').map((s) => s.trim())
-  return { config: plan?.config || config, facing: plan?.facing || rest.join(' · ') }
+  // `rest` is the unit label (e.g. "Unit 103") and must win over plan.facing,
+  // which is a compass direction used by the facing filter below.
+  return { config: plan?.config || config, facing: rest.join(' · ') || plan?.unitLabel || '' }
+}
+
+/* ---------------- Facing (compass) helpers ---------------- */
+
+const EMPTY_ROWS = []
+
+const FACING_ORDER = ['East', 'West', 'North', 'South', 'North-East', 'North-West', 'South-East', 'South-West']
+
+const FACING_ANGLE = {
+  North: 0, 'North-East': 45, East: 90, 'South-East': 135,
+  South: 180, 'South-West': 225, West: 270, 'North-West': 315,
+}
+
+const FACING_ALIASES = {
+  n: 'North', north: 'North',
+  e: 'East', east: 'East',
+  s: 'South', south: 'South',
+  w: 'West', west: 'West',
+  ne: 'North-East', 'north-east': 'North-East', 'east-north': 'North-East',
+  nw: 'North-West', 'north-west': 'North-West', 'west-north': 'North-West',
+  se: 'South-East', 'south-east': 'South-East', 'east-south': 'South-East',
+  sw: 'South-West', 'south-west': 'South-West', 'west-south': 'South-West',
+}
+
+function normaliseFacing(raw) {
+  if (!raw) return ''
+  const key = String(raw)
+    .trim()
+    .toLowerCase()
+    .replace(/facing/g, '')
+    .replace(/[^a-z]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  return FACING_ALIASES[key] || ''
+}
+
+// Unit codes referenced by a plan: "g-1bhk-103" -> 103, "Units A209–A509" -> A209, A509
+function getPlanUnitCodes(plan) {
+  const source = [plan?.unit, plan?.flatNo, plan?.id, plan?.title].filter(Boolean).join(' ')
+  return (source.match(/[A-Za-z]?\d{3,4}/g) || []).map((c) => c.toUpperCase())
+}
+
+function lookupFacingFromPricing(plan, rows) {
+  if (!rows || !rows.length) return ''
+  const codes = getPlanUnitCodes(plan)
+  for (const code of codes) {
+    const row = rows.find((r) => String(r?.flatNo || r?.id || '').toUpperCase() === code)
+    const facing = normaliseFacing(row?.facing)
+    if (facing) return facing
+  }
+  return ''
+}
+
+const FACING_IN_TITLE = /(north[-\s]?east|north[-\s]?west|south[-\s]?east|south[-\s]?west|north|south|east|west)(?:[-\s]?facing)?\b/i
+
+// Resolution order: explicit plan.facing -> direction written in the title -> price-list lookup by unit number.
+function getPlanFacing(plan, pricingRows) {
+  const direct = normaliseFacing(plan?.facing)
+  if (direct) return direct
+
+  const match = String(plan?.title || '').match(FACING_IN_TITLE)
+  const fromTitle = match ? normaliseFacing(match[1]) : ''
+  if (fromTitle) return fromTitle
+
+  return lookupFacingFromPricing(plan, pricingRows)
 }
 
 function formatArea(area = '') {
@@ -182,7 +245,6 @@ function getPlanGroupInfo(label, project, block) {
   return 'Layouts planned around easy circulation, cross ventilation and natural light — with every square foot put to use.'
 }
 
-// ============ PLOT PRICING DEFAULTS (for projects without explicit data) ============
 const DEFAULT_PLOT_TABS = [
   { id: 'all', label: 'All Plots' },
   { id: 'residential', label: 'Residential' },
@@ -212,7 +274,6 @@ const PLOT_FEATURES = [
   { icon: Leaf, title: 'Future Growth', text: ['A location with', 'lasting potential'] },
 ]
 
-// For units (flats, not plots) — compact 5-column layout
 const UNIT_GRID_COLS = 'sm:grid-cols-[1fr_0.85fr_1.3fr_1fr_150px]'
 const UNIT_TABLE_HEADERS = ['Flat', 'Type', 'Facing & area', 'Price', '']
 const UNITS_PAGE_SIZE = 8
@@ -252,10 +313,421 @@ function PlotCell({ children, divider = true }) {
   )
 }
 
-// ============ PRICING TYPE DETECTION ============
 function getPricingType(project) {
   if (project?.plotPricing?.length && project.plotPricing[0].flatNo) return 'units'
   return 'plots'
+}
+
+/* ==================================================================
+   STICKY SUB-MENU
+   - Pins directly below the main site navbar (add data-site-navbar to it)
+   - Tabs follow the real on-page order of sections
+   - Smooth scrolling, flicker-free active highlight, reading progress
+================================================================== */
+const pad = (n) => String(n).padStart(2, '0')
+
+/* ------------------------------------------------------------------ */
+/*  Measures where the main site navbar ends, so the sub-menu can sit  */
+/*  directly under it. Handles fixed/sticky navbars, height changes    */
+/*  and navbars that hide/show on scroll.                              */
+/* ------------------------------------------------------------------ */
+function useNavbarOffset(selector, fallback = 0) {
+  const [offset, setOffset] = useState(fallback)
+
+  useEffect(() => {
+    const el = selector ? document.querySelector(selector) : null
+    if (!el) { setOffset(fallback); return }
+
+    let raf = 0
+    const measure = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const pos = getComputedStyle(el).position
+        const pinned = pos === 'fixed' || pos === 'sticky'
+        const next = pinned ? Math.max(0, Math.round(el.getBoundingClientRect().bottom)) : 0
+        setOffset((prev) => (prev === next ? prev : next))
+      })
+    }
+
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    window.addEventListener('scroll', measure, { passive: true })
+    window.addEventListener('resize', measure)
+    el.addEventListener('transitionend', measure)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+      window.removeEventListener('scroll', measure)
+      window.removeEventListener('resize', measure)
+      el.removeEventListener('transitionend', measure)
+    }
+  }, [selector, fallback])
+
+  return offset
+}
+
+/* ================================================================== */
+/*  PROJECT SUB-MENU                                                   */
+/* ================================================================== */
+function ProjectSubMenu({
+  items = [],
+  projectName = '',
+  onEnquire,
+  navbarSelector = '[data-site-navbar]',
+  fallbackOffset = 0,
+  fontFamily,
+}) {
+  const navOffset = useNavbarOffset(navbarSelector, fallbackOffset)
+
+  const sentinelRef = useRef(null)
+  const barRef = useRef(null)
+  const scrollerRef = useRef(null)
+  const tabRefs = useRef({})
+  const lockRef = useRef(null)
+  const lockTimer = useRef(null)
+  const offsetRef = useRef(navOffset)
+  offsetRef.current = navOffset
+
+  // Always follow the real on-page order of sections, whatever order the items arrive in
+  const itemsKey = items.map((i) => i.id).join('|')
+  const [orderedIds, setOrderedIds] = useState(() => items.map((i) => i.id))
+
+  useEffect(() => {
+    const found = items
+      .map((item) => ({ id: item.id, el: document.getElementById(item.id) }))
+      .filter((x) => x.el)
+    found.sort((a, b) =>
+      a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
+    )
+    setOrderedIds(found.map((x) => x.id))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsKey])
+
+  const ordered = useMemo(
+    () => orderedIds.map((id) => items.find((i) => i.id === id)).filter(Boolean),
+    [orderedIds, items]
+  )
+
+  const [activeId, setActiveId] = useState(items[0]?.id || '')
+  const [stuck, setStuck] = useState(false)
+  const [edges, setEdges] = useState({ left: false, right: false })
+
+  // Progress values live outside React state so scrolling never re-renders the bar
+  const sectionProgress = useMotionValue(0)
+  const pageProgress = useMotionValue(0)
+  const smoothSection = useSpring(sectionProgress, { stiffness: 260, damping: 40, restDelta: 0.001 })
+  const smoothPage = useSpring(pageProgress, { stiffness: 200, damping: 40, restDelta: 0.001 })
+
+  /* ---------------- Scroll-spy + progress + stuck state ---------------- */
+  useEffect(() => {
+    if (!ordered.length) return
+    let raf = 0
+
+    const update = () => {
+      raf = 0
+      const top = offsetRef.current
+      const barH = barRef.current?.offsetHeight || 56
+
+      const sentinel = sentinelRef.current
+      if (sentinel) {
+        const isStuck = sentinel.getBoundingClientRect().top <= top + 0.5
+        setStuck((prev) => (prev === isStuck ? prev : isStuck))
+      }
+
+      // A section becomes active once its top passes a line a little below the bar
+      const probe = top + barH + Math.min(window.innerHeight * 0.3, 180)
+      const els = ordered.map((i) => document.getElementById(i.id))
+
+      let idx = 0
+      els.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= probe) idx = i })
+
+      const atBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+      if (atBottom && !lockRef.current) idx = els.length - 1
+
+      const activeEl = els[idx]
+      if (activeEl) {
+        const r = activeEl.getBoundingClientRect()
+        const p = atBottom ? 1 : (probe - r.top) / Math.max(1, r.height)
+        sectionProgress.set(Math.min(1, Math.max(0, p)))
+      }
+
+      const first = els.find(Boolean)
+      const last = [...els].reverse().find(Boolean)
+      if (first && last) {
+        const start = first.getBoundingClientRect().top + window.scrollY - probe
+        const end = last.getBoundingClientRect().bottom + window.scrollY - window.innerHeight
+        pageProgress.set(Math.min(1, Math.max(0, (window.scrollY - start) / Math.max(1, end - start))))
+      }
+
+      const next = lockRef.current || ordered[idx]?.id
+      setActiveId((prev) => (prev === next ? prev : next))
+    }
+
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [ordered, navOffset, sectionProgress, pageProgress])
+
+  // Expose the combined offset so sections can use scroll-margin-top if needed
+  useEffect(() => {
+    const h = barRef.current?.offsetHeight || 0
+    document.documentElement.style.setProperty('--project-subnav-offset', `${navOffset + h}px`)
+    return () => document.documentElement.style.removeProperty('--project-subnav-offset')
+  }, [navOffset, stuck])
+
+  /* ---------------- Smooth scroll to a section ---------------- */
+  const scrollToSection = useCallback((id) => {
+    const el = document.getElementById(id)
+    if (!el) return
+
+    const barH = barRef.current?.offsetHeight || 0
+    const y = el.getBoundingClientRect().top + window.scrollY - offsetRef.current - barH + 1
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    // Lock the highlight on the clicked tab so it doesn't flicker through
+    // every section it passes during the smooth scroll
+    lockRef.current = id
+    setActiveId(id)
+    clearTimeout(lockTimer.current)
+    const release = () => {
+      lockRef.current = null
+      clearTimeout(lockTimer.current)
+      window.removeEventListener('scrollend', release)
+    }
+    window.addEventListener('scrollend', release, { once: true })
+    lockTimer.current = setTimeout(release, 1200)
+
+    window.scrollTo({ top: Math.max(0, y), behavior: reduce ? 'auto' : 'smooth' })
+    window.history.replaceState(null, '', `#${id}`)
+  }, [])
+
+  // Deep links: /projects/xyz#price-list lands on the right section
+  useEffect(() => {
+    const hash = decodeURIComponent(window.location.hash.slice(1))
+    if (!hash || !items.some((i) => i.id === hash)) return
+    const t = setTimeout(() => scrollToSection(hash), 350)
+    return () => clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [itemsKey])
+
+  useEffect(() => () => clearTimeout(lockTimer.current), [])
+
+  /* ---------------- Horizontal scroller (mobile / many tabs) ---------------- */
+  const updateEdges = useCallback(() => {
+    const s = scrollerRef.current
+    if (!s) return
+    const left = s.scrollLeft > 4
+    const right = s.scrollLeft + s.clientWidth < s.scrollWidth - 4
+    setEdges((prev) => (prev.left === left && prev.right === right ? prev : { left, right }))
+  }, [])
+
+  useEffect(() => {
+    const s = scrollerRef.current
+    if (!s) return
+    updateEdges()
+    s.addEventListener('scroll', updateEdges, { passive: true })
+    const ro = new ResizeObserver(updateEdges)
+    ro.observe(s)
+    return () => { s.removeEventListener('scroll', updateEdges); ro.disconnect() }
+  }, [updateEdges, ordered.length])
+
+  // Keep the active tab centred in view
+  useEffect(() => {
+    const s = scrollerRef.current
+    const t = tabRefs.current[activeId]
+    if (!s || !t) return
+    const target = t.offsetLeft - s.clientWidth / 2 + t.offsetWidth / 2
+    s.scrollTo({ left: Math.max(0, target), behavior: 'smooth' })
+  }, [activeId])
+
+  const nudge = (dir) => {
+    const s = scrollerRef.current
+    if (s) s.scrollBy({ left: dir * s.clientWidth * 0.6, behavior: 'smooth' })
+  }
+
+  if (!ordered.length) return null
+
+  const activeIndex = Math.max(0, ordered.findIndex((i) => i.id === activeId))
+  const activeLabel = ordered[activeIndex]?.label
+
+  return (
+    <>
+      {/* Zero-height marker used to detect when the bar is pinned */}
+      <div ref={sentinelRef} aria-hidden="true" className="h-0 w-full" />
+
+      <div
+        ref={barRef}
+        className="sticky z-40 w-full transition-[top] duration-300 ease-out"
+        style={{ top: navOffset, fontFamily }}
+      >
+        <div
+          className={`relative w-full border-b transition-[background-color,box-shadow,border-color] duration-500 ${
+            stuck
+              ? 'border-[#0F3A6B]/10 bg-white/85 shadow-[0_12px_32px_-20px_rgba(15,58,107,0.45)] backdrop-blur-xl backdrop-saturate-150'
+              : 'border-[#E4ECF4] bg-white'
+          }`}
+        >
+          <div className="mx-auto flex max-w-[1560px] items-center gap-3 px-2 sm:px-6 lg:px-10">
+            {/* Project name + position, shown once the bar is pinned */}
+            <AnimatePresence initial={false}>
+              {stuck && projectName && (
+                <motion.div
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -12 }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                  className="hidden shrink-0 items-center gap-3 xl:flex"
+                >
+                  <span className="relative flex h-2 w-2">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60 motion-reduce:hidden" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  <div className="leading-tight">
+                    <p className="m-0 max-w-[190px] truncate text-[13.5px] font-bold" style={{ color: DEEP_NAVY }}>
+                      {projectName}
+                    </p>
+                    <p className="m-0 flex items-center gap-1 text-[11.5px] font-medium tabular-nums" style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}>
+                      <span className="relative inline-flex overflow-hidden">
+                        <AnimatePresence mode="popLayout" initial={false}>
+                          <motion.span
+                            key={activeIndex}
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: -10, opacity: 0 }}
+                            transition={{ duration: 0.25, ease: EASE }}
+                            className="inline-block"
+                          >
+                            {pad(activeIndex + 1)}
+                          </motion.span>
+                        </AnimatePresence>
+                      </span>
+                      <span>of {pad(ordered.length)}</span>
+                      <span className="max-w-[110px] truncate">— {activeLabel}</span>
+                    </p>
+                  </div>
+                  <span className="ml-1 h-8 w-px bg-[#E0E8F0]" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Tabs */}
+            <div className="relative min-w-0 flex-1">
+              <div className={`pointer-events-none absolute inset-y-0 left-0 z-[2] w-14 bg-gradient-to-r from-white via-white/80 to-transparent transition-opacity duration-300 ${edges.left ? 'opacity-100' : 'opacity-0'}`} />
+              <div className={`pointer-events-none absolute inset-y-0 right-0 z-[2] w-14 bg-gradient-to-l from-white via-white/80 to-transparent transition-opacity duration-300 ${edges.right ? 'opacity-100' : 'opacity-0'}`} />
+
+              {edges.left && (
+                <button
+                  type="button"
+                  onClick={() => nudge(-1)}
+                  aria-label="Scroll sections left"
+                  className="absolute left-0 top-1/2 z-[3] hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-[#D5E1ED] bg-white text-[#0F3A6B] shadow-[0_6px_16px_-8px_rgba(15,58,107,0.4)] transition hover:border-[#0F3A6B] sm:flex"
+                >
+                  <ChevronLeft className="h-4 w-4" strokeWidth={2.25} />
+                </button>
+              )}
+              {edges.right && (
+                <button
+                  type="button"
+                  onClick={() => nudge(1)}
+                  aria-label="Scroll sections right"
+                  className="absolute right-0 top-1/2 z-[3] hidden h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-[#D5E1ED] bg-white text-[#0F3A6B] shadow-[0_6px_16px_-8px_rgba(15,58,107,0.4)] transition hover:border-[#0F3A6B] sm:flex"
+                >
+                  <ChevronRight className="h-4 w-4" strokeWidth={2.25} />
+                </button>
+              )}
+
+              <nav
+                ref={scrollerRef}
+                aria-label="Project sections"
+                className="relative overflow-x-auto py-2 [scrollbar-width:none] sm:py-2.5 [&::-webkit-scrollbar]:hidden"
+                style={{ WebkitOverflowScrolling: 'touch' }}
+              >
+                <div className="mx-auto flex w-max items-center gap-1 px-1 sm:gap-1.5">
+                  {ordered.map((item) => {
+                    const isActive = item.id === activeId
+                    const Icon = item.icon
+                    return (
+                      <a
+                        key={item.id}
+                        ref={(el) => { tabRefs.current[item.id] = el }}
+                        href={`#${item.id}`}
+                        onClick={(e) => { e.preventDefault(); scrollToSection(item.id) }}
+                        aria-current={isActive ? 'location' : undefined}
+                        className={`relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[12.5px] font-semibold outline-none transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-[#0F3A6B]/40 focus-visible:ring-offset-2 sm:px-4 sm:py-2.5 sm:text-[13.5px] ${
+                          isActive ? 'text-white' : 'text-[#5A6B7B] hover:bg-[#F0F6FC] hover:text-[#0F3A6B]'
+                        }`}
+                      >
+                        {isActive && (
+                          <motion.span
+                            layoutId="projectSubnavPill"
+                            transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                            className="absolute inset-0 rounded-full shadow-[0_10px_22px_-10px_rgba(15,58,107,0.8)]"
+                            style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
+                          >
+                            {/* How far you've read through this section */}
+                            <span className="absolute bottom-[4px] left-4 right-4 h-[2px] overflow-hidden rounded-full bg-white/20">
+                              <motion.span
+                                className="absolute inset-0 origin-left rounded-full bg-white/85"
+                                style={{ scaleX: smoothSection }}
+                              />
+                            </span>
+                          </motion.span>
+                        )}
+                        {Icon && (
+                          <Icon
+                            className="relative z-[1] hidden h-4 w-4 sm:block"
+                            strokeWidth={isActive ? 2 : 1.75}
+                          />
+                        )}
+                        <span className="relative z-[1] whitespace-nowrap">{item.label}</span>
+                      </a>
+                    )
+                  })}
+                </div>
+              </nav>
+            </div>
+
+            {/* Enquire CTA, shown once the bar is pinned */}
+            {onEnquire && (
+              <AnimatePresence initial={false}>
+                {stuck && (
+                  <motion.button
+                    type="button"
+                    onClick={onEnquire}
+                    initial={{ opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 12 }}
+                    transition={{ duration: 0.35, ease: EASE }}
+                    className="hidden shrink-0 items-center gap-2 rounded-full px-4 py-2.5 text-[13px] font-bold text-white shadow-[0_10px_22px_-10px_rgba(15,58,107,0.8)] transition-transform hover:-translate-y-px active:scale-[0.97] md:inline-flex"
+                    style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
+                  >
+                    <Send className="h-3.5 w-3.5" strokeWidth={2.25} />
+                    Enquire now
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            )}
+          </div>
+
+          {/* Overall reading progress across all project sections */}
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-x-0 -bottom-px h-[2px] origin-left"
+            style={{ scaleX: smoothPage, background: `linear-gradient(90deg, ${DEEP_NAVY} 0%, #3B7BC4 100%)` }}
+          />
+        </div>
+      </div>
+    </>
+  )
 }
 
 /* ==================================================================
@@ -285,7 +757,6 @@ function UnitRow({ row, onEnquire }) {
         sold ? 'opacity-55' : 'hover:bg-[#F0F6FC]'
       }`}
     >
-      {/* Mobile layout */}
       <div className="flex items-center justify-between gap-3 sm:hidden">
         <div className="min-w-0">
           <p className="m-0 text-[14px] font-bold leading-tight tabular-nums" style={{ color: DEEP_NAVY }}>
@@ -315,7 +786,6 @@ function UnitRow({ row, onEnquire }) {
         </div>
       </div>
 
-      {/* Desktop layout */}
       <div className={`hidden items-center gap-4 sm:grid ${UNIT_GRID_COLS}`}>
         <div className="flex flex-col">
           <span className="text-[15px] font-bold leading-tight tabular-nums" style={{ color: DEEP_NAVY }}>{row.flatNo}</span>
@@ -347,9 +817,6 @@ function UnitRow({ row, onEnquire }) {
 
 /* ==================================================================
    ENQUIRE MODAL
-   - Normal mode: submit → redirect to WhatsApp
-   - Brochure mode (brochureUrl passed): submit → show the brochure
-     with Download / Open buttons (no WhatsApp redirect)
 ================================================================== */
 function EnquireModal({ open, onClose, presetType = '', projectName = '', context = '', brochureUrl = '' }) {
   const INQUIRY_TYPES = ['General Enquiry', 'Gurudev', 'Privana']
@@ -427,7 +894,6 @@ function EnquireModal({ open, onClose, presetType = '', projectName = '', contex
       setSuccessMessage(data.message || 'Your enquiry has been received. Our team will reach out to you shortly.')
       setSubmitting(false); setSubmitted(true)
 
-      // Brochure mode: stay in the modal and show the brochure
       if (isBrochure) return
 
       const url = buildWhatsAppUrl({
@@ -490,14 +956,12 @@ function EnquireModal({ open, onClose, presetType = '', projectName = '', contex
         </div>
 
         {showBrochure ? (
-          /* ============ BROCHURE VIEW ============ */
           <div className="flex flex-col gap-4 px-5 py-5 sm:px-8 sm:py-6">
             <div className="flex items-start gap-3 rounded-xl bg-emerald-50 px-3.5 py-3">
               <Check className="mt-[1px] h-4 w-4 shrink-0 text-emerald-600" strokeWidth={2.5} />
               <p className="m-0 text-[12.5px] leading-snug text-emerald-800 sm:text-[13px]">{successMessage}</p>
             </div>
 
-            {/* PDF preview — desktop/tablet only (most mobile browsers can't render PDFs inline) */}
             <div className="hidden overflow-hidden rounded-xl border border-[#E0E8F0] bg-[#F7FAFD] sm:block">
               <iframe
                 src={`${brochureUrl}#view=FitH`}
@@ -710,7 +1174,6 @@ function FadeUp({ children, delay = 0, className = '', amount = 0.3, once = true
   )
 }
 
-/* Shared section eyebrow (small uppercase label) */
 function SectionEyebrow({ children, className = '' }) {
   return (
     <span
@@ -953,7 +1416,6 @@ function Panorama360Modal({ open, onClose, imageSrc, title, subtitle }) {
 }
 
 export default function ProjectBanner({ project }) {
-  /* ================= AMENITIES (per-project heading, description & items) ================= */
   const amenityTabs = project?.amenityTabs?.length
     ? project.amenityTabs
     : project?.amenities?.length
@@ -988,7 +1450,6 @@ export default function ProjectBanner({ project }) {
   const goNextAmenityTab = () => setActiveAmenity((i) => (i + 1) % amenityTabs.length)
 
   useEffect(() => { setAmenityImgIndex(0) }, [activeAmenity])
-  // Reset to the first amenity when switching between projects
   useEffect(() => { setActiveAmenity(0) }, [project?.slug])
 
   const galleryItems = (project?.galleryImages || []).map((g) => g.image)
@@ -1027,7 +1488,6 @@ export default function ProjectBanner({ project }) {
     exit: (dir) => ({ opacity: 0, x: dir > 0 ? -60 : 60, scale: 0.99 }),
   }
 
-  /* ================= FLOOR PLANS — nested blocks support ================= */
   const floorPlanBlocks = project?.floorPlanBlocks || []
   const hasFloorPlanBlocks = floorPlanBlocks.length > 0
   const [activeBlock, setActiveBlock] = useState(0)
@@ -1038,10 +1498,50 @@ export default function ProjectBanner({ project }) {
 
   const floorPlansRef = useRef(null)
 
+  /* ---------------- Facing filter ---------------- */
+
+  const pricingRowsForFacing = project?.plotPricing?.length ? project.plotPricing : EMPTY_ROWS
+
+  const planFacings = useMemo(() => {
+    const map = new Map()
+    allFloorPlans.forEach((plan) => map.set(plan, getPlanFacing(plan, pricingRowsForFacing)))
+    return map
+  }, [allFloorPlans, pricingRowsForFacing])
+
+  const facingCounts = useMemo(() => {
+    const counts = {}
+    allFloorPlans.forEach((plan) => {
+      const facing = planFacings.get(plan)
+      if (facing) counts[facing] = (counts[facing] || 0) + 1
+    })
+    return counts
+  }, [allFloorPlans, planFacings])
+
+  const facingOptions = useMemo(
+    () => FACING_ORDER.filter((facing) => facingCounts[facing]),
+    [facingCounts],
+  )
+
+  // Only worth showing when the block actually has more than one direction.
+  const hasFacingFilter = facingOptions.length > 1
+
+  const [facingFilter, setFacingFilter] = useState('all')
+
+  useEffect(() => { setFacingFilter('all') }, [activeBlock])
+
+  const isFacingFiltered = hasFacingFilter && facingFilter !== 'all'
+
+  const visibleFloorPlans = isFacingFiltered
+    ? allFloorPlans.filter((plan) => planFacings.get(plan) === facingFilter)
+    : allFloorPlans
+
+  const activeFacingAngle = FACING_ANGLE[facingFilter] ?? -45
+  const selectedPlanFacing = (plan) => planFacings.get(plan) || ''
+
   const floorPlanGroups = (
     floorPlanTabs.length
-      ? floorPlanTabs.map((label) => ({ label, plans: allFloorPlans.filter((p) => planMatchesTab(p, label)) }))
-      : [{ label: '', plans: allFloorPlans }]
+      ? floorPlanTabs.map((label) => ({ label, plans: visibleFloorPlans.filter((p) => planMatchesTab(p, label)) }))
+      : [{ label: '', plans: visibleFloorPlans }]
   ).filter((group) => group.plans.length > 0)
 
   const totalFloorPlans = floorPlanGroups.reduce((sum, g) => sum + g.plans.length, 0)
@@ -1105,7 +1605,6 @@ export default function ProjectBanner({ project }) {
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow }
   }, [lightboxPlan])
 
-  /* ================= MASTER PLAN — Site Plan / Parking Plan ================= */
   const masterPlan = project?.masterPlan || null
   const masterPlanTabs = masterPlan?.tabs?.length ? masterPlan.tabs : []
   const hasMasterPlan = masterPlanTabs.length > 0
@@ -1135,7 +1634,6 @@ export default function ProjectBanner({ project }) {
     return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = prevOverflow }
   }, [masterLightboxOpen])
 
-  // ============ PRICING SECTION SETUP ============
   const pricingType = getPricingType(project)
   const isUnits = pricingType === 'units'
   const plotRows = project?.plotPricing?.length ? project.plotPricing : DEFAULT_PLOT_PRICING
@@ -1175,18 +1673,18 @@ export default function ProjectBanner({ project }) {
   const tourRef = useRef(null)
   const tourInView = useInView(tourRef, { once: true, margin: '-100px' })
 
+  const bannerRef = useRef(null)
+
   const [tour360Open, setTour360Open] = useState(false)
   const [enquireOpen, setEnquireOpen] = useState(false)
   const [enquirePreset, setEnquirePreset] = useState('')
   const [enquireContext, setEnquireContext] = useState('')
   const [enquireBrochure, setEnquireBrochure] = useState('')
 
-  // Normal enquiry → WhatsApp after submit
   const openEnquire = (presetType = '', context = '') => {
     setEnquirePreset(presetType); setEnquireContext(context); setEnquireBrochure(''); setEnquireOpen(true)
   }
 
-  // Brochure enquiry → shows the brochure after submit
   const openBrochure = () => {
     if (!project?.brochureUrl) return
     setEnquirePreset(project.name || ''); setEnquireContext('Brochure'); setEnquireBrochure(project.brochureUrl); setEnquireOpen(true)
@@ -1203,10 +1701,23 @@ export default function ProjectBanner({ project }) {
   const panoramaSrc = project.tour360Image || project.tourImage
   const tourThumbnail = project.tourThumbnail || project.tourImage || project.tour360Image
 
+  // Every section on the page, listed in the same order they are rendered below.
+  // The sub-menu also re-sorts by actual DOM position, so it stays correct if sections move.
+  const subMenuItems = [
+    { id: 'overview', label: 'Overview', icon: Home },
+    amenityTabs.length > 0 && { id: 'amenities', label: 'Amenities', icon: Sparkles },
+    galleryItems.length > 0 && { id: 'gallery', label: 'Gallery', icon: Images },
+    (floorPlanGroups.length > 0 || hasFloorPlanBlocks) && { id: 'floor-plans', label: 'Floor plans', icon: LayoutGrid },
+    hasMasterPlan && { id: 'master-plan', label: 'Master plan', icon: Grid3x3 },
+    plotRows.length > 0 && { id: 'price-list', label: 'Pricing', icon: Tag },
+    (tourThumbnail || panoramaSrc) && { id: 'tour', label: '360° tour', icon: Move3d },
+    project.locationLandmarks?.length > 0 && { id: 'location', label: 'Location', icon: MapPin },
+  ].filter(Boolean)
+
   return (
     <div className={`${figtree.className} w-full overflow-x-clip`} style={{ fontFamily: FONT }}>
       {/* ================= Banner ================= */}
-      <section className="relative w-full" style={{ fontFamily: FONT }}>
+      <section ref={bannerRef} className="relative w-full" style={{ fontFamily: FONT }}>
         <div
           className="relative hidden w-full items-center justify-center overflow-hidden bg-[#333] bg-cover bg-center md:flex md:min-h-[750px]"
           style={{ backgroundImage: `url(${project.heroImage})` }}
@@ -1225,8 +1736,16 @@ export default function ProjectBanner({ project }) {
         </div>
       </section>
 
+      {/* ================= Sticky Sub-Menu (pins below the main navbar) ================= */}
+      <ProjectSubMenu
+        items={subMenuItems}
+        projectName={project.name}
+        fontFamily={FONT}
+        onEnquire={() => openEnquire(project.name || '', 'Sticky menu')}
+      />
+
       {/* ================= Overview ================= */}
-      <section className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
+      <section id="overview" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
         <div className="relative mx-auto grid max-w-[1500px] grid-cols-1 items-stretch gap-7 sm:gap-10 lg:grid-cols-[1fr_0.95fr_1.1fr] lg:gap-8">
           <div>
             <FadeUp>
@@ -1266,7 +1785,6 @@ export default function ProjectBanner({ project }) {
             </FadeUp>
           </div>
 
-          {/* Image: natural height on mobile; on desktop it stretches to exactly match the facts card height */}
           <FadeUp delay={0.15} className="relative lg:h-full lg:min-h-[420px]">
             <img
               src={project.aboutImage}
@@ -1276,7 +1794,7 @@ export default function ProjectBanner({ project }) {
           </FadeUp>
 
           <FadeUp delay={0.25} amount={0.1} className="h-full">
-            <div className="relative flex h-full w-[700px] flex-col justify-center rounded-[18px] border border-[#E0E8F0] bg-white px-4 py-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.18)] sm:rounded-[22px] sm:px-6 sm:py-8 md:px-7 md:py-10">
+            <div className="relative flex h-full w-[650px] flex-col justify-center rounded-[18px] border border-[#E0E8F0] bg-white px-4 py-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.18)] sm:rounded-[22px] sm:px-6 sm:py-8 md:px-7 md:py-10">
               <div className="pointer-events-none absolute bottom-8 left-1/2 top-8 hidden w-px -translate-x-1/2 bg-[#E8EFF7] sm:block" />
               <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
                 {quickFacts.map((fact, i) => {
@@ -1306,7 +1824,7 @@ export default function ProjectBanner({ project }) {
 
       {/* ================= Amenities ================= */}
       {amenityTabs.length > 0 && (
-        <section ref={amenitiesRef} className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-20 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
+        <section ref={amenitiesRef} id="amenities" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-20 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="pointer-events-none absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
           <div className="relative mx-auto max-w-[1500px]">
             <div className="mb-7 grid grid-cols-1 gap-6 sm:mb-12 sm:gap-8 lg:grid-cols-[0.85fr_1.9fr_0.2fr] lg:items-start lg:gap-6">
@@ -1358,7 +1876,6 @@ export default function ProjectBanner({ project }) {
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-[1fr_1.7fr]">
-              {/* Image first on mobile, text card first on desktop */}
               <FadeUp delay={0.2} className="order-2 lg:order-1">
                 <div className="flex flex-col rounded-[18px] p-5 sm:rounded-[24px] sm:p-7 lg:h-full" style={{ backgroundColor: LIGHT_BLUE_SOFT }}>
                   <AnimatePresence mode="wait">
@@ -1450,7 +1967,7 @@ export default function ProjectBanner({ project }) {
 
       {/* ================= Gallery ================= */}
       {galleryItems.length > 0 && (
-        <section ref={galleryRef} className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-20 md:py-24 lg:px-16 lg:py-28" style={{ fontFamily: FONT }}>
+        <section ref={galleryRef} id="gallery" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-20 md:py-24 lg:px-16 lg:py-28" style={{ fontFamily: FONT }}>
           <div className="mx-auto max-w-[1500px]">
             <div className="mb-5 flex flex-col gap-3 sm:mb-8 sm:flex-row sm:items-end sm:justify-between sm:gap-5 md:mb-14">
               <div>
@@ -1660,9 +2177,159 @@ export default function ProjectBanner({ project }) {
               </FadeUp>
             )}
 
+            {hasFacingFilter && (
+              <FadeUp delay={0.08}>
+                <div className="mb-5 sm:mb-7">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
+                    {/* Live compass — the needle swings to the selected direction */}
+                    <div className="flex items-center gap-2.5 sm:gap-3">
+                      <span
+                        className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full border bg-white sm:h-[46px] sm:w-[46px]"
+                        style={{ borderColor: '#DDE7F1', boxShadow: '0 10px 24px -18px rgba(15,58,107,0.9)' }}
+                      >
+                        <span className="pointer-events-none absolute inset-[3px] rounded-full border border-dashed" style={{ borderColor: 'rgba(15,58,107,0.14)' }} />
+                        <span className="pointer-events-none absolute top-[2px] text-[7px] font-bold leading-none sm:text-[7.5px]" style={{ color: DEEP_NAVY, opacity: 0.55 }}>N</span>
+                        <motion.span
+                          animate={{ rotate: activeFacingAngle }}
+                          transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+                          className="flex h-full w-full items-center justify-center"
+                        >
+                          <Navigation2
+                            className="h-[15px] w-[15px] sm:h-[17px] sm:w-[17px]"
+                            strokeWidth={1.5}
+                            style={{ color: DEEP_NAVY, fill: DEEP_NAVY }}
+                          />
+                        </motion.span>
+                      </span>
+                      <span
+                        className="whitespace-nowrap text-[10.5px] font-semibold uppercase tracking-[2.5px] sm:text-[11px] sm:tracking-[3px]"
+                        style={{ color: TEXT_CHARCOAL, opacity: 0.55 }}
+                      >
+                        Facing
+                      </span>
+                    </div>
+
+                    {/* Segmented control */}
+                    <div
+                      className="-mx-4 flex items-center gap-1 overflow-x-auto px-4 [scrollbar-width:none] sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden"
+                    >
+                      <div
+                        className="flex shrink-0 items-center gap-1 rounded-full border p-1"
+                        style={{ borderColor: '#E3ECF5', backgroundColor: '#F5F9FD' }}
+                      >
+                        {[{ id: 'all', label: 'All', count: allFloorPlans.length }]
+                          .concat(facingOptions.map((facing) => ({ id: facing, label: facing, count: facingCounts[facing] })))
+                          .map((option) => {
+                            const isActive = option.id === facingFilter
+                            const angle = FACING_ANGLE[option.id]
+                            return (
+                              <button
+                                key={option.id}
+                                onClick={() => { setFacingFilter(option.id); setPicked(null) }}
+                                aria-pressed={isActive}
+                                className={`relative isolate flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-2 text-[12.5px] font-semibold transition-colors duration-300 active:scale-[0.97] sm:gap-2 sm:px-4 sm:py-2.5 sm:text-[13.5px] ${
+                                  isActive ? 'text-white' : 'text-[#1f2029] hover:bg-white'
+                                }`}
+                              >
+                                {isActive && (
+                                  <motion.span
+                                    layoutId="facingFilterPill"
+                                    transition={{ type: 'spring', stiffness: 400, damping: 34 }}
+                                    className="absolute inset-0 -z-10 rounded-full"
+                                    style={{
+                                      background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)`,
+                                      boxShadow: '0 14px 28px -16px rgba(15,58,107,0.85)',
+                                    }}
+                                  />
+                                )}
+                                {angle === undefined ? (
+                                  <Compass
+                                    className="relative z-[1] h-[14px] w-[14px] sm:h-[15px] sm:w-[15px]"
+                                    strokeWidth={1.8}
+                                    style={{ color: isActive ? '#FFFFFF' : DEEP_NAVY }}
+                                  />
+                                ) : (
+                                  <span
+                                    className="relative z-[1] flex h-[14px] w-[14px] items-center justify-center sm:h-[15px] sm:w-[15px]"
+                                    style={{ transform: `rotate(${angle}deg)` }}
+                                  >
+                                    <Navigation2
+                                      className="h-full w-full"
+                                      strokeWidth={1.6}
+                                      style={{ color: isActive ? '#FFFFFF' : DEEP_NAVY, fill: isActive ? '#FFFFFF' : DEEP_NAVY }}
+                                    />
+                                  </span>
+                                )}
+                                <span className="relative z-[1]">{option.label}</span>
+                                <span
+                                  className="relative z-[1] rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums sm:px-2 sm:text-[10.5px]"
+                                  style={isActive
+                                    ? { backgroundColor: 'rgba(255,255,255,0.22)', color: '#FFFFFF' }
+                                    : { backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
+                                >
+                                  {option.count}
+                                </span>
+                              </button>
+                            )
+                          })}
+                      </div>
+
+                      <AnimatePresence>
+                        {isFacingFiltered && (
+                          <motion.button
+                            initial={{ opacity: 0, x: -6 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -6 }}
+                            transition={{ duration: 0.22, ease: EASE }}
+                            onClick={() => { setFacingFilter('all'); setPicked(null) }}
+                            className="ml-1 flex shrink-0 items-center gap-1.5 rounded-full px-3 py-2 text-[12px] font-semibold transition-colors duration-200 hover:bg-[#F0F6FC] sm:text-[12.5px]"
+                            style={{ color: TEXT_CHARCOAL }}
+                          >
+                            <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+                            Reset
+                          </motion.button>
+                        )}
+                      </AnimatePresence>
+
+                      <span
+                        className="ml-auto hidden shrink-0 pl-4 text-[13px] font-medium tabular-nums lg:inline"
+                        style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}
+                      >
+                        {isFacingFiltered
+                          ? `${totalFloorPlans} of ${allFloorPlans.length} layouts`
+                          : `${allFloorPlans.length} layouts`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </FadeUp>
+            )}
+
             {floorPlanGroups.length === 0 ? (
-              <div className="rounded-3xl border border-dashed border-black/10 bg-white p-10 text-center">
-                <p className="m-0 text-sm text-[#6b7280]">Floor plans for this block are being finalised.</p>
+              <div className="rounded-[18px] border border-dashed bg-white px-6 py-12 text-center sm:rounded-3xl sm:px-10" style={{ borderColor: '#D5E1ED' }}>
+                <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE }}>
+                  <Compass className="h-5 w-5" strokeWidth={1.5} style={{ color: DEEP_NAVY }} />
+                </span>
+                {isFacingFiltered ? (
+                  <>
+                    <p className="m-0 text-[14.5px] font-semibold text-[#1f2029]">
+                      No {facingFilter.toLowerCase()} facing layouts in this block
+                    </p>
+                    <p className="m-0 mt-1.5 text-[13px]" style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}>
+                      Try another direction, or view every layout available here.
+                    </p>
+                    <button
+                      onClick={() => { setFacingFilter('all'); setPicked(null) }}
+                      className="mt-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-semibold text-white transition-transform duration-200 active:scale-[0.97]"
+                      style={{ background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` }}
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" strokeWidth={2} />
+                      Show all layouts
+                    </button>
+                  </>
+                ) : (
+                  <p className="m-0 text-sm text-[#6b7280]">Floor plans for this block are being finalised.</p>
+                )}
               </div>
             ) : (
               <>
@@ -1706,8 +2373,6 @@ export default function ProjectBanner({ project }) {
 
                 <FadeUp delay={0.15} amount={0.1}>
                   <div className="grid grid-cols-1 overflow-hidden rounded-[18px] border border-[#E4ECF4] bg-white shadow-[0_30px_70px_-40px_rgba(0,0,0,0.28)] sm:rounded-[26px] lg:h-[700px] lg:grid-cols-[320px_1fr]">
-
-                    {/* Mobile / tablet: horizontal plan strip */}
                     <div
                       ref={stripRef}
                       className="relative flex snap-x items-center gap-2 overflow-x-auto overscroll-x-contain border-b border-[#E4ECF4] px-3 py-3 [scrollbar-width:none] sm:gap-2.5 sm:px-4 sm:py-3.5 lg:hidden [&::-webkit-scrollbar]:hidden"
@@ -1729,6 +2394,7 @@ export default function ProjectBanner({ project }) {
                             const isActive = plan === selectedPlan
                             const { facing } = splitPlanTitle(plan)
                             const areaLabel = formatArea(plan.area)
+                            const planFacing = selectedPlanFacing(plan)
                             const thumb = plan.image3d || plan.image
                             return (
                               <button
@@ -1751,7 +2417,11 @@ export default function ProjectBanner({ project }) {
                                 </span>
                                 <span className="flex flex-col">
                                   <span className="whitespace-nowrap text-[12px] font-semibold leading-tight sm:text-[13px]">{facing || plan.title}</span>
-                                  {areaLabel && <span className="mt-0.5 whitespace-nowrap text-[10.5px] tabular-nums opacity-70 sm:text-[11px]">{areaLabel}</span>}
+                                  {(areaLabel || planFacing) && (
+                                    <span className="mt-0.5 whitespace-nowrap text-[10.5px] opacity-70 sm:text-[11px]">
+                                      {[areaLabel, planFacing].filter(Boolean).join(' · ')}
+                                    </span>
+                                  )}
                                 </span>
                               </button>
                             )
@@ -1760,7 +2430,6 @@ export default function ProjectBanner({ project }) {
                       ))}
                     </div>
 
-                    {/* Desktop: vertical rail */}
                     <div
                       ref={railRef}
                       className="hidden overflow-y-auto overscroll-contain border-r border-[#E4ECF4] lg:block"
@@ -1785,6 +2454,7 @@ export default function ProjectBanner({ project }) {
                               const isActive = plan === selectedPlan
                               const { facing } = splitPlanTitle(plan)
                               const areaLabel = formatArea(plan.area)
+                              const planFacing = selectedPlanFacing(plan)
                               return (
                                 <li key={plan.id || `${group.label}-${i}`}>
                                   <button
@@ -1805,8 +2475,22 @@ export default function ProjectBanner({ project }) {
                                       <span className="block truncate text-[13.5px] font-semibold" style={{ color: isActive ? DEEP_NAVY : '#1f2029' }}>
                                         {facing || plan.title}
                                       </span>
-                                      {areaLabel && (
-                                        <span className="block text-[11.5px] tabular-nums" style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}>{areaLabel}</span>
+                                      {(areaLabel || planFacing) && (
+                                        <span className="mt-0.5 flex items-center gap-1.5 text-[11.5px]" style={{ color: TEXT_CHARCOAL, opacity: 0.6 }}>
+                                          {areaLabel && <span className="tabular-nums">{areaLabel}</span>}
+                                          {areaLabel && planFacing && <span className="h-2.5 w-px" style={{ backgroundColor: '#C9D7E6' }} />}
+                                          {planFacing && (
+                                            <span className="flex items-center gap-1">
+                                              <span
+                                                className="flex h-[11px] w-[11px] items-center justify-center"
+                                                style={{ transform: `rotate(${FACING_ANGLE[planFacing] ?? 0}deg)` }}
+                                              >
+                                                <Navigation2 className="h-full w-full" strokeWidth={1.7} style={{ color: DEEP_NAVY, fill: DEEP_NAVY }} />
+                                              </span>
+                                              {planFacing}
+                                            </span>
+                                          )}
+                                        </span>
                                       )}
                                     </span>
                                     <ChevronRight
@@ -1879,10 +2563,28 @@ export default function ProjectBanner({ project }) {
                               transition={{ duration: 0.35, ease: EASE }}
                               className="flex flex-1 flex-col"
                             >
-                              {selectedGroupLabel && (
-                                <span className="mb-3 w-fit rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-[1.3px] sm:mb-4 sm:px-3.5 sm:py-1.5 sm:text-[12px] sm:tracking-[1.5px]" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
-                                  {selectedGroupLabel}
-                                </span>
+                              {(selectedGroupLabel || selectedPlanFacing(selectedPlan)) && (
+                                <div className="mb-3 flex flex-wrap items-center gap-2 sm:mb-4">
+                                  {selectedGroupLabel && (
+                                    <span className="w-fit rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-[1.3px] sm:px-3.5 sm:py-1.5 sm:text-[12px] sm:tracking-[1.5px]" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
+                                      {selectedGroupLabel}
+                                    </span>
+                                  )}
+                                  {selectedPlanFacing(selectedPlan) && (
+                                    <span
+                                      className="flex w-fit items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[1.3px] sm:px-3 sm:py-1.5 sm:text-[11.5px] sm:tracking-[1.5px]"
+                                      style={{ borderColor: '#DDE7F1', color: TEXT_CHARCOAL, backgroundColor: '#FBFDFE' }}
+                                    >
+                                      <span
+                                        className="flex h-[13px] w-[13px] items-center justify-center"
+                                        style={{ transform: `rotate(${FACING_ANGLE[selectedPlanFacing(selectedPlan)] ?? 0}deg)` }}
+                                      >
+                                        <Navigation2 className="h-full w-full" strokeWidth={1.6} style={{ color: DEEP_NAVY, fill: DEEP_NAVY }} />
+                                      </span>
+                                      {selectedPlanFacing(selectedPlan)} Facing
+                                    </span>
+                                  )}
+                                </div>
                               )}
 
                               <div className="flex items-start justify-between gap-3 sm:gap-4">
@@ -1944,7 +2646,11 @@ export default function ProjectBanner({ project }) {
                 <div className="absolute left-5 top-6 z-10 max-w-[70%] sm:left-8 sm:top-8">
                   <p className="m-0 text-[15px] font-semibold text-white">{splitPlanTitle(lightboxPlan).facing || lightboxPlan.title}</p>
                   <p className="m-0 mt-1 text-[11.5px] font-medium uppercase tracking-[2px] text-white/55">
-                    {[splitPlanTitle(lightboxPlan).config, formatArea(lightboxPlan.area)].filter(Boolean).join(' · ')}
+                    {[
+                      splitPlanTitle(lightboxPlan).config,
+                      selectedPlanFacing(lightboxPlan) ? `${selectedPlanFacing(lightboxPlan)} Facing` : '',
+                      formatArea(lightboxPlan.area),
+                    ].filter(Boolean).join(' · ')}
                   </p>
                 </div>
 
@@ -1979,9 +2685,9 @@ export default function ProjectBanner({ project }) {
         </section>
       )}
 
-      {/* ================= Master Plan — Site Plan & Parking Plan ================= */}
+      {/* ================= Master Plan ================= */}
       {hasMasterPlan && (
-        <section ref={masterPlanRef} className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
+        <section ref={masterPlanRef} id="master-plan" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
           <div className="relative mx-auto max-w-[1500px]">
             <div className="mb-6 flex flex-col gap-5 sm:mb-10 sm:gap-6 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
@@ -2165,7 +2871,7 @@ export default function ProjectBanner({ project }) {
 
       {/* ================= Pricing & Availability ================= */}
       {plotRows.length > 0 && (
-        <section ref={plotPricingRef} className="relative w-full overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-white to-[#F7FAFD] px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-14 lg:py-24" style={{ fontFamily: FONT }}>
+        <section ref={plotPricingRef} id="price-list" className="relative w-full overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-white to-[#F7FAFD] px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-14 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="pointer-events-none absolute -top-20 left-1/3 h-[380px] w-[380px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
           <div className="relative mx-auto max-w-[1560px]">
             <div className="grid grid-cols-1 gap-7 sm:gap-10 lg:grid-cols-[1fr_1.35fr] xl:grid-cols-[0.95fr_1.3fr] xl:gap-8">
@@ -2429,7 +3135,7 @@ export default function ProjectBanner({ project }) {
 
       {/* ================= 360 Virtual Tour ================= */}
       {(tourThumbnail || panoramaSrc) && (
-        <section ref={tourRef} className="w-full bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
+        <section ref={tourRef} id="tour" className="w-full bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-6 sm:gap-10 lg:grid-cols-[0.75fr_1.6fr] lg:gap-14">
             <FadeUp>
               {project.tourEyebrow && <SectionEyebrow className="mb-3 sm:mb-5">{project.tourEyebrow}</SectionEyebrow>}
@@ -2489,7 +3195,7 @@ export default function ProjectBanner({ project }) {
 
       {/* ================= Location ================= */}
       {project.locationLandmarks?.length > 0 && (
-        <section ref={locationRef} className="w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
+        <section ref={locationRef} id="location" className="w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="mx-auto grid max-w-[1400px] grid-cols-1 items-center gap-6 sm:gap-10 lg:grid-cols-[0.85fr_1.6fr_0.9fr] lg:gap-12">
             <FadeUp>
               <h2 className="mb-3 text-[22px] font-bold leading-[1.2] tracking-tight text-[#141414] sm:mb-4 sm:text-[28px] sm:leading-[1.15] md:text-[38px]">

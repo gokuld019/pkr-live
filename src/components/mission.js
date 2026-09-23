@@ -13,7 +13,7 @@ const GOLD = "#B08D3F";
 
 // Separate images for desktop and mobile
 const DESKTOP_IMAGE = "/upm.jpeg";
-const MOBILE_IMAGE = "/mismob.png"; // add this file to /public
+const MOBILE_IMAGE = "/mismob.jpeg"; // add this file to /public
 
 const DESCRIPTION =
   "We create thoughtfully planned homes that make ownership more accessible for families. From apartments and villas to plots, PKR Estates builds practical spaces for everyday living. Our housing apartment in Chennai solutions bring comfort, value and purposeful planning together.";

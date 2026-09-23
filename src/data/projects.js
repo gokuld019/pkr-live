@@ -26,7 +26,7 @@ export const projects = [
     name: "Gurudev",
     tagline: "Thoughtfully planned homes in the heart of Guduvancheri",
     location: "Guduvancheri, Chennai",
-    heroImage: "/gurudevv.jpg",
+    heroImage: "/ggg.jpeg",
     heroImageMobile: "/gurudevmob.jpeg",
     aboutImage: "/g.png",
 
@@ -147,11 +147,11 @@ export const projects = [
 
     floorPlansHeading: ["Homes Tailored", "to Your Needs"],
     floorPlansDescription:
-      "Smartly designed 1 & 2 BHK apartments with efficient layouts, abundant natural light and optimal space utilisation — available as both East and West facing units.",
+      "Smartly designed 1 & 2 BHK apartments with efficient layouts, abundant natural light and optimal space utilisation.",
     floorPlansCtaLabel: "VIEW ALL PLANS",
     floorPlansCtaHref: "#floor-plans",
 
-    // ---------- Nested Block structure (same UI as Privana) ----------
+    // ---------- Nested Block structure (flat-number based, same as Privana) ----------
     floorPlanBlocks: [
       {
         id: "gurudev-block-a",
@@ -160,12 +160,12 @@ export const projects = [
         tabs: ["1 BHK", "2 BHK"],
         plans: [
           // ============================
-          // 1 BHK — West Facing
+          // 1 BHK + 1T
           // ============================
           {
-            id: "g-1bhk-1t1",
+            id: "g-1bhk-103",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T1.jpeg",
-            title: "1 BHK + 1T · West Facing",
+            title: "1 BHK + 1T · Unit 103",
             type: "1 BHK",
             area: "425 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-3.pdf",
@@ -176,9 +176,9 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t2",
+            id: "g-1bhk-104",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T2.jpeg",
-            title: "1 BHK + 1T · West Facing",
+            title: "1 BHK + 1T · Unit 104",
             type: "1 BHK",
             area: "419 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-4.pdf",
@@ -189,9 +189,9 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t3",
+            id: "g-1bhk-105",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T3.jpeg",
-            title: "1 BHK + 1T · West Facing",
+            title: "1 BHK + 1T · Unit 105",
             type: "1 BHK",
             area: "491 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-5.pdf",
@@ -202,9 +202,9 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t4",
+            id: "g-1bhk-106",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T4.jpeg",
-            title: "1 BHK + 1T · West Facing",
+            title: "1 BHK + 1T · Unit 106",
             type: "1 BHK",
             area: "391 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-6.pdf",
@@ -215,11 +215,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t5",
+            id: "g-1bhk-107",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T5.jpeg",
-            title: "1 BHK + 1T · West Facing",
+            title: "1 BHK + 1T · Unit 107",
             type: "1 BHK",
-            area: "460 Sq.Ft.",
+            area: "408 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-7.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -228,11 +228,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t6",
+            id: "g-1bhk-108",
             image: "/floorplans/gurudev/1bhk1t/1bhk -1T6.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 108",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "460 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-8.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -241,9 +241,9 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t7",
+            id: "g-1bhk-109",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T7.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 109",
             type: "1 BHK",
             area: "440 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-9.pdf",
@@ -254,11 +254,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t8",
+            id: "g-1bhk-112",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T8.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 112",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "425 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-10.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -267,11 +267,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t9",
+            id: "g-1bhk-113",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T9.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 113",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "419 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-11.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -280,11 +280,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t10",
+            id: "g-1bhk-114",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T10.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 114",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "491 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-12.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -293,11 +293,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t11",
+            id: "g-1bhk-115",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T11.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 115",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "391 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-13.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -306,11 +306,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t12",
+            id: "g-1bhk-116",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T12.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 116",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "408 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-14.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -319,11 +319,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t13",
+            id: "g-1bhk-117",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T13.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 117",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "460 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-15.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -332,9 +332,9 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t14",
+            id: "g-1bhk-118",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T14.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 118",
             type: "1 BHK",
             area: "440 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-16.pdf",
@@ -345,11 +345,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t15",
+            id: "g-1bhk-203",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T15.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 203",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "425 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-17.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -358,11 +358,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t16",
+            id: "g-1bhk-204",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T16.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 204",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "419 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-18.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -371,11 +371,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t17",
+            id: "g-1bhk-205",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T17.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 205",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "491 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-19.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -384,11 +384,11 @@ export const projects = [
             ],
           },
           {
-            id: "g-1bhk-1t18",
+            id: "g-1bhk-206",
             image: "/floorplans/gurudev/1bhk1t/1bhk-1T18.jpeg",
-            title: "1 BHK + 1T · East Facing",
+            title: "1 BHK + 1T · Unit 206",
             type: "1 BHK",
-            area: "440 Sq.Ft.",
+            area: "391 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-20.pdf",
             features: [
               { icon: "bed", label: "1 Bedroom" },
@@ -401,9 +401,9 @@ export const projects = [
           // 2 BHK + 2T
           // ============================
           {
-            id: "g-2bhk-2t1",
+            id: "g-2bhk-101",
             image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
-            title: "2 BHK + 2T · East Facing",
+            title: "2 BHK + 2T · Unit 101",
             type: "2 BHK",
             area: "730 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-1.pdf",
@@ -414,9 +414,35 @@ export const projects = [
             ],
           },
           {
-            id: "g-2bhk-2t2",
+            id: "g-2bhk-102",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
+            title: "2 BHK + 2T · Unit 102",
+            type: "2 BHK",
+            area: "730 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-2.pdf",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "g-2bhk-110",
             image: "/floorplans/gurudev/2bhk2t/2bhk-2T2.jpeg",
-            title: "2 BHK + 2T · West Facing",
+            title: "2 BHK + 2T · Unit 110",
+            type: "2 BHK",
+            area: "732 Sq.Ft.",
+            href: "/floor-plans/gurudev/flat-1.pdf",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
+            id: "g-2bhk-111",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T2.jpeg",
+            title: "2 BHK + 2T · Unit 111",
             type: "2 BHK",
             area: "732 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-2.pdf",
@@ -475,6 +501,10 @@ export const projects = [
       { id: "205", flatNo: "205", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 491, uds: 241, basePrice: 2553200, otherCharges: 147300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2875500, reg: 178281, gst: 28755, finalTotal: 3082536, categories: ["1bhk", "west", "unsold"] },
       { id: "206", flatNo: "206", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2325500, reg: 144181, gst: 23255, finalTotal: 2492936, categories: ["1bhk", "west", "unsold"] },
       { id: "207", flatNo: "207", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "west", "unsold"] },
+      { id: "208", flatNo: "208", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2680000, reg: 166160, gst: 26800, finalTotal: 2872960, categories: ["1bhk", "east", "sold"] },
+      { id: "209", flatNo: "209", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2595000, reg: 160890, gst: 25950, finalTotal: 2781840, categories: ["1bhk", "east", "unsold"] },
+      { id: "210", flatNo: "210", block: "Block A", floor: "2nd Floor", type: "2 BHK + 2T", facing: "West", status: "Sold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "sold"] },
+      { id: "211", flatNo: "211", block: "Block A", floor: "2nd Floor", type: "2 BHK + 2T", facing: "West", status: "Sold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "sold"] },
       // Block A · 4th Floor
       { id: "403", flatNo: "403", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 425, uds: 209, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2487500, reg: 154225, gst: 24875, finalTotal: 2666600, categories: ["1bhk", "west", "unsold"] },
       { id: "404", flatNo: "404", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 419, uds: 206, basePrice: 2178800, otherCharges: 125700, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2479500, reg: 153729, gst: 24795, finalTotal: 2658024, categories: ["1bhk", "west", "unsold"] },
@@ -663,8 +693,9 @@ export const projects = [
       "Gurudev gives you the gift of time by offering apartments near Guduvancheri Railway Station, with superior connectivity. Living near MEPZ, Siruseri IT Park and Mahindra World City lets you strike the right work-life balance.",
     locationMapUrl: "https://maps.google.com/?q=Gurudev+Guduvancheri",
     locationMapImage: "",
+    // ✅ UPDATED: New Google Maps embed URL for Gurudev
     locationMapEmbed:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.4277621863025!2d80.1935429!3d13.008409499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52674983f048c3%3A0xf9655e7ba417a69f!2sArchana%20Castle%2C%20Ramapuram%2C%20Parangi%20Malai%2C%20St.Thomas%20Mount%2C%20Tamil%20Nadu%20600016!5e0!3m2!1sen!2sin!4v1789026981810!5m2!1sen!2sin",
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.429674817847!2d80.08094917585561!3d12.815487918280196!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52f7ad0f45d7c3%3A0xfafdd8623a0ace37!2spkr%20estates%20GURUDEV!5e0!3m2!1sen!2sin!4v1790074260318!5m2!1sen!2sin",
     locationLandmarks: [
       { label: "Guduvancheri (GST Road)", distance: "5 mins" },
       { label: "Urapakkam", distance: "10 mins" },
@@ -719,7 +750,7 @@ export const projects = [
     tagline: "Modern living, thoughtfully designed for the way you live today",
     location: "Chennai, Tamil Nadu",
     heroImage: "/upprivana.jpeg",
-    heroImageMobile: "/privmob.jpeg",
+    heroImageMobile: "/priv.png",
     aboutImage: "/privabout.png",
 
     eyebrow: "MORE THAN JUST A HOME",
@@ -753,71 +784,70 @@ export const projects = [
     amenitiesCtaLabel: "VIEW ALL AMENITIES",
     amenitiesCtaHref: "#amenities",
     amenities: [
-  {
-    id: "Outdoor Movie Nights",
-    image: "/amenities/privana8.jpeg",
-    title: "Outdoor Movie Nights",
-    tagline: "Stories Under The Stars",
-    description:
-      "An open-air screening area where residents gather under the stars to enjoy movies, fostering a warm and connected community spirit.",
-    tags: ["Entertainment", "Community", "Open Air"],
-  },
-  {
-    id: "Banquet Hall",
-    image: "/amenities/privana1.png",
-    title: "Banquet Hall",
-    tagline: "Celebrate In Style",
-    description:
-      "A sophisticated and spacious venue designed to host memorable celebrations, from grand weddings to intimate gatherings, with elegance and ease.",
-    tags: ["Events", "Celebrations", "Elegant"],
-  },
-  {
-    id: "club",
-    image: "/amenities/privana2.png",
-    title: "Club House",
-    tagline: "Gather & Celebrate",
-    description:
-      "A dedicated indoor space for leisure and fun, featuring games like billiards and chess for residents to unwind and connect.",
-    tags: ["Events", "Community", "Social"],
-  },
-  {
-    id: "Gym",
-    image: "/amenities/privana3.png",
-    title: "Gym",
-    tagline: "Stay Fit, Stay Strong",
-    description:
-      "A fully-equipped space designed to help you stay active, build strength, and reach your fitness goals without leaving the community.",
-    tags: ["Fitness", "Strength", "Wellness"],
-  },
-  {
-    id: "Kids' Play Area",
-    image: "/amenities/privana4.png",
-    title: "Kids' Play Area",
-    tagline: "Play. Learn. Grow.",
-    description:
-      "A vibrant, safe, and thoughtfully designed indoor space where children can explore, imagine, and play freely.",
-    tags: ["Safe Play", "Kid Friendly", "Fun"],
-  },
-  {
-    id: "Elevators",
-    image: "/amenities/privana5.png",
-    title: "Elevators",
-    tagline: "Effortless Access",
-    description:
-      "High-speed, spacious elevators ensuring smooth and effortless access to every floor, making daily commutes comfortable for all residents.",
-    tags: ["Convenience", "Safety", "Accessibility"],
-  },
-  {
-    id: "Basketball Court",
-    image: "/amenities/privana7.png",
-    title: "Basketball Court",
-    tagline: "Shoot Hoops & Stay Active",
-    description:
-      "A well-maintained outdoor court for residents to shoot hoops, stay active, and enjoy friendly matches with neighbours.",
-    tags: ["Sports", "Active Lifestyle", "Outdoor"],
-  },
-],
-  
+      {
+        id: "Outdoor Movie Nights",
+        image: "/amenities/privana6.png",
+        title: "Outdoor Movie Nights",
+        tagline: "Stories Under The Stars",
+        description:
+          "An open-air screening area where residents gather under the stars to enjoy movies, fostering a warm and connected community spirit.",
+        tags: ["Entertainment", "Community", "Open Air"],
+      },
+      {
+        id: "Banquet Hall",
+        image: "/amenities/privana1.png",
+        title: "Banquet Hall",
+        tagline: "Celebrate In Style",
+        description:
+          "A sophisticated and spacious venue designed to host memorable celebrations, from grand weddings to intimate gatherings, with elegance and ease.",
+        tags: ["Events", "Celebrations", "Elegant"],
+      },
+      {
+        id: "club",
+        image: "/amenities/privana2.png",
+        title: "Club House",
+        tagline: "Gather & Celebrate",
+        description:
+          "A dedicated indoor space for leisure and fun, featuring games like billiards and chess for residents to unwind and connect.",
+        tags: ["Events", "Community", "Social"],
+      },
+      {
+        id: "Gym",
+        image: "/amenities/privana3.png",
+        title: "Gym",
+        tagline: "Stay Fit, Stay Strong",
+        description:
+          "A fully-equipped space designed to help you stay active, build strength, and reach your fitness goals without leaving the community.",
+        tags: ["Fitness", "Strength", "Wellness"],
+      },
+      {
+        id: "Kids' Play Area",
+        image: "/amenities/privana4.png",
+        title: "Kids' Play Area",
+        tagline: "Play. Learn. Grow.",
+        description:
+          "A vibrant, safe, and thoughtfully designed indoor space where children can explore, imagine, and play freely.",
+        tags: ["Safe Play", "Kid Friendly", "Fun"],
+      },
+      {
+        id: "Elevators",
+        image: "/amenities/privana5.png",
+        title: "Elevators",
+        tagline: "Effortless Access",
+        description:
+          "High-speed, spacious elevators ensuring smooth and effortless access to every floor, making daily commutes comfortable for all residents.",
+        tags: ["Convenience", "Safety", "Accessibility"],
+      },
+      {
+        id: "Basketball Court",
+        image: "/amenities/privana7.png",
+        title: "Basketball Court",
+        tagline: "Shoot Hoops & Stay Active",
+        description:
+          "A well-maintained outdoor court for residents to shoot hoops, stay active, and enjoy friendly matches with neighbours.",
+        tags: ["Sports", "Active Lifestyle", "Outdoor"],
+      },
+    ],
 
     floorPlansHeading: ["Homes Tailored", "to Your Needs"],
     floorPlansDescription:
@@ -841,6 +871,7 @@ export const projects = [
             type: "Studio",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "Studio Room" },
               { icon: "bath", label: "1 Toilet" },
@@ -854,6 +885,7 @@ export const projects = [
             type: "Studio",
             area: "—",
             href: "#",
+            facing: "West",
             features: [
               { icon: "bed", label: "Studio Room" },
               { icon: "bath", label: "1 Toilet" },
@@ -867,6 +899,7 @@ export const projects = [
             type: "Studio",
             area: "—",
             href: "#",
+            facing: "South",
             features: [
               { icon: "bed", label: "Studio Room" },
               { icon: "bath", label: "1 Toilet" },
@@ -880,6 +913,7 @@ export const projects = [
             type: "Studio",
             area: "—",
             href: "#",
+            facing: "West",
             features: [
               { icon: "bed", label: "Studio Room" },
               { icon: "bath", label: "1 Toilet" },
@@ -895,6 +929,7 @@ export const projects = [
             type: "1 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -908,6 +943,7 @@ export const projects = [
             type: "1 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -921,6 +957,7 @@ export const projects = [
             type: "1 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -934,6 +971,7 @@ export const projects = [
             type: "1 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -947,6 +985,7 @@ export const projects = [
             type: "1 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -962,6 +1001,7 @@ export const projects = [
             type: "2 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -975,6 +1015,7 @@ export const projects = [
             type: "2 BHK",
             area: "—",
             href: "#",
+            facing: "South",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -988,6 +1029,7 @@ export const projects = [
             type: "2 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1001,6 +1043,7 @@ export const projects = [
             type: "2 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1014,6 +1057,7 @@ export const projects = [
             type: "2 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1027,6 +1071,7 @@ export const projects = [
             type: "2 BHK",
             area: "—",
             href: "#",
+            facing: "South",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1040,6 +1085,7 @@ export const projects = [
             type: "2 BHK",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1055,6 +1101,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1068,6 +1115,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1081,6 +1129,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1094,6 +1143,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1107,6 +1157,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "South",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1120,6 +1171,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1133,6 +1185,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1146,6 +1199,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1159,6 +1213,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "South",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1172,6 +1227,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "South",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1185,6 +1241,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "North",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1198,6 +1255,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "East",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1211,6 +1269,7 @@ export const projects = [
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
+            facing: "South",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -1229,7 +1288,7 @@ export const projects = [
           {
             id: "b-1bhk-106",
             image: "/floorplans/privana/block-b/1bhk/B106.webp",
-            title: "1 BHK · Unit B106",
+            title: "1 BHK · Unit B106 - B506",
             type: "1 BHK",
             area: "—",
             href: "#",
@@ -1465,7 +1524,7 @@ export const projects = [
           {
             id: "b-2bhk1t-107",
             image: "/floorplans/privana/block-b/2bhk1t/B107.webp",
-            title: "2 BHK + 1T · Unit B107",
+            title: "2 BHK + 1T · Unit B107-B507",
             type: "2 BHK 1T",
             area: "—",
             href: "#",
@@ -1519,7 +1578,7 @@ export const projects = [
           {
             id: "b-2bhk2t-105",
             image: "/floorplans/privana/block-b/2bhk2t/B105.webp",
-            title: "2 BHK + 2T · Unit B105",
+            title: "2 BHK + 2T · Unit B105-B505",
             type: "2 BHK 2T",
             area: "—",
             href: "#",
@@ -1651,7 +1710,7 @@ export const projects = [
           {
             id: "b-3bhk-301",
             image: "/floorplans/privana/block-b/3bhk/B104.webp",
-            title: "3 BHK · Unit B301",
+            title: "3 BHK · Unit B104-B504",
             type: "3 BHK",
             area: "—",
             href: "#",
@@ -1675,12 +1734,12 @@ export const projects = [
       heading: ["Thoughtfully Planned", "Site & Parking Layout"],
       description:
         "Every block, driveway and green pocket at Privana is planned around ease of movement, safety and open, breathable spaces. Explore the full site layout and the dedicated parking plan below.",
-      highlights: [
-        { label: "Site Area", value: "3.2 Acres" },
-        { label: "Open Space", value: "55%" },
-        { label: "Blocks", value: "2 (A & B)" },
-        { label: "Covered Parking", value: "140+ Cars" },
-      ],
+      // highlights: [
+      //   { label: "Site Area", value: "3.2 Acres" },
+      //   { label: "Open Space", value: "55%" },
+      //   { label: "Blocks", value: "2 (A & B)" },
+      //   { label: "Covered Parking", value: "140+ Cars" },
+      // ],
       tabs: [
         {
           id: "site",
@@ -1748,8 +1807,9 @@ export const projects = [
       "Privana sits at the heart of a fast-growing neighbourhood, close to schools, IT parks, hospitals and retail. Excellent road and rail connectivity makes everyday commuting simple and stress-free.",
     locationMapUrl: "https://maps.google.com/?q=Guduvancheri+Chennai",
     locationMapImage: "",
+    // ✅ UPDATED: New Google Maps embed URL specifically for PKR ESTATES PRIVANA
     locationMapEmbed:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.4277621863025!2d80.1935429!3d13.008409499999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52674983f048c3%3A0xf9655e7ba417a69f!2sArchana%20Castle%2C%20Ramapuram%2C%20Parangi%20Malai%2C%20St.Thomas%20Mount%2C%20Tamil%20Nadu%20600016!5e0!3m2!1sen!2sin!4v1789026981810!5m2!1sen!2sin",
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3890.4538000050293!2d80.08783897585568!3d12.81392591831403!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a52f700792510ff%3A0x3b167532aa06e06c!2sPKR%20ESTATES%20PRIVANA!5e0!3m2!1sen!2sin!4v1790075321648!5m2!1sen!2sin",
     locationLandmarks: [
       { label: "Guduvancheri (GST Road)", distance: "5 mins" },
       { label: "Urapakkam", distance: "10 mins" },

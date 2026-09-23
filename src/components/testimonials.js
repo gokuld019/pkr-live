@@ -27,8 +27,8 @@ const REVIEWS = [
   {
     id: 2,
     text: "Great location, smart layouts and quality construction. PKR Estates delivers exactly what they promise — no surprises. Highly recommended for anyone looking to buy a home.",
-    name: "Priya Menon",
-    project: "PKR Privana",
+    name: "Vijay",
+    project: "PKR Gurudev",
   },
   {
     id: 3,

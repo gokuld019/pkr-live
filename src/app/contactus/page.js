@@ -155,7 +155,7 @@ export default function ContactPage() {
         <div className="block sm:hidden w-full flex justify-center bg-white">
           <div
             className="relative bg-[#333] bg-cover bg-center"
-            style={{ backgroundImage: `url(/contactmob.jpeg)`, width: "380px", height: "700px", maxWidth: "100%" }}
+            style={{ backgroundImage: `url(/mobcus.jpeg)`, width: "380px", height: "700px", maxWidth: "100%" }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
           </div>
@@ -164,7 +164,7 @@ export default function ContactPage() {
         {/* Tablet & up banner */}
         <div
           className="hidden sm:flex relative w-full h-[420px] md:h-[560px] lg:h-[680px] xl:h-[750px] 2xl:h-[860px] bg-[#333] bg-cover bg-center overflow-hidden"
-          style={{ backgroundImage: `url(/contactus.jpeg)` }}
+          style={{ backgroundImage: `url(/upcus.jpeg)` }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent" />
         </div>

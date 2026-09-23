@@ -6,6 +6,7 @@ import OurProjects from "@/components/ongoingprojects";
 import Testimonials from "@/components/testimonials";
 import OurBlogs from "@/components/blogs";
 import PromoPopup from "@/components/PromoPopup";
+import SocialFeedSection from "@/components/social-feed-section";
 
 export default function Home() {
   return (
@@ -17,6 +18,7 @@ export default function Home() {
       <OurProjects />
       <Testimonials />
       <OurBlogs />
+      <SocialFeedSection />
     </main>
   );
 }
