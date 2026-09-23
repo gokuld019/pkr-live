@@ -9,7 +9,7 @@ export const ALL_POSTS = [
     excerpt:
       "From infrastructure to lifestyle, explore what makes North Bangalore a preferred choice for homebuyers and investors.",
     // Thumbnail — used on the /blogs listing page (landscape works best)
-    image: "/uPBlog-1.png",
+    image: "/upblog.png",
     // Hero — used on the detail page (any aspect ratio, no forced crop)
     heroImage: "/bloghero.png",
     content: `

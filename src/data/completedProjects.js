@@ -25,7 +25,7 @@ export const completedProjects = [
     location: "T Nagar, Chennai",
     tagline: "A landmark address in the heart of T Nagar, fully handed over",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/d3.jpeg",
+    heroImage: "/completed/pk.jpeg",
     heroImageMobile: "/completed/m3.png",
     gallery: [
       "/completed/pks-paradise/gallery-1.jpg",
@@ -53,7 +53,7 @@ export const completedProjects = [
     location: "Maraimalai Nagar, Chennai",
     tagline: "A settled, green community south of the city",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/d2.jpeg",
+    heroImage: "/completed/d6.jpeg",
     heroImageMobile: "/completed/m2.png",
     gallery: [
       "/completed/premavathy-nagar/gallery-1.jpg",
@@ -81,7 +81,7 @@ export const completedProjects = [
     location: "TODO: add locality, Chennai",
     tagline: "Compact, efficient homes for first-time buyers",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/d1.jpeg",
+    heroImage: "/completed/LI.jpeg",
     heroImageMobile: "/completed/m1.png",
     gallery: [
       "/completed/little-india/gallery-1.jpg",
@@ -109,7 +109,7 @@ export const completedProjects = [
     location: "SP Koil, Chennai",
     tagline: "Garden-facing homes on the SP Koil corridor",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/d5.jpeg",
+    heroImage: "/completed/sp.jpeg",
     heroImageMobile: "/completed/m5.png",
     gallery: [
       "/completed/aditi-gardenz-sp-koil/gallery-1.jpg",
@@ -137,7 +137,7 @@ export const completedProjects = [
     location: "Veppampattu, Chennai",
     tagline: "The Aditi Gardenz address, this time in Veppampattu",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/d4.jpeg",
+    heroImage: "/completed/v.jpeg",
     heroImageMobile: "/completed/m4.png",
     gallery: [
       "/completed/aditi-gardenz-veppampattu/gallery-1.jpg",

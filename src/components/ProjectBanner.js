@@ -289,9 +289,13 @@ function formatPlotPrice(plot) {
 function formatUnitPrice(amount) {
   const n = Number(amount)
   if (!Number.isFinite(n)) return '—'
-  if (n >= 10000000) return `₹ ${(n / 10000000).toFixed(2)} Cr`
-  if (n >= 100000) return `₹ ${(n / 100000).toFixed(2)} L`
+  if (n >= 10000000) return `₹ ${trimZeros(n / 10000000)} Cr`
+  if (n >= 100000) return `₹ ${trimZeros(n / 100000)} L`
   return `₹ ${n.toLocaleString('en-IN')}`
+}
+
+function trimZeros(num) {
+  return num.toFixed(2).replace(/\.?0+$/, '')
 }
 
 function getPlotSqYd(plot) {
@@ -2966,8 +2970,8 @@ export default function ProjectBanner({ project }) {
                       <div className="rounded-xl bg-[#F0F6FC] px-2.5 py-2 sm:px-4 sm:py-3">
                         <p className="m-0 text-[10.5px] font-medium sm:text-[12px]" style={{ color: TEXT_CHARCOAL, opacity: 0.65 }}>Starting from</p>
                         <p className="m-0 mt-0.5 text-[15px] font-bold tabular-nums sm:text-[20px]" style={{ color: DEEP_NAVY }}>
-                          {lowestUnitPrice !== null ? formatUnitPrice(lowestUnitPrice) : '—'}
-                        </p>
+  {formatUnitPrice(2200000)}
+</p>
                       </div>
                     </div>
                   )}

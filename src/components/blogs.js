@@ -189,7 +189,7 @@ export default function OurBlogs() {
         </div>
 
         {/* Blog grid */}
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7 h-[450px]">
           
           {/* --- FEATURED POST - FIXED --- */}
           <Link

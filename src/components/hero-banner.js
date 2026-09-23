@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import { getImageProps } from "next/image";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /**
  * Each slide has a separate desktop/tablet image (landscape) and mobile image (portrait).
@@ -14,38 +13,30 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
  */
 const SLIDES = [
   {
-    desktop: "/banners/slide2.jpeg",
+    desktop: "/banners/slide3.jpeg",
     mobile: "/banners/mob1.jpeg",
     alt: "gurudev project view 1",
   },
   {
+    desktop: "/banners/rr.jpeg",
+    mobile: "/banners/mob1.png",
+    alt: "gurudev project view 2",
+  },
+
+  {
     desktop: "/banners/d12.jpeg",
     mobile: "/banners/M12.jpeg",
-    alt: "Radiance project view 2",
+    alt: "gurudev project view 3",
   },
   {
     desktop: "/banners/upd3.jpeg",
     mobile: "/banners/M2.jpeg",
-    alt: "Radiance project view 3",
+    alt: "gurudev project view 4",
   },
 ];
 
-const AUTO_SCROLL_MS = 5000;
+const AUTO_SCROLL_MS = 3000;
 const SWIPE_THRESHOLD = 50;
-const ACCENT = "#0F3A6B";
-
-/* Shared look for both arrow buttons: frosted glass, always readable on any photo */
-const ARROW_BASE =
-  "group absolute top-1/2 z-30 -translate-y-1/2 flex items-center justify-center rounded-full " +
-  "border border-white/40 bg-black/35 text-white backdrop-blur-md " +
-  "shadow-[0_8px_24px_-6px_rgba(0,0,0,0.55)] " +
-  "h-11 w-11 sm:h-12 sm:w-12 lg:h-14 lg:w-14 2xl:h-16 2xl:w-16 " +
-  "transition-all duration-300 ease-out " +
-  "hover:scale-105 hover:border-white hover:bg-white hover:text-[#0F3A6B] " +
-  "active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black/40";
-
-const ARROW_ICON =
-  "h-5 w-5 lg:h-6 lg:w-6 2xl:h-7 2xl:w-7 transition-transform duration-300";
 
 function SlideImage({ slide, priority }) {
   const common = {
@@ -77,11 +68,8 @@ function SlideImage({ slide, priority }) {
 export default function HeroBanner() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const pausedRef = useRef(false);
   const touchStartX = useRef(null);
-
-  const goTo = useCallback((index) => {
-    setActive((index + SLIDES.length) % SLIDES.length);
-  }, []);
 
   const next = useCallback(() => {
     setActive((p) => (p + 1) % SLIDES.length);
@@ -91,17 +79,26 @@ export default function HeroBanner() {
     setActive((p) => (p - 1 + SLIDES.length) % SLIDES.length);
   }, []);
 
-  /* Auto-scroll: a fresh timer is set every time `active` changes (or pause
-     toggles), so every slide gets its own full AUTO_SCROLL_MS window. */
+  /* Keep a ref in sync with `paused` so the interval below can read the
+     latest value without needing to be recreated every time it changes. */
   useEffect(() => {
-    if (paused || SLIDES.length < 2) return;
-    const id = setInterval(() => {
-      setActive((p) => (p + 1) % SLIDES.length);
-    }, AUTO_SCROLL_MS);
-    return () => clearInterval(id);
+    pausedRef.current = paused;
   }, [paused]);
 
-  /* Keyboard arrows */
+  /* Auto-scroll: single interval for the component's lifetime.
+     Pausing just skips a tick instead of resetting the countdown,
+     so the cadence stays a true 5s once resumed. */
+  useEffect(() => {
+    if (SLIDES.length < 2) return;
+    const id = setInterval(() => {
+      if (!pausedRef.current) {
+        setActive((p) => (p + 1) % SLIDES.length);
+      }
+    }, AUTO_SCROLL_MS);
+    return () => clearInterval(id);
+  }, []);
+
+  /* Keyboard arrows (desktop convenience — no visible UI) */
   useEffect(() => {
     const onKey = (e) => {
       if (e.key === "ArrowLeft") prev();
@@ -111,10 +108,10 @@ export default function HeroBanner() {
     return () => window.removeEventListener("keydown", onKey);
   }, [prev, next]);
 
-  /* Swipe support for touch screens */
+  /* Swipe support for touch screens — no longer toggles `paused`,
+     so a tap or vertical scroll gesture doesn't reset the auto-scroll timer. */
   const onTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
-    setPaused(true);
   };
   const onTouchEnd = (e) => {
     if (touchStartX.current !== null) {
@@ -123,23 +120,6 @@ export default function HeroBanner() {
       else if (dx < -SWIPE_THRESHOLD) next();
     }
     touchStartX.current = null;
-    setPaused(false);
-  };
-
-  const handlePrev = () => {
-    prev();
-    setPaused(true);
-    setTimeout(() => setPaused(false), AUTO_SCROLL_MS);
-  };
-  const handleNext = () => {
-    next();
-    setPaused(true);
-    setTimeout(() => setPaused(false), AUTO_SCROLL_MS);
-  };
-  const handleDot = (i) => {
-    goTo(i);
-    setPaused(true);
-    setTimeout(() => setPaused(false), AUTO_SCROLL_MS);
   };
 
   return (
@@ -160,13 +140,6 @@ export default function HeroBanner() {
         "2xl:max-h-[1300px]"
       }
     >
-      <style>{`
-        @keyframes heroProgress { from { width: 0%; } to { width: 100%; } }
-        @media (prefers-reduced-motion: reduce) {
-          .hero-progress { animation: none !important; }
-        }
-      `}</style>
-
       {/* Slides */}
       {SLIDES.map((s, i) => {
         const isActive = i === active;
@@ -185,66 +158,6 @@ export default function HeroBanner() {
           </div>
         );
       })}
-
-      {/* Manual navigation arrows */}
-      {SLIDES.length > 1 && (
-        <>
-          <button
-            type="button"
-            onClick={handlePrev}
-            aria-label="Previous slide"
-            className={`${ARROW_BASE} left-3 sm:left-4 lg:left-6`}
-          >
-            <ChevronLeft className={`${ARROW_ICON} -translate-x-[1px] group-hover:-translate-x-0.5`} strokeWidth={2.25} />
-          </button>
-          <button
-            type="button"
-            onClick={handleNext}
-            aria-label="Next slide"
-            className={`${ARROW_BASE} right-3 sm:right-4 lg:right-6`}
-          >
-            <ChevronRight className={`${ARROW_ICON} translate-x-[1px] group-hover:translate-x-0.5`} strokeWidth={2.25} />
-          </button>
-        </>
-      )}
-
-      {/* Progress dots */}
-      {SLIDES.length > 1 && (
-        <div className="absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2.5 sm:bottom-7">
-          {SLIDES.map((s, i) => {
-            const isActive = i === active;
-            return (
-              <button
-                key={s.desktop}
-                type="button"
-                onClick={() => handleDot(i)}
-                aria-label={`Go to slide ${i + 1}`}
-                aria-current={isActive}
-                className="group relative flex h-3 items-center"
-              >
-                <span
-                  className={`block h-1.5 rounded-full backdrop-blur-md transition-all duration-500 ease-out ${
-                    isActive
-                      ? "w-7 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.45)]"
-                      : "w-1.5 bg-white/45 group-hover:bg-white/75"
-                  }`}
-                />
-                {isActive && !paused && (
-                  <span
-                    key={active}
-                    className="hero-progress absolute inset-y-0 left-0 h-1.5 w-7 origin-left overflow-hidden rounded-full"
-                  >
-                    <span
-                      className="block h-full rounded-full"
-                      style={{ background: ACCENT, animation: `heroProgress ${AUTO_SCROLL_MS}ms linear forwards` }}
-                    />
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
     </section>
   );
 }

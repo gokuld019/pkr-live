@@ -39,7 +39,7 @@ const WHATSAPP_NUMBER = "919381055555";
 const FORCE_SESSION_ID = null;
 
 /* ------------------------------------------------------------------ */
-/*  GLOBAL ANIMATIONS                                                  */
+/*  GLOBAL ANIMATIONS + MOBILE HERO OVERRIDES                          */
 /* ------------------------------------------------------------------ */
 const GLOBAL_STYLES = `
 @keyframes pkrFadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -61,6 +61,9 @@ const GLOBAL_STYLES = `
 .pkr-range { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 99px; background: #E2E8F0; outline: none; }
 .pkr-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #0F3A6B; box-shadow: 0 0 0 4px rgba(15,58,107,.12); cursor: pointer; }
 .pkr-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #0F3A6B; cursor: pointer; }
+
+
+}
 `;
 
 /* ------------------------------------------------------------------ */
@@ -1376,7 +1379,7 @@ export default function FloatingWidgetsModern() {
                       <span className="block text-[14px] font-semibold text-slate-900">{p.name}</span>
                       <span className="block truncate text-[12.5px] text-slate-500">{p.tagline}</span>
                     </span>
-                    <ChevronRight className="h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-600" />
+                    <ChevronRight className="hidden h-4 w-4 text-slate-300 transition group-hover:translate-x-0.5 group-hover:text-slate-600 sm:block" />
                   </button>
                 );
               })}
@@ -1581,7 +1584,7 @@ export default function FloatingWidgetsModern() {
 
       <button
         onClick={() => openEnquireFromChat("")}
-        className="fixed right-0 top-1/2 z-[9998] -translate-y-1/2 rounded-l-md px-2 py-3.5 text-[12px] font-bold tracking-wider text-white antialiased shadow-[-2px_0_8px_rgba(15,58,107,0.25)] transition-all [writing-mode:sideways-lr] sm:px-3.5 sm:text-[15px] sm:hover:pr-4"
+        className="fixed right-0 top-1/2 z-[9998] -translate-y-1/2 rounded-l-md px-1.5 py-2 text-[9px] font-bold tracking-wide text-white antialiased shadow-[-2px_0_8px_rgba(15,58,107,0.25)] transition-all [writing-mode:sideways-lr] sm:px-3.5 sm:py-3.5 sm:text-[15px] sm:tracking-wider sm:hover:pr-4"
         style={{ backgroundColor: DEEP_NAVY, backfaceVisibility: "hidden", transform: "translateZ(0)" }}
         onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
@@ -1593,7 +1596,7 @@ export default function FloatingWidgetsModern() {
 
       {!chatOpen && (
         <div className="fixed bottom-5 left-1/2 z-[9998] flex -translate-x-1/2 flex-col items-center gap-2 sm:bottom-6">
-          {showPreview && (
+          {/* {showPreview && (
             <div className="pkr-fade-up relative flex items-center gap-2 rounded-full border border-slate-200/70 bg-white/90 py-1.5 pl-2 pr-8 text-[12.5px] text-slate-600 shadow-lg backdrop-blur">
               <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
               We&apos;re online — ask me anything
@@ -1601,7 +1604,7 @@ export default function FloatingWidgetsModern() {
                 <X className="h-3 w-3" strokeWidth={2.5} />
               </button>
             </div>
-          )}
+          )} */}
           <button
             onClick={openChat}
             aria-label="Open AI assistant"
@@ -1612,18 +1615,15 @@ export default function FloatingWidgetsModern() {
             </span>
             <span className="flex flex-col items-start leading-tight">
               <span className="text-[13.5px] font-semibold text-white sm:text-[14px]">Ask PKR AI</span>
-              <span className="text-[11px] text-white/55">Homes, pricing & more</span>
             </span>
-            <kbd className="ml-1 hidden rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 font-sans text-[11px] text-white/60 sm:inline-block">
-              {isMac ? "⌘" : "Ctrl"} K
-            </kbd>
+           
           </button>
         </div>
       )}
 
       {chatOpen && (
         <div
-          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/30 backdrop-blur-md sm:p-6"
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/30 p-3 backdrop-blur-md sm:p-6"
           style={{ animation: "pkrOverlayIn .25s ease-out" }}
           onClick={() => setChatOpen(false)}
         >
@@ -1632,7 +1632,7 @@ export default function FloatingWidgetsModern() {
             aria-modal="true"
             aria-label={`${botName} chat`}
             onClick={(e) => { e.stopPropagation(); if (plusOpen) setPlusOpen(false); }}
-            className="relative flex h-full w-full flex-col overflow-hidden sm:h-[88vh] sm:max-h-[860px] sm:max-w-[820px] sm:rounded-[28px] sm:border sm:border-white/70 sm:shadow-[0_50px_120px_-30px_rgba(15,23,42,0.55)]"
+            className="relative flex h-[86vh] max-h-[680px] w-full flex-col overflow-hidden rounded-[24px] border border-white/70 shadow-[0_30px_80px_-20px_rgba(15,23,42,0.45)] sm:h-[88vh] sm:max-h-[860px] sm:max-w-[820px] sm:rounded-[28px] sm:border sm:border-white/70 sm:shadow-[0_50px_120px_-30px_rgba(15,23,42,0.55)]"
             style={{ backgroundColor: CANVAS, animation: "pkrPanelIn .4s cubic-bezier(.22,1,.36,1)" }}
           >
             <div
@@ -1657,7 +1657,7 @@ export default function FloatingWidgetsModern() {
                 <div className="leading-tight">
                   <div className="text-[14px] font-semibold text-slate-900">{botName}</div>
                   <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    <span className="hidden h-1.5 w-1.5 rounded-full bg-emerald-400 sm:inline-block" />
                     {companyName}
                   </div>
                 </div>

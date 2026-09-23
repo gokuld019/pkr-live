@@ -39,7 +39,7 @@ const PROJECTS = [
     name: "Gurudev",
     address:
       "PKR ESTATES Gurudev, Next to SHRIRAM SHANKARI, Perumathunallur, Chennai, Tamil Nadu 603202, India",
-    price: "₹22 Lacs Onwards*",
+    price: "₹22 Lakhs Onwards*",
     type: "Apartments",
     size: "68 Cents",
     bedrooms: "1BHK & 2BHK",
@@ -56,10 +56,10 @@ const PROJECTS = [
     name: "Privana",
     address:
       "Perumattunallur Village, Guduvancheri, Chennai South, Chennai",
-    price: "₹20.01 Lacs Onwards*",
+    price: "₹20.01 Lakhs Onwards*",
     type: "Apartments",
     size: "1.41 Acres",
-    bedrooms: "Studio, 1BHK , 2BHK , 3BHK ",
+    bedrooms: "Studio, 1& 2& 3BHK ",
     units: "186 Units",
     completion: "JUN 2028",
     completionDate: "2028-06-30T23:59:59",

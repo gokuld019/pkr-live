@@ -26,7 +26,7 @@ export const projects = [
     name: "Gurudev",
     tagline: "Thoughtfully planned homes in the heart of Guduvancheri",
     location: "Guduvancheri, Chennai",
-    heroImage: "/ggg.jpeg",
+    heroImage: "/gr.jpeg",
     heroImageMobile: "/gurudevmob.jpeg",
     aboutImage: "/g.png",
 
@@ -749,7 +749,7 @@ export const projects = [
     name: "Privana",
     tagline: "Modern living, thoughtfully designed for the way you live today",
     location: "Chennai, Tamil Nadu",
-    heroImage: "/upprivana.jpeg",
+    heroImage: "/updatedprivana.jpeg",
     heroImageMobile: "/priv.png",
     aboutImage: "/privabout.png",
 
@@ -821,9 +821,9 @@ export const projects = [
         tags: ["Fitness", "Strength", "Wellness"],
       },
       {
-        id: "Kids' Play Area",
+        id: "Little Explore's",
         image: "/amenities/privana4.png",
-        title: "Kids' Play Area",
+        title: "Little Explore's",
         tagline: "Play. Learn. Grow.",
         description:
           "A vibrant, safe, and thoughtfully designed indoor space where children can explore, imagine, and play freely.",
@@ -1794,7 +1794,7 @@ export const projects = [
       { label: "Type",              value: "Studio, 1 & 2 BHK + 2T",           icon: "type" },
       { label: "Development Size",  value: "3.2 Acres",                    icon: "size" },
       { label: "No. of Units",      value: "120",                          icon: "units" },
-      { label: "Price / Sq.Ft",     value: "₹ 5,100 per / Sq.Ft",          icon: "price" },
+      { label: "Price / Sq.Ft",     value: "₹ 5,100 / Sq.Ft",          icon: "price" },
       { label: "Floors",            value: "Stilt + 5",                    icon: "floors" },
       { label: "RERA Number",       value: "TNRERA/35/BLG/0317/2026  dated 03.09.2026",     icon: "rera" },
     ],
