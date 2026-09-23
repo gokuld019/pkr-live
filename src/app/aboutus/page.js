@@ -44,7 +44,7 @@ export default function AboutUsPage() {
         {/* Tablet & up banner */}
         <div
           className="hidden sm:flex relative w-full h-[420px] md:h-[560px] lg:h-[680px] xl:h-[750px] 2xl:h-[860px] bg-[#333] bg-cover bg-center overflow-hidden"
-          style={{ backgroundImage: `url(/about.jpeg)` }}
+          style={{ backgroundImage: `url(/about3.jpeg)` }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent" />
         </div>
