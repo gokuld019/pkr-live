@@ -19,6 +19,9 @@ const DEEP_NAVY_HOVER = "#0A2B50";
 const TEXT_CHARCOAL = "#2D3A46";
 const LIGHT_BLUE = "#E8F0F9";
 
+// Featured pill only
+const FEAT_GREEN = "#2C3A22";
+
 const FEATURED = ALL_POSTS[0];
 const POSTS = ALL_POSTS.slice(1);
 
@@ -99,13 +102,13 @@ export default function OurBlogs() {
           { y: 0, opacity: 1, duration: 0.85, ease: "power3.out", clearProps: "transform,opacity" }
         )
           .fromTo(
-            card.querySelector(".gs-img"),
+            card.querySelectorAll(".gs-img"),
             { scale: 1.1, opacity: 0.85 },
             { scale: 1, opacity: 1, duration: 1.1, ease: "power2.out", clearProps: "transform,opacity" },
             "-=0.7"
           )
           .fromTo(
-            card.querySelector(".gs-tag"),
+            card.querySelectorAll(".gs-tag"),
             { x: -20, opacity: 0 },
             { x: 0, opacity: 1, duration: 0.5, ease: "power2.out", clearProps: "transform,opacity" },
             "-=0.7"
@@ -189,26 +192,50 @@ export default function OurBlogs() {
         </div>
 
         {/* Blog grid */}
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7 lg:h-[450px]">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-2 lg:grid-cols-[2.2fr_1fr_1fr] lg:gap-7 lg:h-[450px]">
 
-          {/* --- FEATURED POST (hidden on mobile) --- */}
+          {/* --- FEATURED POST (stacked card on mobile, split card from sm up) --- */}
           <Link
             href={`/blogs/${FEATURED.slug}`}
-            className="gs-card hidden sm:flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] md:col-span-2 lg:col-span-1 lg:h-full"
+            className="gs-card group/card flex flex-col sm:flex-row overflow-hidden rounded-2xl border border-[#0F3A6B]/10 bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-[box-shadow,border-color] duration-300 hover:border-[#0F3A6B]/25 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] md:col-span-2 lg:col-span-1 sm:min-h-[380px] lg:min-h-0 lg:h-full"
           >
-            {/* Image Container */}
-            <div className="relative h-auto shrink-0 overflow-hidden bg-gray-50 lg:h-[45%]">
+            {/* Mobile image (separate image, below sm only) */}
+            <div className="relative h-auto shrink-0 overflow-hidden bg-gray-50 sm:hidden">
               <Image
-                src={FEATURED.image}
+                src={FEATURED.mobileImage || FEATURED.image}
                 alt={FEATURED.title}
                 width={0}
                 height={0}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                className="gs-img h-auto w-full object-contain transition-transform duration-500 group-hover/card:scale-[1.04] lg:h-full lg:object-cover"
+                sizes="100vw"
+                className="gs-img h-auto w-full object-contain"
               />
             </div>
 
-            <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6 lg:overflow-hidden">
+            {/* Desktop image (sm and up) */}
+            <div className="relative hidden w-[48%] shrink-0 overflow-hidden bg-gray-50 sm:block">
+              <Image
+                src={FEATURED.image}
+                alt={FEATURED.title}
+                fill
+                sizes="(max-width: 1024px) 40vw, 28vw"
+                className="gs-img object-cover transition-transform duration-500 group-hover/card:scale-[1.04]"
+              />
+
+              {/* Bottom gradient for readability */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent" />
+
+             
+
+              {/* Read time */}
+              <div className="absolute bottom-5 left-5 flex items-center gap-2 text-[11px] font-semibold tracking-[0.15em] text-white">
+                <Clock className="h-4 w-4" strokeWidth={1.75} />
+                <span className="uppercase">{FEATURED.readTime || "10 min read"}</span>
+              </div>
+            </div>
+
+            {/* Content (same typography + colors as regular cards) */}
+            <div className="flex min-w-0 flex-1 flex-col px-4 py-5 sm:px-6 sm:py-6 xl:px-10 xl:py-9 lg:overflow-hidden">
+              {/* Category + date */}
               <div className="gs-line flex flex-wrap items-center justify-between gap-2">
                 <span
                   className="text-[10px] font-bold tracking-[0.12em] sm:text-[11px] sm:tracking-[0.15em]"
@@ -225,27 +252,28 @@ export default function OurBlogs() {
               </div>
 
               <h3
-                className="gs-line mt-2.5 text-base font-bold leading-snug sm:mt-3 sm:text-xl"
+                className="gs-line mt-2.5 text-base font-bold leading-snug sm:mt-3 sm:text-2xl xl:mt-5 xl:text-[32px] xl:leading-[1.2]"
                 style={{ color: DEEP_NAVY }}
               >
                 {FEATURED.title}
               </h3>
 
               <p
-                className="gs-line mt-2 text-[13px] leading-relaxed sm:mt-3 sm:text-sm line-clamp-3"
+                className="gs-line mt-2 text-[13px] leading-relaxed line-clamp-3 sm:mt-3 sm:text-sm xl:mt-4 xl:text-[15px]"
                 style={{ color: TEXT_CHARCOAL }}
               >
                 {FEATURED.excerpt}
               </p>
 
-              <div className="gs-line mt-4 pt-3 sm:mt-5 sm:pt-4">
+              {/* Footer */}
+              <div className="gs-line mt-4 pt-3 sm:mt-auto sm:pt-4">
                 <span
-                  className="group flex items-center gap-2 text-[13px] font-bold sm:text-sm"
+                  className="flex items-center gap-2 text-[13px] font-bold sm:text-sm xl:text-base"
                   style={{ color: DEEP_NAVY }}
                 >
                   Read More
                   <ArrowRight
-                    className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1 sm:h-4 sm:w-4"
+                    className="h-3.5 w-3.5 transition-transform duration-300 group-hover/card:translate-x-1 sm:h-4 sm:w-4"
                     style={{ color: DEEP_NAVY }}
                   />
                 </span>
@@ -258,7 +286,7 @@ export default function OurBlogs() {
             <Link
               key={post.slug}
               href={`/blogs/${post.slug}`}
-              className="gs-card flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-shadow duration-300 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] lg:h-full"
+              className="gs-card flex flex-col overflow-hidden rounded-2xl border border-[#0F3A6B]/10 bg-white shadow-[0_4px_24px_rgba(15,58,107,0.06)] transition-[box-shadow,border-color] duration-300 hover:border-[#0F3A6B]/25 hover:shadow-[0_8px_32px_rgba(15,58,107,0.12)] lg:h-full"
             >
               {/* Image Container */}
               <div className="relative h-auto shrink-0 overflow-hidden bg-gray-50 lg:h-[45%]">

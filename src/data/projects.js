@@ -26,8 +26,8 @@ export const projects = [
     name: "Gurudev",
     tagline: "Thoughtfully planned homes in the heart of Guduvancheri",
     location: "Guduvancheri, Chennai",
-    heroImage: "/gr.jpeg",
-    heroImageMobile: "/gurudevmob.jpeg",
+    heroImage: "/updatedgurudev.jpeg",
+    heroImageMobile: "/updatedgurudevv.jpeg",
     aboutImage: "/g.png",
 
     eyebrow: "MORE THAN JUST A HOME",

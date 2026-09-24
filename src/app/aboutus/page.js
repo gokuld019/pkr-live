@@ -36,7 +36,7 @@ export default function AboutUsPage() {
         {/* Mobile-only banner */}
         <div
           className="block sm:hidden relative w-full bg-[#333] bg-cover bg-center"
-          style={{ backgroundImage: `url(/gurumob.jpeg)`, aspectRatio: "380 / 700" }}
+          style={{ backgroundImage: `url(/aa.jpeg)`, aspectRatio: "380 / 700" }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
         </div>

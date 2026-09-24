@@ -34,7 +34,7 @@ const LIGHT_BLUE = '#E8F0F9'
 const LIGHT_BLUE_SOFT = '#F0F6FC'
 
 const LOGO_URL = '/logo.jpeg'
-const ENQUIRY_API = 'https://api.crazystory.in/api/submit-enquiry'
+const ENQUIRY_API = 'https://gurudev.pkrestates.com/backend/api/submit-enquiry'
 
 const WHATSAPP_NUMBER = '919381055555'
 

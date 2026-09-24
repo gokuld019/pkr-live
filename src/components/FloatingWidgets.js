@@ -27,10 +27,10 @@ const LINE = "#E6E9EE";
 const CANVAS = "#FAFAF9";
 const SERIF = 'ui-serif, "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif';
 
-const ENQUIRY_API = "https://api.crazystory.in/api/submit-enquiry";
-const CHATBOT_INIT_API = "https://api.crazystory.in/api/chatbot/init";
-const CHATBOT_CHAT_API = "https://api.crazystory.in/api/chatbot/chat";
-const CHATBOT_HISTORY_API = "https://api.crazystory.in/api/chatbot/history";
+const ENQUIRY_API = "https://gurudev.pkrestates.com/backend/api/submit-enquiry";
+const CHATBOT_INIT_API = "https://gurudev.pkrestates.com/backend/api/chatbot/init";
+const CHATBOT_CHAT_API = "https://gurudev.pkrestates.com/backend/api/chatbot/chat";
+const CHATBOT_HISTORY_API = "https://gurudev.pkrestates.com/backend/api/chatbot/history";
 const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
 const SESSION_STORAGE_KEY = "chatbot_session_id";
 const SESSIONS_INDEX_KEY = "chatbot_sessions_index"; // localStorage: array of session IDs

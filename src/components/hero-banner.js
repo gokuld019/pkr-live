@@ -13,7 +13,7 @@ import { getImageProps } from "next/image";
  */
 const SLIDES = [
   {
-    desktop: "/banners/slide3.jpeg",
+    desktop: "/banners/slide4.jpeg",
     mobile: "/banners/mob1.jpeg",
     alt: "gurudev project view 1",
   },

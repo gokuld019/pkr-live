@@ -26,7 +26,7 @@ const LINE = "#E0E8F0";
 /*  API CONFIG                                                         */
 /* ------------------------------------------------------------------ */
 const CHANNEL_PARTNER_API =
-  "https://api.crazystory.in/api/channel-partner/register";
+  "https://gurudev.pkrestates.com/backend/api/channel-partner/register";
 
 const PROFESSIONS = [
   "Broker",
