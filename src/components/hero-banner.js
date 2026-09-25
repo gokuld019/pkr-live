@@ -13,7 +13,7 @@ import { getImageProps } from "next/image";
  */
 const SLIDES = [
   {
-    desktop: "/banners/slide4.jpeg",
+    desktop: "/banners/ban1.jpeg",
     mobile: "/banners/mob1.jpeg",
     alt: "gurudev project view 1",
   },
@@ -24,12 +24,12 @@ const SLIDES = [
   },
 
   {
-    desktop: "/banners/d12.jpeg",
+    desktop: "/banners/ban3.jpeg",
     mobile: "/banners/M12.jpeg",
     alt: "gurudev project view 3",
   },
   {
-    desktop: "/banners/upd3.jpeg",
+    desktop: "/banners/ban2.jpeg",
     mobile: "/banners/M2.jpeg",
     alt: "gurudev project view 4",
   },
@@ -45,6 +45,15 @@ function SlideImage({ slide, priority }) {
     sizes: "100vw",
     quality: 85,
     className: "object-cover object-top",
+    // Kill any default img border/outline and the inline-element gap
+    // that browsers add under images (this is what causes the thin
+    // stroke/seam line you were seeing at the bottom edge).
+    style: {
+      display: "block",
+      border: 0,
+      outline: "none",
+      verticalAlign: "top",
+    },
   };
 
   const {
@@ -56,7 +65,7 @@ function SlideImage({ slide, priority }) {
   } = getImageProps({ ...common, src: slide.mobile });
 
   return (
-    <picture>
+    <picture style={{ display: "block", border: 0, lineHeight: 0 }}>
       <source media="(max-width: 767px)" srcSet={mobileSet} />
       <source media="(min-width: 768px)" srcSet={desktopSet} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -130,6 +139,7 @@ export default function HeroBanner() {
       onMouseLeave={() => setPaused(false)}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
+      style={{ border: 0, outline: "none", boxShadow: "none" }}
       className={
         "relative isolate w-full overflow-hidden bg-[#0B0B0C] " +
         /* Height scales per breakpoint; max-h keeps it sane on ultra-wide / 4K */
@@ -150,7 +160,16 @@ export default function HeroBanner() {
             aria-roledescription="slide"
             aria-label={`${i + 1} of ${SLIDES.length}`}
             aria-hidden={!isActive}
-            className={`absolute inset-0 transition-opacity duration-[900ms] ease-in-out motion-reduce:transition-none ${
+            style={{
+              // Overlap by 1px on every edge to swallow the subpixel
+              // rounding seam that shows as a thin line at the bottom
+              // of the banner during rendering/crossfade.
+              top: -1,
+              left: -1,
+              right: -1,
+              bottom: -1,
+            }}
+            className={`absolute transition-opacity duration-[900ms] ease-in-out motion-reduce:transition-none ${
               isActive ? "z-10 opacity-100" : "z-0 opacity-0"
             }`}
           >
