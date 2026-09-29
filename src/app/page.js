@@ -13,9 +13,10 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <PromoPopup />
       <HeroBanner />
+      
+      <OurProjects />
       <AboutStats />
       <VisionMission />
-      <OurProjects />
       <Testimonials />
       <OurBlogs />
       <SocialFeedSection />

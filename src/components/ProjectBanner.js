@@ -302,9 +302,7 @@ function getPlotSqYd(plot) {
   return Number.isFinite(sqft) ? Math.round(sqft / 9) : '—'
 }
 
-function isSold(row) {
-  return String(row?.status || '').toLowerCase() === 'sold'
-}
+// Removed isSold function
 
 function PlotCell({ children, divider = true }) {
   return (
@@ -714,31 +712,15 @@ function ProjectSubMenu({
 }
 
 /* ==================================================================
-   UNIT STATUS PILL + UNIT ROW
+   UNIT ROW
 ================================================================== */
-function StatusPill({ sold }) {
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none ${
-        sold ? 'bg-slate-100 text-slate-500' : 'bg-emerald-50 text-emerald-700'
-      }`}
-    >
-      <span className={`h-1.5 w-1.5 rounded-full ${sold ? 'bg-slate-400' : 'bg-emerald-500'}`} />
-      {sold ? 'Sold' : 'Available'}
-    </span>
-  )
-}
-
 function UnitRow({ row, onEnquire }) {
-  const sold = isSold(row)
   const floor = row.floor?.replace(' Floor', '')
   const area = row.sqft ? `${row.sqft} sq.ft` : ''
 
   return (
     <div
-      className={`group rounded-xl px-2.5 py-2.5 transition-colors duration-200 sm:px-4 sm:py-3 ${
-        sold ? 'opacity-55' : 'hover:bg-[#F0F6FC]'
-      }`}
+      className={`group rounded-xl px-2.5 py-2.5 transition-colors duration-200 sm:px-4 sm:py-3 hover:bg-[#F0F6FC]`}
     >
       <div className="flex items-center justify-between gap-3 sm:hidden">
         <div className="min-w-0">
@@ -754,18 +736,14 @@ function UnitRow({ row, onEnquire }) {
           <span className="text-[13.5px] font-bold tabular-nums leading-none" style={{ color: DEEP_NAVY }}>
             {formatUnitPrice(row.finalTotal)}
           </span>
-          {sold ? (
-            <StatusPill sold />
-          ) : (
-            <button
-              type="button"
-              onClick={onEnquire}
-              className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold leading-none text-emerald-700 active:scale-[0.96]"
-            >
-              Enquire
-              <ArrowUpRight className="h-3 w-3" strokeWidth={2.25} />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={onEnquire}
+            className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-semibold leading-none text-emerald-700 active:scale-[0.96]"
+          >
+            Enquire Now
+            <ArrowUpRight className="h-3 w-3" strokeWidth={2.25} />
+          </button>
         </div>
       </div>
 
@@ -781,17 +759,15 @@ function UnitRow({ row, onEnquire }) {
         </div>
         <span className="text-[15px] font-bold tabular-nums" style={{ color: DEEP_NAVY }}>{formatUnitPrice(row.finalTotal)}</span>
         <div className="flex items-center justify-end gap-2">
-          <StatusPill sold={sold} />
-          {!sold && (
-            <button
-              type="button"
-              onClick={onEnquire}
-              aria-label={`Enquire about flat ${row.flatNo}`}
-              className="flex h-8 w-8 items-center justify-center rounded-full border border-[#D5E1ED] bg-white text-[#0F3A6B] transition-all duration-200 hover:border-[#0F3A6B] hover:bg-[#0F3A6B] hover:text-white active:scale-[0.94]"
-            >
-              <ArrowUpRight className="h-4 w-4" strokeWidth={2} />
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={onEnquire}
+            aria-label={`Enquire about flat ${row.flatNo}`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[#D5E1ED] bg-white px-3 py-1.5 text-[12px] font-semibold text-[#0F3A6B] transition-all duration-200 hover:border-[#0F3A6B] hover:bg-[#0F3A6B] hover:text-white active:scale-[0.94]"
+          >
+            Enquire Now
+            <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2} />
+          </button>
         </div>
       </div>
     </div>
@@ -848,7 +824,7 @@ function EnquireModal({ open, onClose, presetType = '', projectName = '', contex
     const payload = {
       full_name: form.name.trim(), email: form.email.trim(), phone: form.phone.trim(),
       inquiry_type: form.inquiryType,
-      message: isBrochure ? [`[Brochure download] ${projectName}`, baseMessage].filter(Boolean).join(' — ') : baseMessage,
+      message: isBrochure ? `[Brochure download] ${projectName}` : baseMessage,
     }
 
     try {
@@ -1630,25 +1606,19 @@ export default function ProjectBanner({ project }) {
     : (project?.plotPricingTabs?.length ? project.plotPricingTabs : DEFAULT_PLOT_TABS)
 
   const [plotFilter, setPlotFilter] = useState('all')
-  const [availableOnly, setAvailableOnly] = useState(false)
   const [unitsVisible, setUnitsVisible] = useState(UNITS_PAGE_SIZE)
   const plotPricingRef = useRef(null)
 
   const filteredPlots = plotRows.filter((p) => {
     const matchesTab = plotFilter === 'all' || (p.categories || []).includes(plotFilter) || p.type === plotFilter
-    const matchesAvail = !(isUnits && availableOnly) || !isSold(p)
-    return matchesTab && matchesAvail
+    return matchesTab
   })
 
   const shownUnits = filteredPlots.slice(0, unitsVisible)
   const remainingUnits = Math.max(0, filteredPlots.length - unitsVisible)
   const canCollapseUnits = unitsVisible > UNITS_PAGE_SIZE && filteredPlots.length > UNITS_PAGE_SIZE
 
-  const availableUnits = isUnits ? plotRows.filter((r) => !isSold(r)) : []
-  const soldUnitsCount = isUnits ? plotRows.length - availableUnits.length : 0
-  const lowestUnitPrice = availableUnits.length
-    ? Math.min(...availableUnits.map((r) => Number(r.finalTotal)).filter(Number.isFinite))
-    : null
+  const availableUnits = plotRows
 
   const locationRef = useRef(null)
   const locationInView = useInView(locationRef, { once: true, margin: '-100px' })
@@ -2663,8 +2633,7 @@ export default function ProjectBanner({ project }) {
         </section>
       )}
 
-      {/* ================= Master Plan ================= */}
-      {hasMasterPlan && (
+      {/* {hasMasterPlan && (
         <section ref={masterPlanRef} id="master-plan" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
           <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
           <div className="relative mx-auto max-w-[1500px]">
@@ -2758,7 +2727,7 @@ export default function ProjectBanner({ project }) {
                   key={`video-${currentMasterTab?.id || activeMasterTab}`}
                   src={currentMasterTab.video}
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
-                  autoPlay muted loop playsInline preload="metadata"
+                  autoPlay muted loop playsInline preload="metassssdata"
                 />
               ) : currentMasterTab?.image ? (
                 <img
@@ -2845,7 +2814,7 @@ export default function ProjectBanner({ project }) {
             )}
           </AnimatePresence>
         </section>
-      )}
+      )} */}
 
       {/* ================= Pricing & Availability ================= */}
       {plotRows.length > 0 && (
@@ -2931,25 +2900,6 @@ export default function ProjectBanner({ project }) {
               <FadeUp delay={0.15} amount={0.1} className="min-w-0">
                 <div className="h-full rounded-[18px] border border-[#E0E8F0] bg-white p-3 shadow-[0_30px_70px_-35px_rgba(0,0,0,0.22)] sm:rounded-[26px] sm:p-6">
 
-                  {isUnits && (
-                    <div className="mb-3 grid grid-cols-3 gap-2 sm:mb-5 sm:gap-3">
-                      <div className="rounded-xl bg-[#F0F6FC] px-2.5 py-2 sm:px-4 sm:py-3">
-                        <p className="m-0 text-[10.5px] font-medium sm:text-[12px]" style={{ color: TEXT_CHARCOAL, opacity: 0.65 }}>Available</p>
-                        <p className="m-0 mt-0.5 text-[15px] font-bold tabular-nums sm:text-[20px]" style={{ color: DEEP_NAVY }}>{availableUnits.length}</p>
-                      </div>
-                      <div className="rounded-xl bg-[#F0F6FC] px-2.5 py-2 sm:px-4 sm:py-3">
-                        <p className="m-0 text-[10.5px] font-medium sm:text-[12px]" style={{ color: TEXT_CHARCOAL, opacity: 0.65 }}>Sold</p>
-                        <p className="m-0 mt-0.5 text-[15px] font-bold tabular-nums sm:text-[20px]" style={{ color: DEEP_NAVY }}>{soldUnitsCount}</p>
-                      </div>
-                      <div className="rounded-xl bg-[#F0F6FC] px-2.5 py-2 sm:px-4 sm:py-3">
-                        <p className="m-0 text-[10.5px] font-medium sm:text-[12px]" style={{ color: TEXT_CHARCOAL, opacity: 0.65 }}>Starting from</p>
-                        <p className="m-0 mt-0.5 text-[15px] font-bold tabular-nums sm:text-[20px]" style={{ color: DEEP_NAVY }}>
-                          {formatUnitPrice(2200000)}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
                   <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 sm:mb-5 sm:gap-y-2.5">
                     <div className="flex min-w-0 items-center gap-1 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                       {plotTabs.map((tab) => {
@@ -2967,25 +2917,6 @@ export default function ProjectBanner({ project }) {
                         )
                       })}
                     </div>
-
-                    {isUnits && (
-                      <button
-                        type="button"
-                        role="switch"
-                        aria-checked={availableOnly}
-                        onClick={() => { setAvailableOnly((v) => !v); setUnitsVisible(UNITS_PAGE_SIZE) }}
-                        className="inline-flex shrink-0 items-center gap-2 text-[12px] font-semibold sm:gap-2.5 sm:text-[13px]"
-                        style={{ color: TEXT_CHARCOAL }}
-                      >
-                        <span
-                          className="relative h-5 w-9 rounded-full transition-colors duration-300"
-                          style={{ backgroundColor: availableOnly ? DEEP_NAVY : '#CBD8E6' }}
-                        >
-                          <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all duration-300 ${availableOnly ? 'left-[18px]' : 'left-0.5'}`} />
-                        </span>
-                        Available only
-                      </button>
-                    )}
                   </div>
 
                   {isUnits ? (
@@ -3002,11 +2933,11 @@ export default function ProjectBanner({ project }) {
 
                           {filteredPlots.length === 0 ? (
                             <p className="m-0 py-10 text-center text-[13px] sm:py-12 sm:text-[14px]" style={{ color: TEXT_CHARCOAL }}>
-                              No units match these filters. Try another type or turn off &ldquo;Available only&rdquo;.
+                              No units match these filters.
                             </p>
                           ) : (
                             <motion.div
-                              key={`${plotFilter}-${availableOnly}`}
+                              key={`${plotFilter}`}
                               initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE }}
                               className="divide-y divide-[#EEF3F9] p-1 sm:p-1.5"
                             >

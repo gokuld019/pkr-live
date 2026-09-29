@@ -28,7 +28,7 @@ export const projects = [
     location: "Guduvancheri, Chennai",
     heroImage: "/updatedgurudev.jpeg",
     heroImageMobile: "/updatedgurudevv.jpeg",
-    aboutImage: "/g.png",
+    aboutImage: "/guruuu.png",
 
     eyebrow: "MORE THAN JUST A HOME",
     heading: ["Designed for a", "Better Way of Life"],
@@ -260,6 +260,7 @@ export const projects = [
             type: "1 BHK",
             area: "425 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-10.pdf",
+            facing: "west",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -325,6 +326,7 @@ export const projects = [
             type: "1 BHK",
             area: "460 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-15.pdf",
+            facing: "east",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -364,6 +366,7 @@ export const projects = [
             type: "1 BHK",
             area: "419 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-18.pdf",
+            facing: "east",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -377,6 +380,7 @@ export const projects = [
             type: "1 BHK",
             area: "491 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-19.pdf",
+            facing: "east",
             features: [
               { icon: "bed", label: "1 Bedroom" },
               { icon: "bath", label: "1 Toilet" },
@@ -402,11 +406,12 @@ export const projects = [
           // ============================
           {
             id: "g-2bhk-101",
-            image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T2.jpeg",
             title: "2 BHK + 2T · Unit 101",
             type: "2 BHK",
             area: "730 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-1.pdf",
+            facing: "west",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -415,11 +420,12 @@ export const projects = [
           },
           {
             id: "g-2bhk-102",
-            image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T2.jpeg",
             title: "2 BHK + 2T · Unit 102",
             type: "2 BHK",
             area: "730 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-2.pdf",
+            facing: "west",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -428,11 +434,12 @@ export const projects = [
           },
           {
             id: "g-2bhk-110",
-            image: "/floorplans/gurudev/2bhk2t/2bhk-2T2.jpeg",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
             title: "2 BHK + 2T · Unit 110",
             type: "2 BHK",
             area: "732 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-1.pdf",
+            facing: "West",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -441,11 +448,12 @@ export const projects = [
           },
           {
             id: "g-2bhk-111",
-            image: "/floorplans/gurudev/2bhk2t/2bhk-2T2.jpeg",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
             title: "2 BHK + 2T · Unit 111",
             type: "2 BHK",
             area: "732 Sq.Ft.",
             href: "/floor-plans/gurudev/flat-2.pdf",
+            facing: "West",
             features: [
               { icon: "bed", label: "2 Bedrooms" },
               { icon: "bath", label: "2 Toilets" },
@@ -456,7 +464,7 @@ export const projects = [
       },
     ],
 
-    // ---------- Plot Sizes & Pricing (Gurudev — from price list) ----------
+    // ---------- Plot Sizes & Pricing (Gurudev — from price list, verified 20-Aug-2026) ----------
     plotPricingEyebrow: "INVEST WITH CONFIDENCE",
     plotPricingHeading: ["Unit Sizes", "& Pricing"],
     plotPricingDescription:
@@ -470,17 +478,18 @@ export const projects = [
       { id: "2bhk", label: "2 BHK" },
       { id: "east", label: "East Facing" },
       { id: "west", label: "West Facing" },
-      { id: "sold", label: "Sold Out" },
-      { id: "unsold", label: "Available" },
+     
     ],
     plotPricing: [
+      // ============================================================
       // Block A · 1st Floor
+      // ============================================================
       { id: "101", flatNo: "101", block: "Block A", floor: "1st Floor", type: "2 BHK + 2T", facing: "East", status: "Sold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "sold"] },
       { id: "102", flatNo: "102", block: "Block A", floor: "1st Floor", type: "2 BHK + 2T", facing: "East", status: "Sold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "sold"] },
       { id: "103", flatNo: "103", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 425, uds: 209, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2487500, reg: 154225, gst: 24875, finalTotal: 2666600, categories: ["1bhk", "west", "unsold"] },
       { id: "104", flatNo: "104", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 419, uds: 206, basePrice: 2178800, otherCharges: 125700, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2479500, reg: 153729, gst: 24795, finalTotal: 2658024, categories: ["1bhk", "west", "unsold"] },
       { id: "105", flatNo: "105", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 491, uds: 241, basePrice: 2553200, otherCharges: 147300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2875500, reg: 178281, gst: 28755, finalTotal: 3082536, categories: ["1bhk", "west", "unsold"] },
-      { id: "106", flatNo: "106", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2325500, reg: 144181, gst: 23255, finalTotal: 2492936, categories: ["1bhk", "west", "unsold"] },
+      { id: "106", flatNo: "106", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2300500, reg: 142631, gst: 23005, finalTotal: 2466136, categories: ["1bhk", "west", "unsold"] },
       { id: "107", flatNo: "107", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "west", "unsold"] },
       { id: "108", flatNo: "108", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2680000, reg: 166160, gst: 26800, finalTotal: 2872960, categories: ["1bhk", "east", "sold"] },
       { id: "109", flatNo: "109", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2570000, reg: 159340, gst: 25700, finalTotal: 2755040, categories: ["1bhk", "east", "sold"] },
@@ -493,7 +502,10 @@ export const projects = [
       { id: "116", flatNo: "116", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "east", "unsold"] },
       { id: "117", flatNo: "117", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Sold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2705000, reg: 167710, gst: 27050, finalTotal: 2899760, categories: ["1bhk", "west", "sold"] },
       { id: "118", flatNo: "118", block: "Block A", floor: "1st Floor", type: "1 BHK + 1T", facing: "West", status: "Sold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2595000, reg: 160890, gst: 25950, finalTotal: 2781840, categories: ["1bhk", "west", "sold"] },
+
+      // ============================================================
       // Block A · 2nd Floor
+      // ============================================================
       { id: "201", flatNo: "201", block: "Block A", floor: "2nd Floor", type: "2 BHK + 2T", facing: "East", status: "Unsold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "unsold"] },
       { id: "202", flatNo: "202", block: "Block A", floor: "2nd Floor", type: "2 BHK + 2T", facing: "East", status: "Sold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "sold"] },
       { id: "203", flatNo: "203", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Sold", sqft: 425, uds: 209, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 150000, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2637500, reg: 163525, gst: 26375, finalTotal: 2827400, categories: ["1bhk", "west", "sold"] },
@@ -502,10 +514,44 @@ export const projects = [
       { id: "206", flatNo: "206", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2325500, reg: 144181, gst: 23255, finalTotal: 2492936, categories: ["1bhk", "west", "unsold"] },
       { id: "207", flatNo: "207", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "west", "unsold"] },
       { id: "208", flatNo: "208", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2680000, reg: 166160, gst: 26800, finalTotal: 2872960, categories: ["1bhk", "east", "sold"] },
-      { id: "209", flatNo: "209", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2595000, reg: 160890, gst: 25950, finalTotal: 2781840, categories: ["1bhk", "east", "unsold"] },
+      { id: "209", flatNo: "209", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2570000, reg: 159340, gst: 25700, finalTotal: 2755040, categories: ["1bhk", "east", "unsold"] },
       { id: "210", flatNo: "210", block: "Block A", floor: "2nd Floor", type: "2 BHK + 2T", facing: "West", status: "Sold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "sold"] },
       { id: "211", flatNo: "211", block: "Block A", floor: "2nd Floor", type: "2 BHK + 2T", facing: "West", status: "Sold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "sold"] },
+      { id: "212", flatNo: "212", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 425, uds: 208, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2512500, reg: 155775, gst: 25125, finalTotal: 2693400, categories: ["1bhk", "east", "sold"] },
+      { id: "213", flatNo: "213", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 419, uds: 206, basePrice: 2178800, otherCharges: 125700, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2479500, reg: 153729, gst: 24795, finalTotal: 2658024, categories: ["1bhk", "east", "unsold"] },
+      { id: "214", flatNo: "214", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 491, uds: 241, basePrice: 2553200, otherCharges: 147300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2875500, reg: 178281, gst: 28755, finalTotal: 3082536, categories: ["1bhk", "east", "sold"] },
+      { id: "215", flatNo: "215", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2325500, reg: 144181, gst: 23255, finalTotal: 2492936, categories: ["1bhk", "east", "unsold"] },
+      { id: "216", flatNo: "216", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "east", "sold"] },
+      { id: "217", flatNo: "217", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2705000, reg: 167710, gst: 27050, finalTotal: 2899760, categories: ["1bhk", "west", "unsold"] },
+      { id: "218", flatNo: "218", block: "Block A", floor: "2nd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2595000, reg: 160890, gst: 25950, finalTotal: 2781840, categories: ["1bhk", "west", "unsold"] },
+
+      // ============================================================
+      // Block A · 3rd Floor
+      // ============================================================
+      { id: "301", flatNo: "301", block: "Block A", floor: "3rd Floor", type: "2 BHK + 2T", facing: "East", status: "Unsold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "unsold"] },
+      { id: "302", flatNo: "302", block: "Block A", floor: "3rd Floor", type: "2 BHK + 2T", facing: "East", status: "Sold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "sold"] },
+      { id: "303", flatNo: "303", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "West", status: "Sold", sqft: 425, uds: 209, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2487500, reg: 154225, gst: 24875, finalTotal: 2666600, categories: ["1bhk", "west", "sold"] },
+      { id: "304", flatNo: "304", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 419, uds: 206, basePrice: 2178800, otherCharges: 125700, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2479500, reg: 153729, gst: 24795, finalTotal: 2658024, categories: ["1bhk", "west", "unsold"] },
+      { id: "305", flatNo: "305", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 491, uds: 241, basePrice: 2553200, otherCharges: 147300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2875500, reg: 178281, gst: 28755, finalTotal: 3082536, categories: ["1bhk", "west", "unsold"] },
+      { id: "306", flatNo: "306", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2325500, reg: 144181, gst: 23255, finalTotal: 2492936, categories: ["1bhk", "west", "unsold"] },
+      { id: "307", flatNo: "307", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "west", "unsold"] },
+      { id: "308", flatNo: "308", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2680000, reg: 166160, gst: 26800, finalTotal: 2872960, categories: ["1bhk", "east", "sold"] },
+      { id: "309", flatNo: "309", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2595000, reg: 160890, gst: 25950, finalTotal: 2781840, categories: ["1bhk", "east", "sold"] },
+      { id: "310", flatNo: "310", block: "Block A", floor: "3rd Floor", type: "2 BHK + 2T", facing: "West", status: "Unsold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "unsold"] },
+      { id: "311", flatNo: "311", block: "Block A", floor: "3rd Floor", type: "2 BHK + 2T", facing: "West", status: "Sold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "sold"] },
+      { id: "312", flatNo: "312", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 425, uds: 208, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2487500, reg: 154225, gst: 24875, finalTotal: 2666600, categories: ["1bhk", "east", "sold"] },
+      { id: "313", flatNo: "313", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 419, uds: 206, basePrice: 2178800, otherCharges: 125700, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2479500, reg: 153729, gst: 24795, finalTotal: 2658024, categories: ["1bhk", "east", "unsold"] },
+      { id: "314", flatNo: "314", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 491, uds: 241, basePrice: 2553200, otherCharges: 147300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2875500, reg: 178281, gst: 28755, finalTotal: 3082536, categories: ["1bhk", "east", "unsold"] },
+      { id: "315", flatNo: "315", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2325500, reg: 144181, gst: 23255, finalTotal: 2492936, categories: ["1bhk", "east", "unsold"] },
+      { id: "316", flatNo: "316", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "east", "unsold"] },
+      { id: "317", flatNo: "317", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2705000, reg: 167710, gst: 27050, finalTotal: 2899760, categories: ["1bhk", "west", "unsold"] },
+      { id: "318", flatNo: "318", block: "Block A", floor: "3rd Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2595000, reg: 160890, gst: 25950, finalTotal: 2781840, categories: ["1bhk", "west", "unsold"] },
+
+      // ============================================================
       // Block A · 4th Floor
+      // ============================================================
+      { id: "401", flatNo: "401", block: "Block A", floor: "4th Floor", type: "2 BHK + 2T", facing: "East", status: "Sold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "sold"] },
+      { id: "402", flatNo: "402", block: "Block A", floor: "4th Floor", type: "2 BHK + 2T", facing: "East", status: "Sold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4365000, reg: 270630, gst: 43650, finalTotal: 4679280, categories: ["2bhk", "east", "sold"] },
       { id: "403", flatNo: "403", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 425, uds: 209, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2487500, reg: 154225, gst: 24875, finalTotal: 2666600, categories: ["1bhk", "west", "unsold"] },
       { id: "404", flatNo: "404", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 419, uds: 206, basePrice: 2178800, otherCharges: 125700, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2479500, reg: 153729, gst: 24795, finalTotal: 2658024, categories: ["1bhk", "west", "unsold"] },
       { id: "405", flatNo: "405", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 491, uds: 241, basePrice: 2553200, otherCharges: 147300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2875500, reg: 178281, gst: 28755, finalTotal: 3082536, categories: ["1bhk", "west", "unsold"] },
@@ -515,14 +561,17 @@ export const projects = [
       { id: "409", flatNo: "409", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2570000, reg: 159340, gst: 25700, finalTotal: 2755040, categories: ["1bhk", "east", "unsold"] },
       { id: "410", flatNo: "410", block: "Block A", floor: "4th Floor", type: "2 BHK + 2T", facing: "West", status: "Unsold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "unsold"] },
       { id: "411", flatNo: "411", block: "Block A", floor: "4th Floor", type: "2 BHK + 2T", facing: "West", status: "Unsold", sqft: 732, uds: 359, basePrice: 3806400, otherCharges: 219600, ebStp: 200000, floorRise: 0, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4376000, reg: 271312, gst: 43760, finalTotal: 4691072, categories: ["2bhk", "west", "unsold"] },
-      { id: "412", flatNo: "412", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 425, uds: 208, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2512500, reg: 155775, gst: 25125, finalTotal: 2693400, categories: ["1bhk", "east", "sold"] },
+      { id: "412", flatNo: "412", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "East", status: "Sold", sqft: 425, uds: 208, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2512500, reg: 155775, gst: 25125, finalTotal: 2693400, categories: ["1bhk", "east", "sold"] },
       { id: "413", flatNo: "413", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 419, uds: 206, basePrice: 2178800, otherCharges: 125700, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2479500, reg: 153729, gst: 24795, finalTotal: 2658024, categories: ["1bhk", "east", "unsold"] },
       { id: "414", flatNo: "414", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 491, uds: 241, basePrice: 2553200, otherCharges: 147300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2875500, reg: 178281, gst: 28755, finalTotal: 3082536, categories: ["1bhk", "east", "unsold"] },
       { id: "415", flatNo: "415", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 391, uds: 192, basePrice: 2033200, otherCharges: 117300, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2325500, reg: 144181, gst: 23255, finalTotal: 2492936, categories: ["1bhk", "east", "unsold"] },
       { id: "416", flatNo: "416", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "East", status: "Unsold", sqft: 408, uds: 200, basePrice: 2121600, otherCharges: 122400, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2419000, reg: 149978, gst: 24190, finalTotal: 2593168, categories: ["1bhk", "east", "unsold"] },
       { id: "417", flatNo: "417", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "West", status: "Sold", sqft: 460, uds: 226, basePrice: 2392000, otherCharges: 138000, ebStp: 150000, floorRise: 0, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2705000, reg: 167710, gst: 27050, finalTotal: 2899760, categories: ["1bhk", "west", "sold"] },
       { id: "418", flatNo: "418", block: "Block A", floor: "4th Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 440, uds: 216, basePrice: 2288000, otherCharges: 132000, ebStp: 150000, floorRise: 0, carParkType: "", carParkPrice: 0, twParkType: "Covered", twParkPrice: 25000, total: 2595000, reg: 160890, gst: 25950, finalTotal: 2781840, categories: ["1bhk", "west", "unsold"] },
+
+      // ============================================================
       // Block A · 5th Floor
+      // ============================================================
       { id: "501", flatNo: "501", block: "Block A", floor: "5th Floor", type: "2 BHK + 2T", facing: "East", status: "Unsold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 500000, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4865000, reg: 301630, gst: 48650, finalTotal: 5215280, categories: ["2bhk", "east", "unsold"] },
       { id: "502", flatNo: "502", block: "Block A", floor: "5th Floor", type: "2 BHK + 2T", facing: "East", status: "Unsold", sqft: 730, uds: 359, basePrice: 3796000, otherCharges: 219000, ebStp: 200000, floorRise: 500000, carParkType: "Covered", carParkPrice: 150000, twParkType: "Open", twParkPrice: 0, total: 4865000, reg: 301630, gst: 48650, finalTotal: 5215280, categories: ["2bhk", "east", "unsold"] },
       { id: "503", flatNo: "503", block: "Block A", floor: "5th Floor", type: "1 BHK + 1T", facing: "West", status: "Unsold", sqft: 425, uds: 209, basePrice: 2210000, otherCharges: 127500, ebStp: 150000, floorRise: 300000, carParkType: "Covered", carParkPrice: 0, twParkType: "Covered", twParkPrice: 0, total: 2812500, reg: 174375, gst: 28125, finalTotal: 3015000, categories: ["1bhk", "west", "unsold"] },
@@ -749,9 +798,9 @@ export const projects = [
     name: "Privana",
     tagline: "Modern living, thoughtfully designed for the way you live today",
     location: "Chennai, Tamil Nadu",
-    heroImage: "/updatedprivana.jpeg",
+    heroImage: "/privvv.jpeg",
     heroImageMobile: "/priv.png",
-    aboutImage: "/privabout.png",
+    aboutImage: "/2nd.png",
 
     eyebrow: "MORE THAN JUST A HOME",
     heading: ["Designed for a", "Better Way of Life"],
@@ -1761,9 +1810,9 @@ export const projects = [
     galleryCtaHref: "#gallery",
     galleryFilters: ["All", "Exteriors", "Interiors", "Amenities", "Lifestyle"],
     galleryImages: [
-      { id: "p1", image: "/spyka1.png", title: "Privana — Elevation", category: "Exteriors", size: "large" },
-      { id: "p2", image: "/spyka2.png", title: "Privana — Entrance", category: "Exteriors", size: "small" },
-      { id: "p3", image: "/spyka3.png", title: "Living Spaces", category: "Interiors", size: "small" },
+      { id: "p1", image: "/spyka1.jpeg", title: "Privana — Elevation", category: "Exteriors", size: "large" },
+      { id: "p2", image: "/spyka2.jpeg", title: "Privana — Entrance", category: "Exteriors", size: "small" },
+      { id: "p3", image: "/spyka3.jpeg", title: "Living Spaces", category: "Interiors", size: "small" },
     ],
     gallery: ["/priv1.png", "/privanaban.jpeg", "/gurudev3.png"],
 
@@ -1835,7 +1884,7 @@ export const projects = [
     tourDescription:
       "Take a virtual tour and explore the spaces, views and lifestyle that await you at Privana. Get a real feel of your future home from anywhere, anytime.",
     tourCtaLabel: "Start 360° Tour",
-    tourThumbnail: "/spykathumbnail.png",
+    tourThumbnail: "/topprivana.jpeg",
     tour360Image: "/spyka360.jpeg",
     tourUrl: "https://example.com/privana-360-tour",
     tourTagline: ["See it,", "Feel it,", "Live it."],

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
-const BG_IMAGE = "/cta.png";
+const BG_IMAGE = "/mission1.png";
 const MODEL_IMAGE = "/lineart.png";
 
 const CREAM = "#FBF8F2";
@@ -79,7 +79,7 @@ export default function PromiseHeroBanner() {
       id="contact"
       className="relative w-full overflow-hidden bg-[#F4F2ED] font-sans"
       style={{
-        height: "40vh",
+        height: "50vh",
       }}
     >
       {/* Background texture */}
