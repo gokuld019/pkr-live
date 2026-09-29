@@ -3,10 +3,16 @@
 
 import { useState, useMemo, useRef } from "react";
 import { Figtree } from "next/font/google";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText"; // free in gsap 3.13+
 import {
   Home, Coins, Wallet, Percent, CalendarDays, RotateCcw, ArrowRight,
   Lightbulb, PiggyBank, Landmark, FileText, User, HeartHandshake,
 } from "lucide-react";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
 const figtree = Figtree({
   subsets: ["latin"],
@@ -107,12 +113,78 @@ export default function EmiCalculatorPage() {
 
   const maxCompareEmi = Math.max(...compareData.map((d) => d.emi));
 
+  // ---------- GSAP: text animations ----------
+  //  [data-text]   static text  -> split into lines, each line rises out of a mask
+  //  [data-fade]   blocks that contain live numbers -> simple soft fade + lift
+  //  [data-chip]   small pills -> staggered fade
+  //  <AnimatedNumber /> handles every value that changes with the sliders
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // 1) Static text: line-by-line masked reveal (re-splits itself on resize / font load)
+        gsap.utils.toArray("[data-text]").forEach((el) => {
+          SplitText.create(el, {
+            type: "lines",
+            mask: "lines",
+            autoSplit: true,
+            linesClass: "split-line",
+            onSplit(self) {
+              gsap.set(el, { visibility: "visible" }); // un-hide (see <style> below)
+              return gsap.from(self.lines, {
+                yPercent: 115,
+                duration: 1.1,
+                ease: "expo.out",
+                stagger: 0.09,
+                scrollTrigger: { trigger: el, start: "top 92%", once: true },
+              });
+            },
+          });
+        });
+
+        // 2) Blocks with live numbers: gentle fade + lift
+        gsap.utils.toArray("[data-fade]").forEach((el) => {
+          gsap.from(el, {
+            y: 16,
+            opacity: 0,
+            duration: 1,
+            ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 92%", once: true },
+          });
+        });
+
+        // 3) Pills: staggered fade
+        gsap.from("[data-chip]", {
+          y: 10,
+          opacity: 0,
+          duration: 0.8,
+          ease: "power3.out",
+          stagger: 0.07,
+          scrollTrigger: { trigger: "[data-chip]", start: "top 95%", once: true },
+        });
+      });
+
+      return () => mm.revert();
+    },
+    { scope: root }
+  );
+
   return (
     <main
       ref={root}
       className={`${figtree.className} min-h-screen relative overflow-x-hidden`}
       style={{ backgroundColor: CREAM, fontFamily: "var(--font-figtree), sans-serif" }}
     >
+      {/* Hide split-able text until GSAP has prepared it (prevents a flash on load).
+          Not applied when the visitor prefers reduced motion. */}
+      <style>{`
+        @media (prefers-reduced-motion: no-preference) {
+          [data-text] { visibility: hidden; }
+        }
+        .split-line { padding-bottom: 0.12em; margin-bottom: -0.12em; } /* keeps descenders (g, y, p) from being clipped by the mask */
+      `}</style>
+
       {/* Hero Section */}
       <section className="relative w-full bg-white">
         {/* Mobile-only banner — fixed 380 x 700px, centered, across all mobile screens */}
@@ -144,10 +216,10 @@ export default function EmiCalculatorPage() {
                 <Home className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={1.75} style={{ color: DEEP_NAVY }} />
               </div>
               <div>
-                <h2 className="text-base sm:text-xl md:text-2xl font-bold" style={{ color: DEEP_NAVY }}>
+                <h2 data-text className="text-base sm:text-xl md:text-2xl font-bold" style={{ color: DEEP_NAVY }}>
                   Calculate Your EMI
                 </h2>
-                <p className="text-[12.5px] sm:text-sm mt-1" style={{ color: TEXT_CHARCOAL }}>
+                <p data-text className="text-[12.5px] sm:text-sm mt-1" style={{ color: TEXT_CHARCOAL }}>
                   Adjust the values to see your estimated monthly EMI.
                 </p>
               </div>
@@ -157,7 +229,7 @@ export default function EmiCalculatorPage() {
               <SliderField
                 icon={Home}
                 label="Property Value"
-                value={formatINR(propertyValue)}
+                value={<AnimatedNumber value={propertyValue} />}
                 min={2000000}
                 max={50000000}
                 step={100000}
@@ -170,7 +242,12 @@ export default function EmiCalculatorPage() {
               <SliderField
                 icon={Coins}
                 label="Down Payment"
-                value={`${formatINR(downPayment)} (${downPaymentPct}%)`}
+                value={
+                  <AnimatedNumber
+                    value={downPayment}
+                    format={(v) => `${formatINR(v)} (${downPaymentPct}%)`}
+                  />
+                }
                 min={0}
                 max={70}
                 step={1}
@@ -186,18 +263,18 @@ export default function EmiCalculatorPage() {
                   <Wallet className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.75} style={{ color: DEEP_NAVY }} />
                 </div>
                 <div className="flex-1 min-w-[100px]">
-                  <div className="text-[13px] sm:text-sm font-medium" style={{ color: DEEP_NAVY }}>Loan Amount</div>
-                  <div className="text-[10.5px] sm:text-[11px]" style={{ color: TEXT_CHARCOAL }}>(Auto calculated)</div>
+                  <div data-text className="text-[13px] sm:text-sm font-medium" style={{ color: DEEP_NAVY }}>Loan Amount</div>
+                  <div data-text className="text-[10.5px] sm:text-[11px]" style={{ color: TEXT_CHARCOAL }}>(Auto calculated)</div>
                 </div>
                 <div className="text-[15px] sm:text-lg font-bold" style={{ color: DEEP_NAVY }}>
-                  {formatINR(loanAmount)}
+                  <AnimatedNumber value={loanAmount} />
                 </div>
               </div>
 
               <SliderField
                 icon={Percent}
                 label="Interest Rate (p.a.)"
-                value={`${interestRate}%`}
+                value={<AnimatedNumber value={interestRate} format={(v) => `${v.toFixed(1)}%`} duration={0.35} />}
                 min={5}
                 max={15}
                 step={0.1}
@@ -210,7 +287,7 @@ export default function EmiCalculatorPage() {
               <SliderField
                 icon={CalendarDays}
                 label="Loan Tenure"
-                value={`${tenureYears} Years`}
+                value={<AnimatedNumber value={tenureYears} format={(v) => `${Math.round(v)} Years`} duration={0.35} />}
                 min={5}
                 max={30}
                 step={1}
@@ -236,9 +313,9 @@ export default function EmiCalculatorPage() {
                 <PiggyBank className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={1.75} style={{ color: DEEP_NAVY }} />
               </div>
               <div>
-                <div className="text-[12.5px] sm:text-sm" style={{ color: TEXT_CHARCOAL }}>Your Estimated Monthly EMI</div>
-                <div className="text-xl sm:text-3xl md:text-4xl font-bold mt-1 break-words" style={{ color: DEEP_NAVY }}>
-                  {formatINR(emi)}
+                <div data-text className="text-[12.5px] sm:text-sm" style={{ color: TEXT_CHARCOAL }}>Your Estimated Monthly EMI</div>
+                <div data-fade className="text-xl sm:text-3xl md:text-4xl font-bold mt-1 break-words" style={{ color: DEEP_NAVY }}>
+                  <AnimatedNumber value={emi} duration={0.5} />
                 </div>
               </div>
             </div>
@@ -246,9 +323,9 @@ export default function EmiCalculatorPage() {
             <div className="h-px w-full mb-5 sm:mb-6" style={{ backgroundColor: LINE }} />
 
             <div className="grid grid-cols-1 xs:grid-cols-3 sm:grid-cols-3 gap-3.5 sm:gap-4 mb-6 sm:mb-8">
-              <StatBlock label="Loan Amount" value={formatINR(loanAmount)} />
-              <StatBlock label="Total Interest" value={formatINR(totalInterest)} />
-              <StatBlock label="Total Payment" value={formatINR(totalPayment)} />
+              <StatBlock label="Loan Amount" value={<AnimatedNumber value={loanAmount} />} />
+              <StatBlock label="Total Interest" value={<AnimatedNumber value={totalInterest} />} />
+              <StatBlock label="Total Payment" value={<AnimatedNumber value={totalPayment} />} />
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-8 mb-6 sm:mb-8 flex-1">
@@ -265,8 +342,10 @@ export default function EmiCalculatorPage() {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center">
-                  <div className="text-base sm:text-xl font-bold" style={{ color: DEEP_NAVY }}>{formatINRShort(totalPayment)}</div>
-                  <div className="text-[10.5px] sm:text-[11px] mt-0.5" style={{ color: TEXT_CHARCOAL }}>Total Payment</div>
+                  <div className="text-base sm:text-xl font-bold" style={{ color: DEEP_NAVY }}>
+                    <AnimatedNumber value={totalPayment} format={formatINRShort} />
+                  </div>
+                  <div data-text className="text-[10.5px] sm:text-[11px] mt-0.5" style={{ color: TEXT_CHARCOAL }}>Total Payment</div>
                 </div>
               </div>
 
@@ -275,31 +354,31 @@ export default function EmiCalculatorPage() {
                 <div className="flex items-start gap-3">
                   <span className="w-3 h-3 rounded-full mt-1 shrink-0" style={{ backgroundColor: DEEP_NAVY }} />
                   <div>
-                    <div className="text-[13px] sm:text-sm font-semibold" style={{ color: DEEP_NAVY }}>Principal Amount</div>
+                    <div data-text className="text-[13px] sm:text-sm font-semibold" style={{ color: DEEP_NAVY }}>Principal Amount</div>
                     <div className="text-[13px] sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
-                      {formatINR(loanAmount)} ({principalPct}%)
+                      <AnimatedNumber value={loanAmount} format={(v) => `${formatINR(v)} (${principalPct}%)`} />
                     </div>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="w-3 h-3 rounded-full mt-1 shrink-0" style={{ backgroundColor: TRACK }} />
                   <div>
-                    <div className="text-[13px] sm:text-sm font-semibold" style={{ color: DEEP_NAVY }}>Total Interest</div>
+                    <div data-text className="text-[13px] sm:text-sm font-semibold" style={{ color: DEEP_NAVY }}>Total Interest</div>
                     <div className="text-[13px] sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
-                      {formatINR(totalInterest)} ({interestPct}%)
+                      <AnimatedNumber value={totalInterest} format={(v) => `${formatINR(v)} (${interestPct}%)`} />
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Tip callout */}
-            <div className="flex items-start gap-3 rounded-xl p-3.5 sm:p-4" style={{ backgroundColor: LIGHT_BLUE }}>
+            {/* Tip callout (contains a live number, so it fades as one block) */}
+            <div data-fade className="flex items-start gap-3 rounded-xl p-3.5 sm:p-4" style={{ backgroundColor: LIGHT_BLUE }}>
               <Lightbulb className="w-5 h-5 shrink-0 mt-0.5" style={{ color: DEEP_NAVY }} />
               <p className="text-[13px] sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
                 A lower interest rate can save you up to{" "}
                 <span className="font-bold" style={{ color: DEEP_NAVY }}>
-                  {formatINRShort(potentialSavings)}
+                  <AnimatedNumber value={potentialSavings} format={formatINRShort} />
                 </span>{" "}
                 over your loan tenure!
               </p>
@@ -315,10 +394,10 @@ export default function EmiCalculatorPage() {
           <div className="rounded-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]" style={{ backgroundColor: LIGHT_BLUE_SOFT }}>
             {/* Left: chart */}
             <div className="p-4 sm:p-6 md:p-8 flex flex-col">
-              <h3 className="text-base sm:text-xl md:text-2xl font-bold" style={{ color: DEEP_NAVY }}>
+              <h3 data-text className="text-base sm:text-xl md:text-2xl font-bold" style={{ color: DEEP_NAVY }}>
                 See How Small Changes Make a Big Difference
               </h3>
-              <p className="text-[12.5px] sm:text-sm mt-1.5 mb-5 sm:mt-2 sm:mb-6" style={{ color: TEXT_CHARCOAL }}>
+              <p data-text className="text-[12.5px] sm:text-sm mt-1.5 mb-5 sm:mt-2 sm:mb-6" style={{ color: TEXT_CHARCOAL }}>
                 Compare EMIs for different interest rates and loan tenures.
               </p>
 
@@ -371,7 +450,7 @@ export default function EmiCalculatorPage() {
                             color: emphasize ? "#fff" : DEEP_NAVY,
                           }}
                         >
-                          {formatINR(item.emi)}
+                          <AnimatedNumber value={item.emi} duration={0.5} />
                         </div>
 
                         {/* Bar */}
@@ -410,7 +489,7 @@ export default function EmiCalculatorPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-stretch">
             {/* Home Loan Benefits */}
             <div className="rounded-2xl border bg-white p-4 sm:p-6 md:p-8 h-full" style={{ borderColor: LINE }}>
-              <h3 className="text-[15px] sm:text-lg md:text-xl font-bold mb-4 sm:mb-6" style={{ color: DEEP_NAVY }}>
+              <h3 data-text className="text-[15px] sm:text-lg md:text-xl font-bold mb-4 sm:mb-6" style={{ color: DEEP_NAVY }}>
                 Home Loan Benefits
               </h3>
               <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -426,7 +505,7 @@ export default function EmiCalculatorPage() {
                       <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: LIGHT_BLUE }}>
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={1.75} style={{ color: DEEP_NAVY }} />
                       </div>
-                      <p className="text-[13px] sm:text-sm leading-snug" style={{ color: DEEP_NAVY }}>
+                      <p data-text className="text-[13px] sm:text-sm leading-snug" style={{ color: DEEP_NAVY }}>
                         <span className="font-semibold">{item.text[0]}</span>
                         <br />
                         <span style={{ color: TEXT_CHARCOAL }}>{item.text[1]}</span>
@@ -439,10 +518,10 @@ export default function EmiCalculatorPage() {
 
             {/* Banking Partners */}
             <div className="rounded-2xl border bg-white p-4 sm:p-6 md:p-8 h-full flex flex-col" style={{ borderColor: LINE }}>
-              <h3 className="text-[15px] sm:text-lg md:text-xl font-bold" style={{ color: DEEP_NAVY }}>
+              <h3 data-text className="text-[15px] sm:text-lg md:text-xl font-bold" style={{ color: DEEP_NAVY }}>
                 Our Banking Partners
               </h3>
-              <p className="text-[12.5px] sm:text-sm mt-1 mb-5 sm:mb-6" style={{ color: TEXT_CHARCOAL }}>
+              <p data-text className="text-[12.5px] sm:text-sm mt-1 mb-5 sm:mb-6" style={{ color: TEXT_CHARCOAL }}>
                 We work with leading banks to help you get the best home loan offers.
               </p>
 
@@ -450,6 +529,7 @@ export default function EmiCalculatorPage() {
                 {["SBI", "HDFC Bank", "ICICI Bank", "Axis Bank", "Kotak"].map((bank) => (
                   <span
                     key={bank}
+                    data-chip
                     className="inline-flex items-center rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-[12px] sm:text-sm font-semibold border transition-colors"
                     style={{ borderColor: LINE, color: DEEP_NAVY, backgroundColor: LIGHT_BLUE_SOFT }}
                   >
@@ -465,6 +545,57 @@ export default function EmiCalculatorPage() {
   );
 }
 
+/**
+ * Counts smoothly from the previous value to the new one.
+ * Text is written straight to the DOM by GSAP, so React never re-renders per frame.
+ * `format` can be an inline function; the latest one is always used.
+ */
+function AnimatedNumber({ value, format = formatINR, duration = 0.6, className, style }) {
+  const ref = useRef(null);
+  const state = useRef({ val: value });
+  const fmt = useRef(format);
+  fmt.current = format;
+
+  // First-render text is frozen so React never overwrites GSAP's in-flight updates
+  const initialText = useRef(format(value)).current;
+  // Re-run if the formatted result changes even when the number itself didn't
+  const target = format(value);
+
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el) return;
+
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) {
+        state.current.val = value;
+        el.textContent = fmt.current(value);
+        return;
+      }
+
+      gsap.to(state.current, {
+        val: value,
+        duration,
+        ease: "power3.out",
+        overwrite: true, // fast slider dragging won't stack tweens
+        onUpdate: () => {
+          el.textContent = fmt.current(state.current.val);
+        },
+        onComplete: () => {
+          el.textContent = fmt.current(value);
+        },
+      });
+    },
+    { dependencies: [value, target] }
+  );
+
+  return (
+    <span ref={ref} className={className} style={style}>
+      {initialText}
+    </span>
+  );
+}
+
 function SliderField({ icon: Icon, label, value, min, max, step, current, onChange, minLabel, maxLabel }) {
   const pct = ((current - min) / (max - min)) * 100;
 
@@ -475,7 +606,7 @@ function SliderField({ icon: Icon, label, value, min, max, step, current, onChan
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 mb-1.5 sm:mb-2">
-          <span className="text-[13px] sm:text-sm font-medium" style={{ color: TEXT_CHARCOAL }}>{label}</span>
+          <span data-text className="text-[13px] sm:text-sm font-medium" style={{ color: TEXT_CHARCOAL }}>{label}</span>
           <span className="text-[13px] sm:text-sm font-bold" style={{ color: DEEP_NAVY }}>{value}</span>
         </div>
 
@@ -494,8 +625,8 @@ function SliderField({ icon: Icon, label, value, min, max, step, current, onChan
         </div>
 
         <div className="flex items-center justify-between mt-1.5">
-          <span className="text-[10.5px] sm:text-[11px]" style={{ color: TEXT_CHARCOAL }}>{minLabel}</span>
-          <span className="text-[10.5px] sm:text-[11px]" style={{ color: TEXT_CHARCOAL }}>{maxLabel}</span>
+          <span data-text className="text-[10.5px] sm:text-[11px]" style={{ color: TEXT_CHARCOAL }}>{minLabel}</span>
+          <span data-text className="text-[10.5px] sm:text-[11px]" style={{ color: TEXT_CHARCOAL }}>{maxLabel}</span>
         </div>
       </div>
     </div>
@@ -505,7 +636,7 @@ function SliderField({ icon: Icon, label, value, min, max, step, current, onChan
 function StatBlock({ label, value }) {
   return (
     <div className="min-w-0">
-      <div className="text-[10.5px] sm:text-[11px] mb-1" style={{ color: TEXT_CHARCOAL }}>{label}</div>
+      <div data-text className="text-[10.5px] sm:text-[11px] mb-1" style={{ color: TEXT_CHARCOAL }}>{label}</div>
       <div className="text-[12.5px] sm:text-sm md:text-base font-bold break-words" style={{ color: DEEP_NAVY }}>{value}</div>
     </div>
   );

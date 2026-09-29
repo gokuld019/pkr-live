@@ -11,7 +11,7 @@ import {
   FadeUp,
   EASE,
 } from "@/components/motion/reveal";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 
 const geist = Geist({
@@ -38,10 +38,46 @@ const STATS = [
   { value: "100%", label: "RERA Approved" },
 ];
 
+/* ------------------------------------------------------------------ */
+/*  MASKED WORD RISE — each word rises out of a mask while un-blurring  */
+/*  (same animation as the hero headline, triggered on scroll into view) */
+/* ------------------------------------------------------------------ */
+function MaskText({ text, delay = 0, step = 0.1, className = "" }) {
+  const reduce = useReducedMotion();
+  const words = text.split(" ");
+
+  return (
+    <span className={className}>
+      {words.map((word, i) => (
+        <span
+          key={`${word}-${i}`}
+          className="inline-block overflow-hidden align-bottom"
+          style={{
+            marginRight: i === words.length - 1 ? 0 : "0.25em",
+            paddingBottom: "0.14em",
+            marginBottom: "-0.14em",
+          }}
+        >
+          <motion.span
+            className="inline-block will-change-transform"
+            initial={reduce ? false : { y: "110%", opacity: 0, filter: "blur(8px)" }}
+            whileInView={{ y: "0%", opacity: 1, filter: "blur(0px)" }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 1, ease: EASE, delay: delay + i * step }}
+          >
+            {word}
+          </motion.span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 export default function VisionMission() {
   const root = useRef(null);
   const lineRef = useRef(null);
   const lineShow = useReveal(lineRef, { amount: "some" });
+  const reduce = useReducedMotion();
 
   return (
     <>
@@ -54,29 +90,41 @@ export default function VisionMission() {
       >
         <div className="h-[3px] w-full bg-gradient-to-r from-transparent via-[#B08D3F] to-transparent" />
         <div className="mx-auto max-w-[1700px] px-6 py-5 sm:px-10 sm:py-6">
-          <FadeUp className="flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full rounded-full bg-[#B08D3F]/40 animate-ping" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[#B08D3F]" />
             </span>
-            <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.28em] text-[#E9C97A]">
-              Trusted Real Estate Partner
-            </span>
-            <span className="h-px flex-1 bg-gradient-to-r from-[#B08D3F]/60 to-transparent" />
-          </FadeUp>
+            <MaskText
+              text="Trusted Real Estate Partner"
+              delay={0.1}
+              className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.28em] text-[#E9C97A]"
+            />
+            <motion.span
+              className="h-px flex-1 origin-left bg-gradient-to-r from-[#B08D3F]/60 to-transparent"
+              initial={reduce ? false : { scaleX: 0, opacity: 0 }}
+              whileInView={{ scaleX: 1, opacity: 1 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 1.2, ease: EASE, delay: 0.5 }}
+            />
+          </div>
           <div className="mt-4 grid grid-cols-2 gap-y-5 sm:mt-5 sm:grid-cols-4 sm:gap-4 sm:divide-x sm:divide-white/15">
             {STATS.map((s, i) => (
-              <FadeUp
+              <div
                 key={s.label}
-                delay={i * 0.08}
                 className="flex flex-col items-center justify-center text-center sm:px-4">
-                <span className="text-[20px] sm:text-[26px] font-bold tracking-tight text-[#E9C97A]">
-                  {s.value}
-                </span>
-                <span className="mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.14em] text-white/75">
-                  {s.label}
-                </span>
-              </FadeUp>
+                <MaskText
+                  text={s.value}
+                  delay={0.3 + i * 0.12}
+                  className="text-[20px] sm:text-[26px] font-bold tracking-tight text-[#E9C97A]"
+                />
+                <MaskText
+                  text={s.label}
+                  delay={0.45 + i * 0.12}
+                  step={0.06}
+                  className="mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.14em] text-white/75"
+                />
+              </div>
             ))}
           </div>
         </div>

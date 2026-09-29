@@ -10,20 +10,20 @@ const SLIDES = [
   //   alt: "gurudev project view 1",
   // },
   {
-    desktop: "/banners/hero2.jpeg",
-    mobile: "/banners/mob2.webp",
+    desktop: "/banners/up1.jpeg",
+    mobile: "/banners/mob1.webp",
     alt: "gurudev project view 2",
   },
  
 
 
   {
-    desktop: "/banners/hero1.jpeg",
-    mobile: "/banners/mob1.webp",
+    desktop: "/banners/up3.jpeg",
+    mobile: "/banners/mob2.webp",
     alt: "gurudev project view 3",
   },
   {
-    desktop: "/banners/hero3.jpeg",
+    desktop: "/banners/up2.jpeg",
     mobile: "/banners/mob3.webp",
     alt: "gurudev project view 4",
   },

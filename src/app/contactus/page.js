@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Figtree } from "next/font/google";
+import { motion, AnimatePresence } from "framer-motion";
+import { EASE, useReveal, SplitReveal, WordReveal, FadeUp } from "@/components/motion/reveal";
 
 /* ---------------------------------------------------------
    Figtree font
@@ -178,15 +180,22 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 items-stretch gap-3.5 sm:gap-5 lg:grid-cols-[1.3fr_1fr] lg:gap-[22px]">
           {/* Form card */}
           <div className={`${CARD} flex flex-col p-4 sm:p-7 lg:p-8`}>
-            <h2 className="mb-1.5 text-lg font-semibold sm:text-2xl" style={{ color: DEEP_NAVY }}>Get in Touch</h2>
-            <p className="mb-4 text-[13px] sm:mb-6 sm:text-sm" style={{ color: TEXT_CHARCOAL }}>
-              Fill out the form and our team will get back to you shortly.
-            </p>
+            <SplitReveal
+              text="Get in Touch"
+              className="mb-1.5 text-lg font-semibold sm:text-2xl text-[#0F3A6B]"
+            />
+            <WordReveal
+              text="Fill out the form and our team will get back to you shortly."
+              delay={0.1}
+              className="mb-4 text-[13px] sm:mb-6 sm:text-sm text-[#2D3A46]"
+            />
 
             <form onSubmit={handleSubmit} className="flex flex-1 flex-col">
               <div className="mb-3.5 grid grid-cols-1 gap-3.5 sm:mb-4 sm:grid-cols-2 sm:gap-4">
                 <div className="flex flex-col gap-1.5 sm:gap-2">
-                  <label htmlFor="name" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>Full Name *</label>
+                  <label htmlFor="name" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>
+                    <LineReveal>Full Name *</LineReveal>
+                  </label>
                   <input
                     id="name"
                     name="name"
@@ -201,7 +210,9 @@ export default function ContactPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5 sm:gap-2">
-                  <label htmlFor="phone" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>Phone Number *</label>
+                  <label htmlFor="phone" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>
+                    <LineReveal delay={0.05}>Phone Number *</LineReveal>
+                  </label>
                   <div className="flex items-center overflow-hidden rounded-lg border focus-within:outline focus-within:outline-2 focus-within:outline-offset-1" style={{ borderColor: LINE }}>
                     <span className="border-r px-3 py-2.5 text-[13px] sm:py-3 sm:text-sm" style={{ borderColor: LINE, color: TEXT_CHARCOAL }}>+91</span>
                     <input
@@ -221,7 +232,9 @@ export default function ContactPage() {
 
               <div className="mb-3.5 grid grid-cols-1 gap-3.5 sm:mb-4 sm:grid-cols-2 sm:gap-4">
                 <div className="flex flex-col gap-1.5 sm:gap-2">
-                  <label htmlFor="email" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>Email Address *</label>
+                  <label htmlFor="email" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>
+                    <LineReveal>Email Address *</LineReveal>
+                  </label>
                   <input
                     id="email"
                     type="email"
@@ -237,7 +250,9 @@ export default function ContactPage() {
                   />
                 </div>
                 <div className="flex flex-col gap-1.5 sm:gap-2">
-                  <label htmlFor="interest" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>Interested In</label>
+                  <label htmlFor="interest" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>
+                    <LineReveal delay={0.05}>Interested In</LineReveal>
+                  </label>
                   <select
                     id="interest"
                     name="interest"
@@ -258,7 +273,9 @@ export default function ContactPage() {
               </div>
 
               <div className="mb-3.5 flex flex-1 flex-col gap-1.5 sm:mb-4 sm:gap-2">
-                <label htmlFor="message" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>Your Message</label>
+                <label htmlFor="message" className="text-[12px] font-semibold sm:text-[13px]" style={{ color: DEEP_NAVY }}>
+                  <LineReveal>Your Message</LineReveal>
+                </label>
                 <textarea
                   id="message"
                   name="message"
@@ -273,35 +290,39 @@ export default function ContactPage() {
                 />
               </div>
 
-              <button
-                type="submit"
-                className="mt-1 inline-flex w-full items-center justify-center gap-2 rounded-md border-none px-6 py-3 text-[13px] font-semibold text-white transition-colors sm:mt-1.5 sm:py-[13px] sm:text-sm"
-                style={{ backgroundColor: DEEP_NAVY }}
-                onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
-                onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
-              >
-                {submitted ? "Message Sent!" : "Send Message"} {!submitted && <Icon.Arrow />}
-              </button>
+              <FadeUp delay={0.1} amount={0.8} className="mt-1 sm:mt-1.5">
+                <button
+                  type="submit"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-md border-none px-6 py-3 text-[13px] font-semibold text-white transition-colors sm:py-[13px] sm:text-sm"
+                  style={{ backgroundColor: DEEP_NAVY }}
+                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
+                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
+                >
+                  <SwapText>{submitted ? "Message Sent!" : "Send Message"}</SwapText> {!submitted && <Icon.Arrow />}
+                </button>
+              </FadeUp>
               <p className="mb-0 mt-2.5 flex items-center gap-1.5 text-[11px] sm:mt-3 sm:text-xs" style={{ color: TEXT_CHARCOAL, opacity: 0.85 }}>
-                <span>&#128274;</span> Your information is safe with us. We respect your privacy.
+                <span>&#128274;</span>
+                <LineReveal delay={0.1}>Your information is safe with us. We respect your privacy.</LineReveal>
               </p>
             </form>
           </div>
 
           {/* Info card */}
           <div className={`${CARD} flex flex-col p-4 sm:p-7 lg:p-8`}>
-            <InfoRow icon="Pin" title="Visit Our Office">
-              Flat A10, Archana Castle, 4/23 Patrick Church Road, St. Thomas Mount, Chennai&nbsp;&ndash;&nbsp;600&nbsp;016, Tamil Nadu, India
-            </InfoRow>
-            <InfoRow icon="Phone" title="Call Us">
-              +91 93810 55555
-            </InfoRow>
-            <InfoRow icon="Mail" title="Email Us">
-              pkr@pkrestates.com
-            </InfoRow>
-            <InfoRow icon="Clock" title="Working Hours" last>
-              Mon &ndash; Sat: 9:00 AM &ndash; 6:00 PM<br />Sunday: By Appointment
-            </InfoRow>
+            <InfoRow
+              icon="Pin"
+              title="Visit Our Office"
+              text="Flat A10, Archana Castle, 4/23 Patrick Church Road, St. Thomas Mount, Chennai – 600 016, Tamil Nadu, India"
+            />
+            <InfoRow icon="Phone" title="Call Us" text="+91 93810 55555" />
+            <InfoRow icon="Mail" title="Email Us" text="pkr@pkrestates.com" />
+            <InfoRow
+              icon="Clock"
+              title="Working Hours"
+              lines={["Mon – Sat: 9:00 AM – 6:00 PM", "Sunday: By Appointment"]}
+              last
+            />
           </div>
         </div>
 
@@ -319,27 +340,30 @@ export default function ContactPage() {
             />
           </div>
 
-          <a
-            href="https://maps.google.com/?q=Archana+Castle,+4/23+Patrick+Church+Road,+St.Thomas+Mount,+Chennai+600016"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 rounded-lg p-2.5 text-[12.5px] font-semibold transition-colors sm:p-3 sm:text-[13px]"
-            style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
-            onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT)}
-            onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE)}
-          >
-            <Icon.Pin size={16} /> Get Directions <Icon.Arrow />
-          </a>
+          <FadeUp delay={0.1} amount={0.8}>
+            <a
+              href="https://maps.google.com/?q=Archana+Castle,+4/23+Patrick+Church+Road,+St.Thomas+Mount,+Chennai+600016"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 rounded-lg p-2.5 text-[12.5px] font-semibold transition-colors sm:p-3 sm:text-[13px]"
+              style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE_SOFT)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = LIGHT_BLUE)}
+            >
+              <Icon.Pin size={16} /> Get Directions <Icon.Arrow />
+            </a>
+          </FadeUp>
         </div>
       </section>
 
       {/* ---------------- OTHER WAYS ---------------- */}
       <section className="mx-auto max-w-[1240px] px-4 pb-8 pt-5 sm:px-6 sm:pb-14 sm:pt-8 lg:pb-[60px] lg:pt-10">
-        <h2 className="mb-3.5 text-lg font-semibold sm:mb-5 sm:text-2xl lg:mb-[22px]" style={{ color: DEEP_NAVY }}>
-          Other Ways to Reach Us
-        </h2>
+        <SplitReveal
+          text="Other Ways to Reach Us"
+          className="mb-3.5 text-lg font-semibold sm:mb-5 sm:text-2xl lg:mb-[22px] text-[#0F3A6B]"
+        />
         <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4 lg:gap-[18px]">
-          {OTHER_WAYS.map((w) => {
+          {OTHER_WAYS.map((w, i) => {
             const Ico = Icon[w.icon];
             return (
               <a
@@ -353,10 +377,12 @@ export default function ContactPage() {
                 <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full sm:h-11 sm:w-11" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
                   <Ico />
                 </span>
-                <span className="flex flex-1 flex-col gap-0.5 text-[12.5px] sm:gap-1 sm:text-[13.5px]">
-                  <strong className="text-[13px] sm:text-[14.5px]" style={{ color: DEEP_NAVY }}>{w.title}</strong>
-                  <span style={{ color: TEXT_CHARCOAL }}>{w.desc}</span>
-                </span>
+                <div className="flex flex-1 flex-col gap-0.5 text-[12.5px] sm:gap-1 sm:text-[13.5px]">
+                  <strong className="text-[13px] sm:text-[14.5px]" style={{ color: DEEP_NAVY }}>
+                    <LineReveal delay={0.08 * i}>{w.title}</LineReveal>
+                  </strong>
+                  <WordReveal text={w.desc} delay={0.1 + 0.08 * i} className="text-[#2D3A46]" />
+                </div>
                 <span style={{ color: DEEP_NAVY }}><Icon.Arrow /></span>
               </a>
             );
@@ -368,10 +394,18 @@ export default function ContactPage() {
       <section className="mx-auto grid max-w-[1240px] grid-cols-1 items-start gap-6 px-4 py-8 sm:gap-10 sm:px-6 sm:py-14 md:grid-cols-[0.9fr_1.4fr] lg:py-[60px]">
         <div>
           <p className="mb-3 flex items-center gap-2.5 text-[11px] font-semibold tracking-[1.8px] sm:mb-3.5 sm:text-[12px] sm:tracking-[2px]" style={{ color: DEEP_NAVY }}>
-            <span className="inline-block h-px w-6" style={{ backgroundColor: DEEP_NAVY }} /> QUICK ANSWERS
+            <span className="inline-block h-px w-6" style={{ backgroundColor: DEEP_NAVY }} />
+            <LineReveal>QUICK ANSWERS</LineReveal>
           </p>
-          <h2 className="mb-2 text-xl font-semibold sm:mb-2.5 sm:text-[28px]" style={{ color: DEEP_NAVY }}>Have a Question?</h2>
-          <p className="text-[13px] sm:text-base" style={{ color: TEXT_CHARCOAL }}>Find quick answers in our FAQs.</p>
+          <SplitReveal
+            text="Have a Question?"
+            className="mb-2 text-xl font-semibold sm:mb-2.5 sm:text-[28px] text-[#0F3A6B]"
+          />
+          <WordReveal
+            text="Find quick answers in our FAQs."
+            delay={0.1}
+            className="text-[13px] sm:text-base text-[#2D3A46]"
+          />
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3.5">
@@ -387,32 +421,96 @@ export default function ContactPage() {
                 onClick={() => setOpenFaq(openFaq === i ? -1 : i)}
                 aria-expanded={openFaq === i}
               >
-                <span>{i + 1}. {f.q}</span>
+                <span className="block flex-1">
+                  <LineReveal delay={0.06 * i}>{`${i + 1}. ${f.q}`}</LineReveal>
+                </span>
                 <span className="flex-shrink-0" style={{ color: DEEP_NAVY }}>
                   {openFaq === i ? <Icon.Minus /> : <Icon.Plus />}
                 </span>
               </button>
-              {openFaq === i && (
-                <p className="mt-2 text-[12.5px] leading-[1.55] sm:mt-2.5 sm:text-[13.5px] sm:leading-[1.6]" style={{ color: TEXT_CHARCOAL }}>{f.a}</p>
-              )}
+
+              <AnimatePresence initial={false}>
+                {openFaq === i && (
+                  <motion.div
+                    key="answer"
+                    className="overflow-hidden"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.5, ease: EASE }}
+                  >
+                    <WordReveal
+                      text={f.a}
+                      className="pt-2 text-[12.5px] leading-[1.55] sm:pt-2.5 sm:text-[13.5px] sm:leading-[1.6] text-[#2D3A46]"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ))}
 
-          <a
-            href="#"
-            className="flex items-center justify-end gap-2 text-[13px] font-semibold sm:col-start-2 sm:justify-self-end sm:text-sm"
-            style={{ color: DEEP_NAVY }}
-          >
-            View All FAQs <Icon.Arrow />
-          </a>
+          <FadeUp delay={0.1} amount={0.8} className="flex justify-end sm:col-start-2 sm:justify-self-end">
+            <a
+              href="#"
+              className="flex items-center justify-end gap-2 text-[13px] font-semibold sm:text-sm"
+              style={{ color: DEEP_NAVY }}
+            >
+              View All FAQs <Icon.Arrow />
+            </a>
+          </FadeUp>
         </div>
       </section>
     </div>
   );
 }
 
+/* ---------------------------------------------------------
+   Same line-mask reveal used for the stat labels in AboutStats:
+   the text slides up out of an overflow-hidden wrapper once it scrolls into view.
+--------------------------------------------------------- */
+function LineReveal({ children, delay = 0, className = "" }) {
+  const ref = useRef(null);
+  const show = useReveal(ref, { amount: 0.6 });
+
+  return (
+    <span ref={ref} className={`block overflow-hidden py-[0.08em] -my-[0.08em] ${className}`}>
+      <motion.span
+        className="block"
+        initial={{ y: "100%", opacity: 0 }}
+        animate={show ? { y: "0%", opacity: 1 } : { y: "100%", opacity: 0 }}
+        transition={{ duration: 0.7, delay, ease: EASE }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  );
+}
+
+/* Animates dynamic text when it changes ("Send Message" -> "Message Sent!").
+   Skips the first render so it doesn't fight the page-load reveal. */
+function SwapText({ children }) {
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+  }, []);
+
+  return (
+    <span className="block overflow-hidden py-[0.08em] -my-[0.08em]">
+      <motion.span
+        key={String(children)}
+        className="block"
+        initial={mounted.current ? { y: "100%", opacity: 0 } : false}
+        animate={{ y: "0%", opacity: 1 }}
+        transition={{ duration: 0.5, ease: EASE }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  );
+}
+
 /* Small helper for the "Get in Touch" info column rows */
-function InfoRow({ icon, title, children, last }) {
+function InfoRow({ icon, title, text, lines, last }) {
   const Ico = Icon[icon];
   return (
     <div
@@ -423,8 +521,22 @@ function InfoRow({ icon, title, children, last }) {
         <Ico size={20} />
       </span>
       <div className="min-w-0 flex-1">
-        <h4 className="mb-0.5 text-[14px] font-semibold sm:mb-1 sm:text-[15px]" style={{ color: DEEP_NAVY }}>{title}</h4>
-        <p className="m-0 break-words text-[12.5px] leading-[1.55] sm:text-[13.5px] sm:leading-[1.65]" style={{ color: TEXT_CHARCOAL }}>{children}</p>
+        <h4 className="mb-0.5 text-[14px] font-semibold sm:mb-1 sm:text-[15px]" style={{ color: DEEP_NAVY }}>
+          <LineReveal>{title}</LineReveal>
+        </h4>
+        {lines ? (
+          <div className="m-0 text-[12.5px] leading-[1.55] sm:text-[13.5px] sm:leading-[1.65]" style={{ color: TEXT_CHARCOAL }}>
+            {lines.map((line, i) => (
+              <LineReveal key={line} delay={0.1 + 0.08 * i}>{line}</LineReveal>
+            ))}
+          </div>
+        ) : (
+          <WordReveal
+            text={text}
+            delay={0.1}
+            className="m-0 break-words text-[12.5px] leading-[1.55] sm:text-[13.5px] sm:leading-[1.65] text-[#2D3A46]"
+          />
+        )}
       </div>
     </div>
   );

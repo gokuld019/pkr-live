@@ -1,12 +1,20 @@
 // src/components/social-feed-section.jsx
 'use client'
 
+/*  npm i gsap @gsap/react   (GSAP handles the text animation only;
+    framer-motion still handles the cards, tabs and panel as before)  */
+
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import { Figtree } from 'next/font/google'
 import {
   MonitorPlay, Camera, ThumbsUp, Play, ArrowRight, ArrowUpRight, Eye, CalendarDays,
 } from 'lucide-react'
+
+gsap.registerPlugin(useGSAP, ScrollTrigger)
 
 /* ================================================================== */
 /*  ✏️  EDIT HERE — paste up to 3 post links for each platform          */
@@ -87,6 +95,9 @@ const TAB_BY_ID = Object.fromEntries(TABS.map((t) => [t.id, t]))
 /* ------------------------------------------------------------------ */
 const COMPACT = new Intl.NumberFormat('en-IN', { notation: 'compact', maximumFractionDigits: 1 })
 
+const prefersReduced = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
 function formatDate(iso) {
   const d = new Date(iso)
   return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -123,6 +134,26 @@ function youtubeThumbs(video) {
   return video.type === 'short'
     ? [{ src: `${base}/oardefault.jpg`, zoom: 1 }, { src: `${base}/hqdefault.jpg`, zoom: 1.9 }]
     : [{ src: `${base}/maxresdefault.jpg`, zoom: 1 }, { src: `${base}/hqdefault.jpg`, zoom: 1.34 }]
+}
+
+/* ------------------------------------------------------------------ */
+/*  GSAP: card text reveal                                             */
+/*  Any element marked data-text inside `scopeRef` slides up + fades   */
+/*  in, staggered, right after its card has started to appear.         */
+/* ------------------------------------------------------------------ */
+function useTextReveal(scopeRef, index = 0) {
+  useGSAP(() => {
+    if (prefersReduced()) return
+    gsap.from('[data-text]', {
+      autoAlpha: 0,
+      y: 18,
+      duration: 0.9,
+      ease: 'expo.out',
+      stagger: 0.08,
+      delay: 0.22 + index * 0.08,
+      clearProps: 'transform',
+    })
+  }, { scope: scopeRef })
 }
 
 /* ------------------------------------------------------------------ */
@@ -191,9 +222,12 @@ function SiteButton({ href, children }) {
 /* "See more" card that fills an empty slot */
 function MoreCard({ tab, index }) {
   const Icon = tab.Icon
+  const ref = useRef(null)
+  useTextReveal(ref, index)
   return (
     <CardMotion index={index}>
       <a
+        ref={ref}
         href={tab.url}
         target="_blank"
         rel="noopener noreferrer"
@@ -208,10 +242,10 @@ function MoreCard({ tab, index }) {
         </span>
 
         <div className="relative">
-          <p className="m-0 text-[11px] font-semibold uppercase tracking-[2px] text-[#B8CFE8]">{tab.handle}</p>
-          <p className="m-0 mt-2 text-[22px] font-bold leading-[1.2] sm:text-[24px]">{tab.moreTitle}</p>
-          <p className="m-0 mt-2 max-w-[260px] text-[13.5px] leading-[1.6] text-white/75">{tab.moreText}</p>
-          <span className="mt-5 inline-flex items-center gap-2 text-[11.5px] font-bold uppercase tracking-[1.6px]">
+          <p data-text className="m-0 text-[11px] font-semibold uppercase tracking-[2px] text-[#B8CFE8]">{tab.handle}</p>
+          <p data-text className="m-0 mt-2 text-[22px] font-bold leading-[1.2] sm:text-[24px]">{tab.moreTitle}</p>
+          <p data-text className="m-0 mt-2 max-w-[260px] text-[13.5px] leading-[1.6] text-white/75">{tab.moreText}</p>
+          <span data-text className="mt-5 inline-flex items-center gap-2 text-[11.5px] font-bold uppercase tracking-[1.6px]">
             Open {tab.label}
             <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={2.5} />
           </span>
@@ -224,8 +258,11 @@ function MoreCard({ tab, index }) {
 /* Full-width panel when a platform has no posts to show yet */
 function EmptyPanel({ tab }) {
   const Icon = tab.Icon
+  const ref = useRef(null)
+  useTextReveal(ref, 0)
   return (
     <motion.div
+      ref={ref}
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: EASE }}
@@ -240,9 +277,9 @@ function EmptyPanel({ tab }) {
             <Icon className="h-7 w-7" strokeWidth={1.75} />
           </span>
           <div>
-            <p className="m-0 text-[11px] font-semibold uppercase tracking-[2px] text-[#B8CFE8]">{tab.handle}</p>
-            <p className="m-0 mt-1.5 text-[22px] font-bold leading-tight sm:text-[28px]">{tab.moreTitle}</p>
-            <p className="m-0 mt-2 max-w-[440px] text-[14px] leading-[1.6] text-white/75">{tab.moreText}</p>
+            <p data-text className="m-0 text-[11px] font-semibold uppercase tracking-[2px] text-[#B8CFE8]">{tab.handle}</p>
+            <p data-text className="m-0 mt-1.5 text-[22px] font-bold leading-tight sm:text-[28px]">{tab.moreTitle}</p>
+            <p data-text className="m-0 mt-2 max-w-[440px] text-[14px] leading-[1.6] text-white/75">{tab.moreText}</p>
           </div>
         </div>
         <a
@@ -283,11 +320,13 @@ function YouTubeThumb({ video, className = '', fit = 'cover' }) {
 
 function VideoCard({ video, index }) {
   const [playing, setPlaying] = useState(false)
+  const bodyRef = useRef(null)
   const isShort = video.type === 'short'
+  useTextReveal(bodyRef, index)
 
   return (
     <CardMotion index={index}>
-      <div className={CARD_SURFACE}>
+      <div ref={bodyRef} className={CARD_SURFACE}>
         {/* Media */}
         <div className="relative aspect-video overflow-hidden bg-[#0A1422]">
           {playing ? (
@@ -338,7 +377,7 @@ function VideoCard({ video, index }) {
 
         {/* Body */}
         <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <div className="mb-2.5 flex items-center justify-between gap-3">
+          <div data-text className="mb-2.5 flex items-center justify-between gap-3">
             <span className="rounded px-2 py-1 text-[10px] font-bold uppercase tracking-[1.4px]" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
               {isShort ? 'YouTube Short' : 'YouTube Video'}
             </span>
@@ -348,11 +387,11 @@ function VideoCard({ video, index }) {
             </span>
           </div>
 
-          <h3 className="m-0 line-clamp-2 text-[16px] font-bold leading-snug sm:text-[17px]" style={{ color: DEEP_NAVY }}>
+          <h3 data-text className="m-0 line-clamp-2 text-[16px] font-bold leading-snug sm:text-[17px]" style={{ color: DEEP_NAVY }}>
             {video.title}
           </h3>
 
-          <div className="mt-auto flex items-center justify-between gap-3 pt-5">
+          <div data-text className="mt-auto flex items-center justify-between gap-3 pt-5">
             {video.views ? (
               <span className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold" style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}>
                 <Eye className="h-4 w-4" strokeWidth={1.9} />
@@ -532,6 +571,24 @@ export default function SocialFeedSection({
   const { status, videos } = useLatestVideos()
   const [activeTab, setActiveTab] = useState(defaultTab)
   const tab = TAB_BY_ID[activeTab]
+  const rootRef = useRef(null)
+
+  /* GSAP: header text — eyebrow fades up, heading lines rise out of a mask,
+     description follows. Plays once when the header scrolls into view. */
+  useGSAP(() => {
+    if (prefersReduced()) {
+      gsap.set('[data-eyebrow]', { autoAlpha: 0.7 })
+      gsap.set('[data-line], [data-desc]', { autoAlpha: 1 })
+      return
+    }
+    const tl = gsap.timeline({
+      defaults: { ease: 'expo.out' },
+      scrollTrigger: { trigger: '[data-head]', start: 'top 82%', once: true },
+    })
+    tl.fromTo('[data-eyebrow]', { autoAlpha: 0, y: 14 }, { autoAlpha: 0.7, y: 0, duration: 0.9 })
+      .fromTo('[data-line]', { autoAlpha: 0, yPercent: 110 }, { autoAlpha: 1, yPercent: 0, duration: 1.3, stagger: 0.14 }, '-=0.6')
+      .fromTo('[data-desc]', { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0, duration: 1 }, '-=0.9')
+  }, { scope: rootRef })
 
   const onTabKey = (e) => {
     const i = TABS.findIndex((t) => t.id === activeTab)
@@ -541,6 +598,7 @@ export default function SocialFeedSection({
 
   return (
     <section
+      ref={rootRef}
       id={id}
       className={`${figtree.className} relative w-full overflow-hidden bg-white px-4 py-14 sm:px-8 sm:py-20 md:px-10 lg:px-16 lg:py-24`}
       style={{ fontFamily: FONT }}
@@ -549,16 +607,22 @@ export default function SocialFeedSection({
 
       <div className="relative mx-auto max-w-[1280px]">
         {/* ================= Header (centred, like the other sections) ================= */}
-        <div className="mx-auto mb-8 max-w-[640px] text-center sm:mb-10">
-          <span className="text-[10.5px] font-semibold uppercase tracking-[3px] sm:text-[11.5px] sm:tracking-[3.5px]" style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}>
+        <div data-head className="mx-auto mb-8 max-w-[640px] text-center sm:mb-10">
+          <span
+            data-eyebrow
+            className="invisible inline-block text-[10.5px] font-semibold uppercase tracking-[3px] sm:text-[11.5px] sm:tracking-[3.5px]"
+            style={{ color: TEXT_CHARCOAL, opacity: 0.7 }}
+          >
             {eyebrow}
           </span>
           <h2 className="m-0 mt-3 text-[28px] font-bold leading-[1.12] tracking-tight sm:text-[40px] md:text-[46px]" style={{ color: DEEP_NAVY }}>
-            {heading[0]}
-            <br />
-            {heading[1]}
+            {heading.map((line) => (
+              <span key={line} className="-mb-[0.1em] block overflow-hidden pb-[0.1em]">
+                <span data-line className="invisible block">{line}</span>
+              </span>
+            ))}
           </h2>
-          <p className="m-0 mt-3 text-[13.5px] leading-[1.7] sm:mt-4 sm:text-[15px]" style={{ color: TEXT_CHARCOAL }}>
+          <p data-desc className="invisible m-0 mt-3 text-[13.5px] leading-[1.7] sm:mt-4 sm:text-[15px]" style={{ color: TEXT_CHARCOAL }}>
             {description}
           </p>
         </div>
