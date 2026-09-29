@@ -16,7 +16,6 @@ export default function Home() {
       
       <OurProjects />
       <AboutStats />
-      <VisionMission />
       <Testimonials />
       <OurBlogs />
       <SocialFeedSection />
