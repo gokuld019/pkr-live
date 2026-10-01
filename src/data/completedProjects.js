@@ -137,7 +137,7 @@ export const completedProjects = [
     location: "Veppampattu, Chennai",
     tagline: "The Aditi Gardenz address, this time in Veppampattu",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/agv.png",
+    heroImage: "/completed/cp6.png",
     heroImageMobile: "/completed/cp4.png",
     gallery: [
       "/completed/aditi-gardenz-veppampattu/gallery-1.jpg",
