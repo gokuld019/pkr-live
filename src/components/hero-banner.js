@@ -11,7 +11,7 @@ const SLIDES = [
   // },
   {
     desktop: "/banners/up1.jpeg",
-    mobile: "/banners/mob1.webp",
+    mobile: "/banners/newmob3.png",
     alt: "gurudev project view 2",
   },
  
@@ -19,12 +19,12 @@ const SLIDES = [
 
   {
     desktop: "/banners/up3.jpeg",
-    mobile: "/banners/mob2.webp",
+    mobile: "/banners/newmob1.png",
     alt: "gurudev project view 3",
   },
   {
     desktop: "/banners/up2.jpeg",
-    mobile: "/banners/mob3.webp",
+    mobile: "/banners/newmob2.png",
     alt: "gurudev project view 4",
   },
 ];

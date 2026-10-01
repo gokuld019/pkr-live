@@ -183,7 +183,6 @@ function normaliseFacing(raw) {
   return FACING_ALIASES[key] || ''
 }
 
-// Unit codes referenced by a plan: "g-1bhk-103" -> 103, "Units A209–A509" -> A209, A509
 function getPlanUnitCodes(plan) {
   const source = [plan?.unit, plan?.flatNo, plan?.id, plan?.title].filter(Boolean).join(' ')
   return (source.match(/[A-Za-z]?\d{3,4}/g) || []).map((c) => c.toUpperCase())
@@ -202,7 +201,6 @@ function lookupFacingFromPricing(plan, rows) {
 
 const FACING_IN_TITLE = /(north[-\s]?east|north[-\s]?west|south[-\s]?east|south[-\s]?west|north|south|east|west)(?:[-\s]?facing)?\b/i
 
-// Resolution order: explicit plan.facing -> direction written in the title -> price-list lookup by unit number.
 function getPlanFacing(plan, pricingRows) {
   const direct = normaliseFacing(plan?.facing)
   if (direct) return direct
@@ -301,8 +299,6 @@ function getPlotSqYd(plot) {
   const sqft = Number(plot.sqft)
   return Number.isFinite(sqft) ? Math.round(sqft / 9) : '—'
 }
-
-// Removed isSold function
 
 function PlotCell({ children, divider = true }) {
   return (
@@ -1486,6 +1482,8 @@ export default function ProjectBanner({ project }) {
   const [facingFilter, setFacingFilter] = useState('all')
 
   useEffect(() => { setFacingFilter('all') }, [activeBlock])
+  // ✅ NEW: clear picked plan whenever facing filter changes so a valid plan is always selected
+  useEffect(() => { setPicked(null) }, [facingFilter])
 
   const isFacingFiltered = hasFacingFilter && facingFilter !== 'all'
 
@@ -1974,6 +1972,29 @@ export default function ProjectBanner({ project }) {
                 <IconCircleButton onClick={() => setLightboxOpen(true)} ariaLabel="Open fullscreen" variant="light" className="!absolute !right-3 !top-3 !h-9 !w-9 !bg-white/10 !text-white backdrop-blur-md hover:!bg-white/25 sm:!right-6 sm:!top-6 sm:!h-11 sm:!w-11">
                   <Maximize2 className="h-4 w-4" />
                 </IconCircleButton>
+
+                {/* ✅ NEW: prev / next arrows on the image */}
+                {galleryItems.length > 1 && (
+                  <>
+                    <IconCircleButton
+                      onClick={galleryPrev}
+                      ariaLabel="Previous image"
+                      variant="light"
+                      className="!absolute !left-3 !top-1/2 !z-10 !h-9 !w-9 !-translate-y-1/2 !bg-white/15 !text-white backdrop-blur-md hover:!bg-white/30 sm:!left-6 sm:!h-12 sm:!w-12"
+                    >
+                      <ChevronLeft className="h-5 w-5" strokeWidth={2} />
+                    </IconCircleButton>
+
+                    <IconCircleButton
+                      onClick={galleryNext}
+                      ariaLabel="Next image"
+                      variant="light"
+                      className="!absolute !right-3 !top-1/2 !z-10 !h-9 !w-9 !-translate-y-1/2 !bg-white/15 !text-white backdrop-blur-md hover:!bg-white/30 sm:!right-6 sm:!h-12 sm:!w-12"
+                    >
+                      <ChevronRight className="h-5 w-5" strokeWidth={2} />
+                    </IconCircleButton>
+                  </>
+                )}
 
                 <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex flex-col gap-3 p-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4 sm:p-8">
                   <AnimatePresence mode="wait">
@@ -2633,188 +2654,7 @@ export default function ProjectBanner({ project }) {
         </section>
       )}
 
-      {/* {hasMasterPlan && (
-        <section ref={masterPlanRef} id="master-plan" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
-          <div className="pointer-events-none absolute -right-32 -top-32 h-[420px] w-[420px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
-          <div className="relative mx-auto max-w-[1500px]">
-            <div className="mb-6 flex flex-col gap-5 sm:mb-10 sm:gap-6 lg:mb-14 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <FadeUp>
-                  <SectionEyebrow className="mb-3 sm:mb-5">{masterPlan.eyebrow || 'Master Plan'}</SectionEyebrow>
-                </FadeUp>
-
-                <RevealText
-                  as="h2"
-                  text={<>
-                    {masterPlan.heading?.[0] || 'Thoughtfully Planned'}<br />
-                    <span style={{ color: DEEP_NAVY }}>{masterPlan.heading?.[1] || 'Site & Parking Layout'}</span>
-                  </>}
-                  className="mb-3 text-[24px] font-semibold leading-[1.16] tracking-tight text-[#1f2029] sm:mb-4 sm:text-[32px] sm:leading-[1.12] md:text-[42px] xl:text-[46px]"
-                  delay={0.1}
-                />
-
-                <FadeUp delay={0.2}>
-                  <p className="m-0 max-w-[540px] text-[13.5px] leading-[1.75] sm:text-[15px] sm:leading-[1.8]" style={{ color: TEXT_CHARCOAL }}>
-                    {masterPlan.description || 'Every block, driveway and green pocket is planned around ease of movement and open, breathable spaces.'}
-                  </p>
-                </FadeUp>
-              </div>
-
-              {masterPlanTabs.length > 1 && (
-                <FadeUp delay={0.2}>
-                  <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-                    {masterPlanTabs.map((tab, i) => {
-                      const isActive = activeMasterTab === i
-                      const TabIcon = getMasterPlanIcon(tab.id)
-                      return (
-                        <button
-                          key={tab.id || tab.label}
-                          onClick={() => setActiveMasterTab(i)}
-                          className={`group relative flex items-center gap-2 overflow-hidden rounded-xl border px-2 py-2 transition-all duration-300 sm:gap-3 sm:rounded-2xl sm:px-3 sm:py-2.5 ${
-                            isActive
-                              ? 'border-[#0F3A6B] bg-[#0F3A6B] text-white shadow-[0_16px_34px_-14px_rgba(15,58,107,0.65)]'
-                              : 'border-[#D5E1ED] bg-white text-[#1f2029] hover:border-[#0F3A6B]/40 hover:bg-[#F7FAFD]'
-                          }`}
-                        >
-                          <span className="relative flex h-10 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-black/10 sm:h-12 sm:w-16">
-                            {tab.video ? (
-                              <video src={tab.video} className="h-full w-full object-cover" autoPlay muted loop playsInline preload="metadata" />
-                            ) : tab.image ? (
-                              <img src={tab.image} alt="" className="h-full w-full object-cover" />
-                            ) : (
-                              <TabIcon className="h-4 w-4" strokeWidth={1.75} />
-                            )}
-                            <span className="pointer-events-none absolute inset-0 rounded-lg ring-1 ring-inset ring-white/25" />
-                          </span>
-
-                          <span className="flex min-w-0 items-center gap-2 pr-1">
-                            <TabIcon className="hidden h-4 w-4 sm:block" strokeWidth={1.75} />
-                            <span className="text-left text-[12.5px] font-semibold leading-tight sm:whitespace-nowrap sm:text-[14px]">{tab.label}</span>
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </FadeUp>
-              )}
-            </div>
-
-            {masterPlan.highlights?.length > 0 && (
-              <FadeUp delay={0.25}>
-                <div className="mb-5 flex flex-wrap gap-2 sm:mb-8 sm:gap-3">
-                  {masterPlan.highlights.map((h, i) => (
-                    <div key={i} className="flex items-center gap-2 rounded-xl border border-[#E0E8F0] bg-[#F7FAFD] px-3 py-2 sm:gap-2.5 sm:rounded-2xl sm:px-5 sm:py-3">
-                      <span className="h-1.5 w-1.5 shrink-0 rounded-full sm:h-2 sm:w-2" style={{ backgroundColor: DEEP_NAVY }} />
-                      <span className="text-[12px] font-semibold sm:text-[13px]" style={{ color: TEXT_CHARCOAL, opacity: 0.75 }}>{h.label}</span>
-                      <span className="text-[12px] font-bold sm:text-[13px]" style={{ color: DEEP_NAVY }}>{h.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </FadeUp>
-            )}
-
-            <motion.div
-              initial={{ opacity: 0, y: 24 }} animate={masterPlanInView ? { opacity: 1, y: 0 } : {}} transition={{ duration: 0.7, ease: EASE }}
-              onClick={openMasterLightbox}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMasterLightbox() } }}
-              aria-label={`View ${currentMasterTab?.label || 'plan'} full screen`}
-              className="group relative h-[280px] w-full cursor-zoom-in overflow-hidden rounded-[18px] border border-black/[0.04] bg-[#F7FAFD] shadow-[0_30px_70px_-35px_rgba(0,0,0,0.22)] outline-none transition-shadow duration-500 focus-visible:ring-2 focus-visible:ring-[#0F3A6B]/40 sm:h-[520px] sm:rounded-[26px] md:h-[600px]"
-            >
-              {currentMasterTab?.video ? (
-                <video
-                  key={`video-${currentMasterTab?.id || activeMasterTab}`}
-                  src={currentMasterTab.video}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
-                  autoPlay muted loop playsInline preload="metassssdata"
-                />
-              ) : currentMasterTab?.image ? (
-                <img
-                  src={currentMasterTab.image}
-                  alt={currentMasterTab?.label}
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03]"
-                />
-              ) : null}
-
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/45 to-transparent" />
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/55 to-transparent" />
-
-              <span
-                className="pointer-events-none absolute left-3 top-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10.5px] font-bold uppercase tracking-[1.4px] text-white shadow-[0_10px_24px_-12px_rgba(15,58,107,0.7)] sm:left-6 sm:top-6 sm:px-4 sm:text-[11.5px] sm:tracking-[1.8px]"
-                style={{ backgroundColor: DEEP_NAVY }}
-              >
-                {currentMasterTab?.label}
-              </span>
-
-              <button
-                onClick={(e) => { e.stopPropagation(); openMasterLightbox() }}
-                aria-label={`View ${currentMasterTab?.label || 'plan'} full screen`}
-                className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-3.5 py-2 text-[12px] font-semibold tracking-wide text-white backdrop-blur-xl transition-all duration-300 hover:border-white/60 hover:bg-white/20 active:scale-[0.97] sm:bottom-6 sm:right-6 sm:gap-2.5 sm:px-5 sm:py-3 sm:text-[13px]"
-              >
-                <Expand className="h-4 w-4" strokeWidth={2} />
-                <span className="hidden sm:inline">Expand Plan</span>
-                <span className="sm:hidden">Expand</span>
-              </button>
-
-              {masterPlanTabs.length > 1 && (
-                <div className="absolute bottom-6 left-4 flex items-center gap-1.5 sm:bottom-8 sm:left-6">
-                  {masterPlanTabs.map((tab, i) => (
-                    <button key={tab.id || tab.label} onClick={(e) => { e.stopPropagation(); setActiveMasterTab(i) }} aria-label={`Show ${tab.label}`}
-                      className={`h-1.5 rounded-full transition-all duration-500 ${i === activeMasterTab ? 'w-8 bg-white' : 'w-2.5 bg-white/40 hover:bg-white/70'}`} />
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          </div>
-
-          <AnimatePresence>
-            {masterLightboxOpen && currentMasterTab && (
-              <motion.div
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}
-                className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm"
-                onClick={() => setMasterLightboxOpen(false)}
-                onWheel={(e) => { e.preventDefault(); setMasterLightboxZoom((z) => Math.min(4, Math.max(0.5, z - e.deltaY * 0.0015))) }}
-              >
-                <button onClick={(e) => { e.stopPropagation(); setMasterLightboxOpen(false) }} aria-label="Close"
-                  className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20">
-                  <X className="h-5 w-5" strokeWidth={2} />
-                </button>
-
-                <div className="absolute left-5 top-6 text-[13px] font-semibold uppercase tracking-[1.5px] text-white/70 sm:left-8 sm:top-8">
-                  {currentMasterTab?.label}
-                </div>
-
-                <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/10 px-2 py-2 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
-                  <button onClick={() => setMasterLightboxZoom((z) => Math.max(0.5, z - 0.25))} aria-label="Zoom out" className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20">
-                    <ZoomOut className="h-5 w-5" strokeWidth={1.75} />
-                  </button>
-                  <span className="min-w-[60px] text-center text-[13px] font-medium tabular-nums text-white">{Math.round(masterLightboxZoom * 100)}%</span>
-                  <button onClick={() => setMasterLightboxZoom((z) => Math.min(4, z + 0.25))} aria-label="Zoom in" className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20">
-                    <ZoomIn className="h-5 w-5" strokeWidth={1.75} />
-                  </button>
-                  <span className="mx-1 h-6 w-px bg-white/20" />
-                  <button onClick={() => setMasterLightboxZoom(1)} aria-label="Reset zoom" className="flex h-10 items-center justify-center rounded-full px-3 text-[12px] font-medium text-white transition hover:bg-white/20">
-                    Reset
-                  </button>
-                </div>
-
-                <motion.div className="flex max-h-full max-w-full items-center justify-center p-4" onClick={(e) => e.stopPropagation()}
-                  drag={masterLightboxZoom > 1} dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }} dragElastic={0.1}
-                  style={{ cursor: masterLightboxZoom > 1 ? 'grab' : 'default' }}>
-                  <motion.img src={currentMasterTab?.image} alt={currentMasterTab?.label}
-                    animate={{ scale: masterLightboxZoom }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="max-h-[90vh] max-w-[90vw] select-none object-contain" draggable={false} />
-                </motion.div>
-
-                <p className="absolute bottom-20 left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[11px] tracking-wide text-white/50 sm:block">
-                  Scroll to zoom · Drag to pan · ESC to close
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </section>
-      )} */}
+      {/* {hasMasterPlan && ( ... )} */}
 
       {/* ================= Pricing & Availability ================= */}
       {plotRows.length > 0 && (

@@ -172,18 +172,15 @@ export default function PromiseHeroBanner() {
     <section
       ref={sectionRef}
       id="contact"
-      className="relative w-full overflow-hidden bg-[#F4F2ED] font-sans"
-      style={{
-        height: "50vh",
-      }}
+      className="relative h-[240px] w-full overflow-hidden bg-[#081B36] font-sans sm:h-[50vh] sm:bg-[#F4F2ED]"
     >
-      {/* Background texture */}
-      <div className="absolute inset-0 z-0">
+      {/* Background texture — hidden on mobile (solid dark blue shows instead), unchanged on desktop */}
+      <div className="absolute inset-0 z-0 hidden sm:block">
         <Image src={BG_IMAGE} alt="" fill priority sizes="100vw" className="object-cover" />
       </div>
 
-      {/* Legibility overlay — strongest behind the left copy, fading toward the illustration */}
-      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#081B36]/60 via-[#081B36]/20 to-transparent" />
+      {/* Legibility overlay — desktop only; on mobile the solid dark blue needs no overlay */}
+      <div className="absolute inset-0 z-10 hidden bg-gradient-to-r from-[#081B36]/60 via-[#081B36]/20 to-transparent sm:block" />
 
       {/* Model cutout */}
       <div

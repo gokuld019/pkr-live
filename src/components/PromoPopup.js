@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
  * Uses a separate artwork for mobile (< 768px) and desktop/tablet.
  */
 
-const DESKTOP_IMAGE_URL = "/popup.jpeg";
+const DESKTOP_IMAGE_URL = "/popnew.png";
 const MOBILE_IMAGE_URL = "/POP.png";
 
 export default function PromoPopup() {
