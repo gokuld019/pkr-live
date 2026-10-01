@@ -365,7 +365,7 @@ export const projects = [
           },
           {
             id: "g-1bhk-204",
-            image: "/floorplans/gurudev/1bhk1t/1bhk-1T11.jpeg",                       
+            image: "",                       
              
             title: "1 BHK + 1T · Unit 204",
             type: "1 BHK",
@@ -395,7 +395,7 @@ export const projects = [
           },
           {
             id: "g-1bhk-206",
-            image: "/floorplans/gurudev/1bhk1t/1bhk-1T16.jpeg",
+            image: "/floorplans/gurudev/1bhk1t/1bhk-1T12.jpeg",
             title: "1 BHK + 1T · Unit 206",
             type: "1 BHK",
             area: "391 Sq.Ft.",
@@ -441,7 +441,7 @@ export const projects = [
           },
           {
             id: "g-2bhk-110",
-            image: "/floorplans/gurudev/1bhk1t/1bhk-1T12.jpeg ",
+            image: " ",
                           // /floorplans/gurudev/1bhk1t/1bhk-1T18.jpeg
             title: "2 BHK + 2T · Unit 110",
             type: "2 BHK",
