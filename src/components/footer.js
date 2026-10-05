@@ -315,14 +315,14 @@ export default function Footer() {
                   className="mt-0.5 h-4 w-4 flex-shrink-0"
                   style={{ color: DEEP_NAVY }}
                 />
-                <span
-                  className="text-[13px] leading-relaxed sm:text-sm"
-                  style={{ color: TEXT_CHARCOAL }}
-                >
-                  Mon – Sat: 9:00 AM – 6:00 PM
-                  <br />
-                  Sunday: By Appointment
-                </span>
+               <span
+  className="text-[13px] leading-relaxed sm:text-sm"
+  style={{ color: TEXT_CHARCOAL }}
+>
+  Mon – Sun: 9:30 AM – 6:00 PM
+  <br />
+  Tuesday: Holiday
+</span>
               </div>
             </div>
           </div>

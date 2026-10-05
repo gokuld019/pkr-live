@@ -53,7 +53,7 @@ export const completedProjects = [
     location: "Maraimalai Nagar, Chennai",
     tagline: "A settled, green community south of the city",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/premvathy.png",
+    heroImage: "/completed/Premvathy.png",
     heroImageMobile: "/completed/cp2.png",
     gallery: [
       "/completed/premavathy-nagar/gallery-1.jpg",
