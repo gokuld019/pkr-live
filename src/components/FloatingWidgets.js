@@ -1,13 +1,16 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { createPortal } from "react-dom";
 import {
   Building2, CheckCircle2, Calculator, Info, Phone, Mail, Globe, MapPin, X,
-  Send, ChevronRight, Check, AlertTriangle, Home, LayoutGrid, Ruler, Leaf,
+  Send, ChevronRight, ChevronDown, Check, AlertTriangle, Home, LayoutGrid, Ruler, Leaf,
   Hammer, FileText, IndianRupee, Share2, Camera, Play, Building, ShieldCheck,
   Sparkles, ArrowUp, Plus, SquarePen, Copy, CornerDownLeft, Clock, History,
-  MessageSquare, Trash2,
+  MessageSquare, Trash2, BedDouble, Bath, Sofa, Toilet, CookingPot, Fence,
+  Navigation, Navigation2, Compass, RefreshCw, Expand, ZoomIn, ZoomOut, Eye,
 } from "lucide-react";
+import { projects as PROJECT_DATA } from "@/data/projects"; // if "@/" alias isn't set up, use "../data/projects"
 
 const LOGO_URL = "/3dlogo.png";
 const GREETING_LOGO_URL = "/3dlogo2.png"; // separate image just for the "how can I help?" greeting screen — swap this path independently
@@ -27,10 +30,10 @@ const LINE = "#E6E9EE";
 const CANVAS = "#FAFAF9";
 const SERIF = 'ui-serif, "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif';
 
-const ENQUIRY_API = "https://gurudev.pkrestates.com/backend/api/submit-enquiry";
-const CHATBOT_INIT_API = "https://gurudev.pkrestates.com/backend/api/chatbot/init";
-const CHATBOT_CHAT_API = "https://gurudev.pkrestates.com/backend/api/chatbot/chat";
-const CHATBOT_HISTORY_API = "https://gurudev.pkrestates.com/backend/api/chatbot/history";
+const ENQUIRY_API = "https://api.crazystory.in/api/submit-enquiry";
+const CHATBOT_INIT_API = "https://api.crazystory.in/api/chatbot/init";
+const CHATBOT_CHAT_API = "https://api.crazystory.in/api/chatbot/chat";
+const CHATBOT_HISTORY_API = "https://api.crazystory.in/api/chatbot/history";
 const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
 const SESSION_STORAGE_KEY = "chatbot_session_id";
 const SESSIONS_INDEX_KEY = "chatbot_sessions_index"; 
@@ -58,12 +61,11 @@ const GLOBAL_STYLES = `
 }
 .pkr-scroll::-webkit-scrollbar { width: 8px; }
 .pkr-scroll::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 99px; border: 2px solid transparent; background-clip: padding-box; }
+.pkr-hscroll { scrollbar-width: none; }
+.pkr-hscroll::-webkit-scrollbar { display: none; }
 .pkr-range { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 99px; background: #E2E8F0; outline: none; }
 .pkr-range::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #0F3A6B; box-shadow: 0 0 0 4px rgba(15,58,107,.12); cursor: pointer; }
 .pkr-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: #0F3A6B; cursor: pointer; }
-
-
-}
 `;
 
 /* ------------------------------------------------------------------ */
@@ -206,6 +208,119 @@ function groupSessionsByTime(sessions = []) {
 }
 
 /* ------------------------------------------------------------------ */
+/*  FLOOR PLAN HELPERS (same logic as the project page)                */
+/* ------------------------------------------------------------------ */
+const EMPTY_ROWS = [];
+
+const FACING_ORDER = ["East", "West", "North", "South", "North-East", "North-West", "South-East", "South-West"];
+
+const FACING_ANGLE = {
+  North: 0, "North-East": 45, East: 90, "South-East": 135,
+  South: 180, "South-West": 225, West: 270, "North-West": 315,
+};
+
+const FACING_ALIASES = {
+  n: "North", north: "North",
+  e: "East", east: "East",
+  s: "South", south: "South",
+  w: "West", west: "West",
+  ne: "North-East", "north-east": "North-East", "east-north": "North-East",
+  nw: "North-West", "north-west": "North-West", "west-north": "North-West",
+  se: "South-East", "south-east": "South-East", "east-south": "South-East",
+  sw: "South-West", "south-west": "South-West", "west-south": "South-West",
+};
+
+function normaliseFacing(raw) {
+  if (!raw) return "";
+  const key = String(raw)
+    .trim()
+    .toLowerCase()
+    .replace(/facing/g, "")
+    .replace(/[^a-z]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return FACING_ALIASES[key] || "";
+}
+
+function getPlanUnitCodes(plan) {
+  const source = [plan?.unit, plan?.flatNo, plan?.id, plan?.title].filter(Boolean).join(" ");
+  return (source.match(/[A-Za-z]?\d{3,4}/g) || []).map((c) => c.toUpperCase());
+}
+
+function lookupFacingFromPricing(plan, rows) {
+  if (!rows || !rows.length) return "";
+  const codes = getPlanUnitCodes(plan);
+  for (const code of codes) {
+    const row = rows.find((r) => String(r?.flatNo || r?.id || "").toUpperCase() === code);
+    const facing = normaliseFacing(row?.facing);
+    if (facing) return facing;
+  }
+  return "";
+}
+
+const FACING_IN_TITLE = /(north[-\s]?east|north[-\s]?west|south[-\s]?east|south[-\s]?west|north|south|east|west)(?:[-\s]?facing)?\b/i;
+
+function getPlanFacing(plan, pricingRows) {
+  const direct = normaliseFacing(plan?.facing);
+  if (direct) return direct;
+  const match = String(plan?.title || "").match(FACING_IN_TITLE);
+  const fromTitle = match ? normaliseFacing(match[1]) : "";
+  if (fromTitle) return fromTitle;
+  return lookupFacingFromPricing(plan, pricingRows);
+}
+
+function planMatchesTab(plan, label) {
+  if (!label) return true;
+  if (plan.type) return plan.type === label;
+  return (plan.title || "").toLowerCase().startsWith(label.toLowerCase());
+}
+
+function splitPlanTitle(plan) {
+  const title = plan?.title || "";
+  const [config, ...rest] = title.split("·").map((s) => s.trim());
+  return { config: plan?.config || config, facing: rest.join(" · ") || plan?.unitLabel || "" };
+}
+
+function formatArea(area = "") {
+  const value = String(area).trim();
+  return /\d/.test(value) ? value : "";
+}
+
+function getPlanRooms(plan) {
+  if (!plan) return [];
+  if (plan.rooms?.length) return plan.rooms;
+  if (plan.features?.length) return plan.features.map((f) => f.label);
+  return [];
+}
+
+function getRoomIcon(label = "") {
+  const l = label.toLowerCase();
+  if (l.includes("bed")) return BedDouble;
+  if (l.includes("toilet")) return Toilet;
+  if (l.includes("bath")) return Bath;
+  if (l.includes("living") || l.includes("hall")) return Sofa;
+  if (l.includes("kitchen")) return CookingPot;
+  if (l.includes("balcon")) return Fence;
+  return Sparkles;
+}
+
+const DEFAULT_TYPE_INFO = [
+  [/^studio/i, "Compact, self-contained homes where the living, sleeping and kitchenette zones flow into one bright, easy-to-maintain space — ideal for singles, students and first-time buyers."],
+  [/^1\s*bhk/i, "A private bedroom with a separate living and kitchen area — the right balance of comfort and affordability for couples, small families and investors."],
+  [/^3\s*bhk/i, "Our most spacious configuration, with three bedrooms, generous common areas and ample storage — built for larger families who want room to grow."],
+  [/^2\s*bhk.*2\s*t/i, "Two bedrooms with two full bathrooms, so mornings never clash. A wide living-cum-dining area keeps the home social while the bedrooms stay private."],
+  [/^2\s*bhk.*1\s*t/i, "Two well-proportioned bedrooms sharing a single bathroom — an efficient plan that puts more of the carpet area into the living and bedroom spaces."],
+  [/^2\s*bhk/i, "Two well-proportioned bedrooms around a shared living-cum-dining space, planned for growing families who want comfort without wasted corridors."],
+];
+
+function getPlanGroupInfo(label, project, block) {
+  const custom = block?.tabInfo?.[label] || project?.floorPlanTypeInfo?.[label];
+  if (custom) return custom;
+  const match = DEFAULT_TYPE_INFO.find(([pattern]) => pattern.test(label || ""));
+  if (match) return match[1];
+  return "Layouts planned around easy circulation, cross ventilation and natural light — with every square foot put to use.";
+}
+
+/* ------------------------------------------------------------------ */
 /*  COMPANY DATA                                                       */
 /* ------------------------------------------------------------------ */
 const COMPANY = {
@@ -337,21 +452,22 @@ const PROJECTS = {
         { label: "VIT University", distance: "20 mins" },
       ],
     },
-    faqTopics: ["overview", "configuration", "unitSizes", "amenities", "specifications", "location", "rera", "price"],
+    faqTopics: ["overview", "configuration", "floorPlans", "unitSizes", "amenities", "specifications", "location", "rera", "price"],
   },
   privana: {
     name: "Privana",
-    tagline: "Details coming soon",
+    tagline: "Studio, 1, 2 & 3 BHK homes",
     icon: Building,
     overview:
-      "Privana details will be added here once the brochure is uploaded. For now, you can reach out to our team directly for more information.",
-    faqTopics: ["overview"],
+      "Privana brings together contemporary architecture, premium finishes and a thoughtfully curated set of amenities in one refined residential address. Choose from Studio, 1, 2 & 3 BHK layouts across Block A and Block B. For more details, reach out to our team directly.",
+    faqTopics: ["overview", "floorPlans"],
   },
 };
 
 const PROJECT_TOPIC_META = {
   overview: { label: "Overview", icon: Home },
   configuration: { label: "Configuration & Units", icon: LayoutGrid },
+  floorPlans: { label: "Floor Plans", icon: LayoutGrid },
   unitSizes: { label: "Unit Sizes", icon: Ruler },
   amenities: { label: "Amenities", icon: Leaf },
   specifications: { label: "Specifications", icon: Hammer },
@@ -359,6 +475,167 @@ const PROJECT_TOPIC_META = {
   rera: { label: "RERA Details", icon: FileText },
   price: { label: "Pricing", icon: IndianRupee },
 };
+
+/* ------------------------------------------------------------------ */
+/*  SMART KEYWORD ROUTER                                               */
+/*  Understands typed messages like "2bhk floor in privana",           */
+/*  "east facing 1 bhk gurudev", "block b 3bhk", "gurudev amenities"   */
+/*  and answers locally with the same data as the project page.        */
+/*  Anything it doesn't recognise still goes to the backend chatbot.   */
+/* ------------------------------------------------------------------ */
+const PROJECT_ALIASES = {
+  gurudev: ["gurudev", "guru dev", "gurudeva"],
+  privana: ["privana", "privna", "prevana"],
+};
+
+const normType = (t = "") => String(t).toLowerCase().replace(/[^a-z0-9]/g, "");
+
+function detectProject(q) {
+  return Object.keys(PROJECT_ALIASES).find((key) => PROJECT_ALIASES[key].some((a) => q.includes(a))) || null;
+}
+
+function parseFloorFilters(q) {
+  const f = {};
+
+  if (/studio/.test(q)) {
+    f.type = "studio"; f.typeLabel = "Studio";
+  } else {
+    const m = q.match(/\b([1-4])\s*-?\s*(?:bhk|bed(?:room)?s?)/);
+    if (m) { f.type = `${m[1]}bhk`; f.typeLabel = `${m[1]} BHK`; }
+  }
+
+  const t = q.match(/\b([1-3])\s*(?:t\b|toilets?|baths?)/);
+  if (t) f.toilets = Number(t[1]);
+
+  const fm = q.match(FACING_IN_TITLE);
+  if (fm) { const facing = normaliseFacing(fm[1]); if (facing) f.facing = facing; }
+
+  const b = q.match(/\bblock\s*-?\s*([ab])\b/);
+  if (b) f.block = b[1].toUpperCase();
+
+  const u = q.match(/\b([ab]?\d{3})\b(?!\s*(?:sq|sft))/);
+  if (u) f.unit = u[1].toUpperCase();
+
+  return f;
+}
+
+function toiletsOf(plan) {
+  const feat = (plan.features || []).find((x) => /(\d+)\s*toilet/i.test(x.label || ""));
+  if (!feat) return null;
+  return Number(feat.label.match(/(\d+)\s*toilet/i)[1]);
+}
+
+function planHasUnit(plan, code) {
+  const letter = (code.match(/^[A-Z]/) || [""])[0];
+  const n = Number(code.replace(/\D/g, ""));
+  const codes = (String(plan.title || "").match(/[A-Za-z]?\d{3,4}/g) || []).map((c) => c.toUpperCase());
+  if (!codes.length) return false;
+
+  const sameLetter = (c) => !letter || !/^[A-Z]/.test(c) || c[0] === letter;
+  const numOf = (c) => Number(c.replace(/\D/g, ""));
+
+  if (codes.some((c) => sameLetter(c) && numOf(c) === n)) return true;
+
+  if (codes.length >= 2) {
+    const first = codes[0];
+    const last = codes[codes.length - 1];
+    if (sameLetter(first) && n % 100 === numOf(first) % 100 && n >= numOf(first) && n <= numOf(last)) return true;
+  }
+  return false;
+}
+
+function findPlanMatches(projectKey, f) {
+  const dp = PROJECT_DATA.find((p) => p.slug === projectKey);
+  if (!dp) return [];
+  const rows = dp.plotPricing?.length ? dp.plotPricing : EMPTY_ROWS;
+  const out = [];
+
+  (dp.floorPlanBlocks || []).forEach((block, blockIdx) => {
+    if (f.block && !normType(block.label).includes("block" + f.block.toLowerCase())) return;
+
+    (block.plans || []).forEach((plan) => {
+      if (f.type && !normType(plan.type || plan.title).startsWith(f.type)) return;
+      if (f.toilets && toiletsOf(plan) !== f.toilets) return;
+      const facing = getPlanFacing(plan, rows);
+      if (f.facing && facing !== f.facing) return;
+      if (f.unit && !planHasUnit(plan, f.unit)) return;
+
+      out.push({
+        blockIdx,
+        blockLabel: block.label,
+        planId: plan.id,
+        title: splitPlanTitle(plan).facing || plan.title,
+        type: plan.type || "",
+        area: formatArea(plan.area),
+        facing,
+        image: plan.image3d || plan.image || "",
+      });
+    });
+  });
+  return out;
+}
+
+function describeFilters(f) {
+  const parts = [];
+  if (f.facing) parts.push(`${f.facing}-facing`);
+  if (f.typeLabel) parts.push(f.typeLabel);
+  if (f.toilets) parts.push(`${f.toilets} toilet${f.toilets > 1 ? "s" : ""}`);
+  if (f.block) parts.push(`Block ${f.block}`);
+  if (f.unit) parts.push(`unit ${f.unit}`);
+  return parts.join(" · ");
+}
+
+const EXPLICIT_FLOOR = /floor\s*-?\s*plans?|\bfloors?\b|layouts?|\bplans?\b/;
+const UNIT_WORDS = /bhk|studio|bed(?:room)?s?\b|\bflats?\b|\bunits?\b|\bapartments?\b/;
+
+function detectTopic(q, filters) {
+  if (/\brera\b/.test(q)) return "rera";
+  if (EXPLICIT_FLOOR.test(q)) return "floorPlans";
+  if (/pric|cost|how much|rates?\b|budget/.test(q)) return "price";
+  if (/amenit|facilit|gym|swimming|pool|club\s*house|play\s*area|walking track|elevator|\blift\b|parking|\bpark\b/.test(q)) return "amenities";
+  if (/location|landmark|nearby|near by|schools?\b|colleges?\b|connectivity|distance|how far|where is|address|\bmap\b/.test(q)) return "location";
+  if (/specification|\bspecs?\b|material|finish|paint|tiles?\b|kitchen|electrical|wiring|structure/.test(q)) return "specifications";
+  if (/configuration|how many|total units|\bblocks?\b|towers?/.test(q) && !filters.block) return "configuration";
+  if (/unit\s*size|sq\.?\s*ft|sqft|carpet|saleable|square\s*feet|\bsizes?\b/.test(q)) return "unitSizes";
+  if (UNIT_WORDS.test(q) || filters.unit || filters.facing) return "floorPlans";
+  if (/overview|\babout\b|details|tell me|know more/.test(q)) return "overview";
+  return null;
+}
+
+/** Returns an array of bot entries, or null to let the backend chatbot answer. */
+function routeMessage(raw) {
+  const q = String(raw || "").toLowerCase().trim();
+  if (!q) return null;
+
+  const projectKey = detectProject(q);
+  const filters = parseFloorFilters(q);
+  const topic = detectTopic(q, filters);
+
+  if (!topic) {
+    if (projectKey && q.split(/\s+/).length <= 3) return [{ kind: "project-topics", projectKey }];
+    return null;
+  }
+
+  // facing / unit-code alone (no project, no unit words) is too vague to hijack a normal question
+  if (topic === "floorPlans" && !projectKey && !EXPLICIT_FLOOR.test(q) && !UNIT_WORDS.test(q)) return null;
+
+  if (topic === "floorPlans") {
+    const keys = projectKey ? [projectKey] : Object.keys(PROJECTS).filter((k) => PROJECTS[k].faqTopics.includes("floorPlans"));
+    const entries = keys
+      .map((k) => ({ kind: "plans-result", projectKey: k, filters, matches: findPlanMatches(k, filters) }))
+      .filter((e) => projectKey || e.matches.length > 0);
+    if (entries.length) return entries;
+    return [{ kind: "plans-result", projectKey: null, filters, matches: [] }];
+  }
+
+  if (projectKey) {
+    if (PROJECTS[projectKey].faqTopics.includes(topic)) return [{ kind: "project-detail", projectKey, topic }];
+    return null;
+  }
+
+  const options = Object.keys(PROJECTS).filter((k) => PROJECTS[k].faqTopics.includes(topic));
+  return options.length ? [{ kind: "pick-project", topic, options }] : null;
+}
 
 /* ------------------------------------------------------------------ */
 /*  EMI ENGINE                                                         */
@@ -713,6 +990,563 @@ function DistanceList({ items }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  PLAN RESULTS — shown when the user types e.g. "2bhk floor privana" */
+/*  Each matching layout gets a View button that opens the full        */
+/*  floor plan details (image, rooms, facing, enquire…).               */
+/* ------------------------------------------------------------------ */
+const RESULTS_PAGE = 5;
+
+function FacingArrow({ facing, size = 12, active = false }) {
+  const angle = FACING_ANGLE[facing] ?? 0;
+  const color = active ? "#FFFFFF" : DEEP_NAVY;
+  return (
+    <span className="flex shrink-0 items-center justify-center" style={{ width: size, height: size, transform: `rotate(${angle}deg)` }}>
+      <Navigation2 className="h-full w-full" strokeWidth={1.6} style={{ color, fill: color }} />
+    </span>
+  );
+}
+
+function PlanResults({ entry, onView, onBrowse, onEnquire, onPickProject }) {
+  const [showAll, setShowAll] = useState(false);
+  const { projectKey, filters, matches } = entry;
+  const project = projectKey ? PROJECTS[projectKey] : null;
+  const summary = describeFilters(filters);
+  const shown = showAll ? matches : matches.slice(0, RESULTS_PAGE);
+  const hidden = matches.length - shown.length;
+
+  if (!matches.length) {
+    return (
+      <>
+        <p className="m-0">
+          I couldn&apos;t find a layout matching{summary ? <> <strong className="font-semibold text-slate-900">{summary}</strong></> : " that"}
+          {project ? <> in <strong className="font-semibold text-slate-900">{project.name}</strong></> : ""}. Here&apos;s how you can continue:
+        </p>
+        <ChipRow>
+          {project && <Chip icon={LayoutGrid} onClick={() => onBrowse(projectKey)}>Browse all {project.name} floor plans</Chip>}
+          {!project && Object.keys(PROJECTS).filter((k) => PROJECTS[k].faqTopics.includes("floorPlans")).map((k) => (
+            <Chip key={k} icon={LayoutGrid} onClick={() => onPickProject(k)}>{PROJECTS[k].name} floor plans</Chip>
+          ))}
+          <Chip primary icon={Mail} onClick={() => onEnquire(project?.name || "General Enquiry")}>Talk to our team</Chip>
+        </ChipRow>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <p className="m-0">
+        Found <strong className="font-semibold text-slate-900">{matches.length}</strong> layout{matches.length > 1 ? "s" : ""}
+        {summary ? <> for <strong className="font-semibold text-slate-900">{summary}</strong></> : ""} in{" "}
+        <strong className="font-semibold text-slate-900">{project.name}</strong>:
+      </p>
+
+      <div className="mt-3 space-y-2">
+        {shown.map((m) => (
+          <div key={`${m.blockIdx}-${m.planId}`} className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-2.5 shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl" style={{ backgroundColor: LIGHT_BLUE_SOFT }}>
+              {m.image
+                ? <img src={m.image} alt="" loading="lazy" className="h-full w-full object-contain p-0.5" />
+                : <LayoutGrid className="h-5 w-5" strokeWidth={1.6} style={{ color: DEEP_NAVY }} />}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[13.5px] font-semibold leading-5 text-slate-900">{m.title}</span>
+              <span className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11.5px] leading-4 text-slate-500">
+                {m.blockLabel && <span>{m.blockLabel}</span>}
+                {m.type && <span>· {m.type}</span>}
+                {m.area && <span className="tabular-nums">· {m.area}</span>}
+                {m.facing && (
+                  <span className="flex items-center gap-1">· <FacingArrow facing={m.facing} size={11} />{m.facing}</span>
+                )}
+              </span>
+            </span>
+            <button
+              onClick={() => onView(projectKey, m)}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-2 text-[12.5px] font-semibold text-white transition active:scale-[0.96]"
+              style={{ backgroundColor: DEEP_NAVY }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
+            >
+              <Eye className="h-3.5 w-3.5" strokeWidth={2} />View
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <ChipRow>
+        {hidden > 0 && <Chip icon={ChevronDown} onClick={() => setShowAll(true)}>Show {hidden} more</Chip>}
+        {showAll && matches.length > RESULTS_PAGE && <Chip onClick={() => setShowAll(false)}>Show less</Chip>}
+        <Chip icon={LayoutGrid} onClick={() => onBrowse(projectKey)}>Open floor plan explorer</Chip>
+        <Chip primary icon={Mail} onClick={() => onEnquire(project.name)}>Enquire about {project.name}</Chip>
+      </ChipRow>
+    </>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  FLOOR PLAN EXPLORER — same data + behaviour as the project page    */
+/*  Block selector → facing filter → unit types → plan list → detail   */
+/* ------------------------------------------------------------------ */
+function FloorPlanExplorer({ projectKey, onEnquire, init }) {
+  const dataProject = useMemo(() => PROJECT_DATA.find((p) => p.slug === projectKey) || null, [projectKey]);
+  const blocks = dataProject?.floorPlanBlocks || [];
+
+  const [activeBlock, setActiveBlock] = useState(init?.blockIdx ?? 0);
+  const [facingFilter, setFacingFilter] = useState("all");
+  const [picked, setPicked] = useState(() => {
+    if (!init?.planId) return null;
+    const b = blocks[init.blockIdx ?? 0];
+    const plan = b?.plans?.find((p) => p.id === init.planId);
+    if (!plan) return null;
+    return { plan, label: (b.tabs || []).find((t) => planMatchesTab(plan, t)) || "" };
+  });
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [zoom, setZoom] = useState(1);
+
+  const listRef = useRef(null);
+  const activeRowRef = useRef(null);
+
+  const block = blocks[activeBlock] || null;
+  const tabs = block?.tabs || [];
+  const allPlans = block?.plans || [];
+  const pricingRows = dataProject?.plotPricing?.length ? dataProject.plotPricing : EMPTY_ROWS;
+
+  /* ---------------- Facing filter ---------------- */
+  const planFacings = useMemo(() => {
+    const map = new Map();
+    allPlans.forEach((plan) => map.set(plan, getPlanFacing(plan, pricingRows)));
+    return map;
+  }, [allPlans, pricingRows]);
+
+  const facingCounts = useMemo(() => {
+    const counts = {};
+    allPlans.forEach((plan) => {
+      const f = planFacings.get(plan);
+      if (f) counts[f] = (counts[f] || 0) + 1;
+    });
+    return counts;
+  }, [allPlans, planFacings]);
+
+  const facingOptions = useMemo(() => FACING_ORDER.filter((f) => facingCounts[f]), [facingCounts]);
+  const hasFacingFilter = facingOptions.length > 1;
+  const isFacingFiltered = hasFacingFilter && facingFilter !== "all";
+  const visiblePlans = isFacingFiltered ? allPlans.filter((p) => planFacings.get(p) === facingFilter) : allPlans;
+  const activeFacingAngle = FACING_ANGLE[facingFilter] ?? -45;
+  const planFacingOf = (plan) => planFacings.get(plan) || "";
+
+  /* ---------------- Groups (unit types) ---------------- */
+  const groups = (
+    tabs.length
+      ? tabs.map((label) => ({ label, plans: visiblePlans.filter((p) => planMatchesTab(p, label)) }))
+      : [{ label: "", plans: visiblePlans }]
+  ).filter((g) => g.plans.length > 0);
+
+  const totalPlans = groups.reduce((sum, g) => sum + g.plans.length, 0);
+  const firstGroup = groups[0];
+  const selection =
+    picked && groups.some((g) => g.label === picked.label && g.plans.includes(picked.plan))
+      ? picked
+      : firstGroup ? { plan: firstGroup.plans[0], label: firstGroup.label } : null;
+
+  const selectedPlan = selection?.plan || null;
+  const selectedLabel = selection?.label || "";
+  const selectedImage = selectedPlan ? (selectedPlan.image3d || selectedPlan.image) : null;
+  const selectedFacing = selectedPlan ? planFacingOf(selectedPlan) : "";
+
+  const changeBlock = (i) => { setActiveBlock(i); setFacingFilter("all"); setPicked(null); };
+  const changeFacing = (f) => { setFacingFilter(f); setPicked(null); };
+
+  const openLightbox = () => { setZoom(1); setLightboxOpen(true); };
+
+  // when opened from a "View" button, scroll the list so the chosen layout is visible
+  useEffect(() => {
+    if (!init?.planId) return;
+    const box = listRef.current;
+    const row = activeRowRef.current;
+    if (box && row) box.scrollTop = Math.max(0, row.offsetTop - box.clientHeight / 2 + row.clientHeight / 2);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") { e.stopPropagation(); setLightboxOpen(false); }
+      if (e.key === "+" || e.key === "=") setZoom((z) => Math.min(4, z + 0.25));
+      if (e.key === "-") setZoom((z) => Math.max(0.5, z - 0.25));
+      if (e.key === "0") setZoom(1);
+    };
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [lightboxOpen]);
+
+  if (!block) {
+    return (
+      <Card title="Floor plans" icon={LayoutGrid}>
+        <p className="m-0 text-[14px] text-slate-600">Floor plans for this project are being finalised. Please contact our team for the latest layouts.</p>
+        <button
+          onClick={onEnquire}
+          className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-slate-900 py-3 text-[13.5px] font-semibold text-white transition hover:bg-[#0F3A6B]"
+        >
+          <Send className="h-3.5 w-3.5" strokeWidth={2.25} />Enquire now
+        </button>
+      </Card>
+    );
+  }
+
+  const rooms = getPlanRooms(selectedPlan);
+
+  return (
+    <div className="space-y-3">
+      {/* ---- Select block ---- */}
+      {blocks.length > 1 && (
+        <div>
+          <p className="m-0 mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.18em] text-slate-400">Select block</p>
+          <div className="flex flex-wrap gap-2">
+            {blocks.map((b, i) => {
+              const active = i === activeBlock;
+              return (
+                <button
+                  key={b.id || b.label || i}
+                  onClick={() => changeBlock(i)}
+                  className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-[13px] font-semibold transition active:scale-[0.97] ${
+                    active ? "border-transparent text-white shadow-[0_10px_24px_-12px_rgba(15,58,107,0.7)]" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                  }`}
+                  style={active ? { background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` } : undefined}
+                >
+                  <Building2 className="h-3.5 w-3.5" strokeWidth={1.9} />
+                  {b.label}
+                  {b.tag && (
+                    <span
+                      className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide"
+                      style={active ? { backgroundColor: "rgba(255,255,255,0.18)", color: "#fff" } : { backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
+                    >
+                      {b.tag}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* ---- Facing filter ---- */}
+      {hasFacingFilter && (
+        <div className="flex items-center gap-2.5">
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm">
+            <span className="pointer-events-none absolute inset-[3px] rounded-full border border-dashed" style={{ borderColor: "rgba(15,58,107,0.14)" }} />
+            <span className="pointer-events-none absolute top-[1px] text-[6.5px] font-bold leading-none" style={{ color: DEEP_NAVY, opacity: 0.55 }}>N</span>
+            <span className="flex h-full w-full items-center justify-center transition-transform duration-500" style={{ transform: `rotate(${activeFacingAngle}deg)`, transitionTimingFunction: "cubic-bezier(.34,1.56,.64,1)" }}>
+              <Navigation2 className="h-[14px] w-[14px]" strokeWidth={1.5} style={{ color: DEEP_NAVY, fill: DEEP_NAVY }} />
+            </span>
+          </span>
+          <div className="pkr-hscroll -mr-1 flex min-w-0 flex-1 items-center gap-1 overflow-x-auto pb-0.5">
+            <div className="flex shrink-0 items-center gap-1 rounded-full border border-[#E3ECF5] bg-[#F5F9FD] p-1">
+              {[{ id: "all", label: "All", count: allPlans.length }]
+                .concat(facingOptions.map((f) => ({ id: f, label: f, count: facingCounts[f] })))
+                .map((opt) => {
+                  const active = opt.id === facingFilter;
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => changeFacing(opt.id)}
+                      aria-pressed={active}
+                      className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2.5 py-1.5 text-[12px] font-semibold transition active:scale-[0.97] ${
+                        active ? "text-white" : "text-slate-700 hover:bg-white"
+                      }`}
+                      style={active ? { background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` } : undefined}
+                    >
+                      {opt.id === "all"
+                        ? <Compass className="h-[13px] w-[13px]" strokeWidth={1.8} style={{ color: active ? "#fff" : DEEP_NAVY }} />
+                        : <FacingArrow facing={opt.id} size={13} active={active} />}
+                      {opt.label}
+                      <span
+                        className="rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums"
+                        style={active ? { backgroundColor: "rgba(255,255,255,0.22)", color: "#fff" } : { backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
+                      >
+                        {opt.count}
+                      </span>
+                    </button>
+                  );
+                })}
+            </div>
+            {isFacingFiltered && (
+              <button onClick={() => changeFacing("all")} className="ml-1 flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1.5 text-[11.5px] font-semibold text-slate-500 transition hover:bg-slate-100">
+                <RefreshCw className="h-3 w-3" strokeWidth={2} />Reset
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ---- Empty state ---- */}
+      {groups.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-5 py-8 text-center">
+          <span className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: LIGHT_BLUE }}>
+            <Compass className="h-[18px] w-[18px]" strokeWidth={1.6} style={{ color: DEEP_NAVY }} />
+          </span>
+          {isFacingFiltered ? (
+            <>
+              <p className="m-0 text-[14px] font-semibold text-slate-800">No {facingFilter.toLowerCase()} facing layouts in this block</p>
+              <p className="m-0 mt-1 text-[12.5px] text-slate-500">Try another direction, or view every layout available here.</p>
+              <button onClick={() => changeFacing("all")} className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-4 py-2 text-[12.5px] font-semibold text-white transition hover:bg-[#0F3A6B]">
+                <RefreshCw className="h-3 w-3" strokeWidth={2} />Show all layouts
+              </button>
+            </>
+          ) : (
+            <p className="m-0 text-[13px] text-slate-500">Floor plans for this block are being finalised.</p>
+          )}
+        </div>
+      ) : (
+        <>
+          {/* ---- Unit types ---- */}
+          {groups.length > 1 && (
+            <div className="pkr-hscroll flex items-center gap-2 overflow-x-auto pb-0.5">
+              <span className="mr-0.5 shrink-0 text-[10.5px] font-semibold uppercase tracking-[0.18em] text-slate-400">Unit types</span>
+              {groups.map((g) => {
+                const active = g.label === selectedLabel;
+                return (
+                  <button
+                    key={g.label || "all"}
+                    onClick={() => setPicked({ plan: g.plans[0], label: g.label })}
+                    className={`inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12.5px] font-semibold transition active:scale-[0.97] ${
+                      active ? "border-transparent text-white" : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                    }`}
+                    style={active ? { backgroundColor: DEEP_NAVY } : undefined}
+                  >
+                    {g.label || "All layouts"}
+                    <span
+                      className="rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums"
+                      style={active ? { backgroundColor: "rgba(255,255,255,0.2)", color: "#fff" } : { backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}
+                    >
+                      {g.plans.length}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <p className="m-0 text-right text-[11.5px] font-medium tabular-nums text-slate-400">
+            {isFacingFiltered ? `${totalPlans} of ${allPlans.length} layouts` : `${allPlans.length} layouts`}
+          </p>
+
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+            {/* ---- Plan list ---- */}
+            <div ref={listRef} className="pkr-scroll relative max-h-[230px] overflow-y-auto border-b border-slate-200" style={{ backgroundColor: "#FBFDFE" }}>
+              {groups.map((group) => (
+                <div key={group.label || "all"}>
+                  <div
+                    className="sticky top-0 z-[2] flex items-center justify-between gap-2 border-b border-[#E3ECF5] px-4 py-2 backdrop-blur-sm"
+                    style={{ backgroundColor: "rgba(237,244,251,0.94)" }}
+                  >
+                    <span className="text-[10.5px] font-bold uppercase tracking-[0.16em]" style={{ color: DEEP_NAVY }}>{group.label || "All layouts"}</span>
+                    <span className="text-[11px] font-semibold tabular-nums text-slate-400">{group.plans.length}</span>
+                  </div>
+                  <ul className="m-0 list-none p-0">
+                    {group.plans.map((plan, i) => {
+                      const active = plan === selectedPlan;
+                      const { facing } = splitPlanTitle(plan);
+                      const areaLabel = formatArea(plan.area);
+                      const pf = planFacingOf(plan);
+                      return (
+                        <li key={plan.id || `${group.label}-${i}`}>
+                          <button
+                            ref={active ? activeRowRef : null}
+                            onClick={() => setPicked({ plan, label: group.label })}
+                            aria-current={active}
+                            className={`relative flex w-full items-center gap-3 border-b border-[#EEF3F9] px-4 py-2.5 text-left transition ${active ? "bg-[#0F3A6B]/[0.07]" : "hover:bg-[#F1F7FC]"}`}
+                          >
+                            {active && <span className="absolute left-0 top-0 h-full w-[3px]" style={{ backgroundColor: DEEP_NAVY }} />}
+                            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ backgroundColor: active ? DEEP_NAVY : LIGHT_BLUE }}>
+                              <LayoutGrid className="h-[16px] w-[16px]" strokeWidth={1.6} style={{ color: active ? "#fff" : DEEP_NAVY }} />
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span className="block truncate text-[13px] font-semibold leading-5" style={{ color: active ? DEEP_NAVY : "#1f2029" }}>
+                                {facing || plan.title}
+                              </span>
+                              {(areaLabel || pf) && (
+                                <span className="flex items-center gap-1.5 text-[11.5px] leading-4 text-slate-500">
+                                  {areaLabel && <span className="tabular-nums">{areaLabel}</span>}
+                                  {areaLabel && pf && <span className="h-2.5 w-px bg-slate-300" />}
+                                  {pf && (<span className="flex items-center gap-1"><FacingArrow facing={pf} size={11} />{pf}</span>)}
+                                </span>
+                              )}
+                            </span>
+                            <ChevronRight className={`h-4 w-4 shrink-0 transition-opacity ${active ? "opacity-100" : "opacity-0"}`} strokeWidth={2} style={{ color: DEEP_NAVY }} />
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            {/* ---- Selected plan: image ---- */}
+            {selectedPlan && (
+              <>
+                <div
+                  onClick={() => selectedImage && openLightbox()}
+                  className="group relative h-[260px] cursor-zoom-in overflow-hidden sm:h-[320px]"
+                  style={{ backgroundColor: LIGHT_BLUE_SOFT }}
+                >
+                  {selectedImage ? (
+                    <img
+                      key={selectedPlan.id || selectedPlan.title}
+                      src={selectedImage}
+                      alt={selectedPlan.title}
+                      className="pkr-fade-up absolute inset-0 h-full w-full select-none object-contain p-4"
+                      draggable={false}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center">
+                      <LayoutGrid className="h-8 w-8" strokeWidth={1.4} style={{ color: DEEP_NAVY, opacity: 0.6 }} />
+                      <p className="m-0 text-[13px] text-slate-500">Floor plan image coming soon</p>
+                    </div>
+                  )}
+
+                  <span className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-[#141414]/15 bg-white/90 shadow-sm">
+                    <span className="absolute -top-2.5 rounded bg-white px-1 text-[9px] font-bold leading-none text-[#141414]">N</span>
+                    <Navigation className="h-3.5 w-3.5 -rotate-45 fill-[#141414] text-[#141414]" strokeWidth={1.5} />
+                  </span>
+
+                  {selectedImage && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); openLightbox(); }}
+                      aria-label="Enlarge floor plan"
+                      className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-[#D5E1ED] bg-white px-3 py-1.5 text-[11.5px] font-semibold shadow-md transition hover:border-[#0F3A6B]/50 hover:bg-[#0F3A6B] hover:text-white active:scale-[0.97]"
+                      style={{ color: DEEP_NAVY }}
+                    >
+                      <Expand className="h-3.5 w-3.5" strokeWidth={2} />Enlarge
+                    </button>
+                  )}
+                </div>
+
+                {/* ---- Selected plan: details ---- */}
+                <div key={selectedPlan.id || selectedPlan.title} className="pkr-fade-up border-t border-slate-200 px-4 py-4 sm:px-5">
+                  {(selectedLabel || selectedFacing) && (
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      {selectedLabel && (
+                        <span className="w-fit rounded-full px-3 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em]" style={{ backgroundColor: LIGHT_BLUE, color: DEEP_NAVY }}>
+                          {selectedLabel}
+                        </span>
+                      )}
+                      {selectedFacing && (
+                        <span className="flex w-fit items-center gap-1.5 rounded-full border border-[#DDE7F1] bg-[#FBFDFE] px-2.5 py-1 text-[10.5px] font-bold uppercase tracking-[0.12em]" style={{ color: TEXT_CHARCOAL }}>
+                          <FacingArrow facing={selectedFacing} size={12} />
+                          {selectedFacing} Facing
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="m-0 text-[18px] font-semibold leading-tight text-[#1f2029]">
+                      {splitPlanTitle(selectedPlan).facing || selectedPlan.title}
+                    </h3>
+                    {formatArea(selectedPlan.area) && (
+                      <span className="shrink-0 whitespace-nowrap pt-0.5 text-[14px] font-bold tabular-nums" style={{ color: DEEP_NAVY }}>
+                        {formatArea(selectedPlan.area)}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="m-0 mt-2 border-b border-[#EDF2F8] pb-3.5 text-[13px] leading-[1.65] text-slate-600">
+                    {getPlanGroupInfo(selectedLabel, dataProject, block)}
+                  </p>
+
+                  {rooms.length > 0 && (
+                    <ul className="m-0 grid list-none grid-cols-1 gap-x-4 gap-y-2.5 px-0 py-3.5 sm:grid-cols-2">
+                      {rooms.map((room, i) => {
+                        const RoomIcon = getRoomIcon(room);
+                        return (
+                          <li key={i} className="flex items-center gap-3">
+                            <RoomIcon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.4} style={{ color: DEEP_NAVY }} />
+                            <span className="text-[13.5px] leading-5 text-slate-700">{room}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+
+                  <button
+                    onClick={onEnquire}
+                    className="flex w-full items-center justify-center gap-2 rounded-md py-3 text-[13.5px] font-bold text-white shadow-[0_4px_14px_-4px_rgba(15,58,107,0.4)] transition active:scale-[0.98]"
+                    style={{ backgroundColor: DEEP_NAVY }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY_HOVER)}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = DEEP_NAVY)}
+                  >
+                    <Send className="h-4 w-4" strokeWidth={2.25} />Enquire Now
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ---- Lightbox (portal so chat transforms/overflow don't clip it) ---- */}
+      {lightboxOpen && selectedPlan && selectedImage && typeof document !== "undefined" && createPortal(
+        <div
+          className="fixed inset-0 z-[10002] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          style={{ animation: "pkrOverlayIn .25s ease-out" }}
+          onClick={() => setLightboxOpen(false)}
+          onWheel={(e) => setZoom((z) => Math.min(4, Math.max(0.5, z - e.deltaY * 0.0015)))}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); setLightboxOpen(false); }}
+            aria-label="Close"
+            className="absolute right-5 top-5 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur-md transition hover:bg-white/20"
+          >
+            <X className="h-5 w-5" strokeWidth={2} />
+          </button>
+
+          <div className="absolute left-5 top-6 z-10 max-w-[70%] sm:left-8 sm:top-8">
+            <p className="m-0 text-[15px] font-semibold text-white">{splitPlanTitle(selectedPlan).facing || selectedPlan.title}</p>
+            <p className="m-0 mt-1 text-[11.5px] font-medium uppercase tracking-[2px] text-white/55">
+              {[
+                splitPlanTitle(selectedPlan).config,
+                selectedFacing ? `${selectedFacing} Facing` : "",
+                formatArea(selectedPlan.area),
+              ].filter(Boolean).join(" · ")}
+            </p>
+          </div>
+
+          <div className="absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-full bg-white/10 px-2 py-2 backdrop-blur-md" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setZoom((z) => Math.max(0.5, z - 0.25))} aria-label="Zoom out" className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20">
+              <ZoomOut className="h-5 w-5" strokeWidth={1.75} />
+            </button>
+            <span className="min-w-[60px] text-center text-[13px] font-medium tabular-nums text-white">{Math.round(zoom * 100)}%</span>
+            <button onClick={() => setZoom((z) => Math.min(4, z + 0.25))} aria-label="Zoom in" className="flex h-10 w-10 items-center justify-center rounded-full text-white transition hover:bg-white/20">
+              <ZoomIn className="h-5 w-5" strokeWidth={1.75} />
+            </button>
+            <span className="mx-1 h-6 w-px bg-white/20" />
+            <button onClick={() => setZoom(1)} aria-label="Reset zoom" className="flex h-10 items-center justify-center rounded-full px-3 text-[12px] font-medium text-white transition hover:bg-white/20">
+              Reset
+            </button>
+          </div>
+
+          <div className="flex max-h-full max-w-full items-center justify-center overflow-auto p-4" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={selectedImage}
+              alt={selectedPlan.title}
+              className="max-h-[90vh] max-w-[90vw] select-none object-contain transition-transform duration-200"
+              style={{ transform: `scale(${zoom})` }}
+              draggable={false}
+            />
+          </div>
+
+          <p className="absolute bottom-20 left-1/2 hidden -translate-x-1/2 whitespace-nowrap text-[11px] tracking-wide text-white/50 sm:block">
+            Scroll to zoom · ESC to close
+          </p>
+        </div>,
+        document.body
+      )}
+    </div>
   );
 }
 
@@ -1177,12 +2011,24 @@ export default function FloatingWidgetsModern() {
     let sid = sessionId;
     if (!sid) { sid = resolveSessionId(); setSessionId(sid); rememberSessionId(sid); }
 
+    const index = readSessionsIndex();
+    const existing = index.find((x) => x.session_id === sid);
+
+    // ---- Smart keyword routing: answer project questions locally with the same data as the project page ----
+    const smartEntries = routeMessage(text);
+    if (smartEntries) {
+      setPlusOpen(false);
+      pushUser(text);
+      setChatInput("");
+      smartEntries.forEach(pushBot);
+      rememberSessionId(sid, { title: existing?.title || text.slice(0, 60), total: (existing?.total || 0) + 2 });
+      return;
+    }
+
     pushUser(text);
     setChatInput("");
     setLog((l) => [...l, { role: "bot", kind: "typing" }]);
 
-    const index = readSessionsIndex();
-    const existing = index.find((x) => x.session_id === sid);
     if (!existing?.title) {
       rememberSessionId(sid, { title: text.slice(0, 60), total: (existing?.total || 0) + 2 });
     } else {
@@ -1215,6 +2061,7 @@ export default function FloatingWidgetsModern() {
   };
 
   const goOngoingProjects = () => flow("Ongoing projects", { kind: "projects" });
+  const goFloorPlans = () => flow("Floor plans", { kind: "projects" });
   const goCompletedProjects = () => flow("Completed projects", { kind: "completed-projects" });
   const goEmiCalculator = () => flow("EMI calculator", { kind: "emi" });
   const goAboutCompany = () => flow("About PKR Estates", { kind: "about-company" });
@@ -1226,6 +2073,12 @@ export default function FloatingWidgetsModern() {
   const selectTopic = (projectKey, topic) => flow(PROJECT_TOPIC_META[topic].label, { kind: "project-detail", projectKey, topic });
   const openEnquireFromChat = useCallback((type) => { setPlusOpen(false); setEnquirePreset(type); setEnquireOpen(true); }, []);
 
+  // "View" on a matched layout → opens the full floor plan details for that exact plan
+  const viewPlan = (projectKey, m) =>
+    flow(`View ${m.title}`, { kind: "project-detail", projectKey, topic: "floorPlans", init: { blockIdx: m.blockIdx, planId: m.planId } });
+  const browsePlans = (projectKey) =>
+    flow("Open floor plan explorer", { kind: "project-detail", projectKey, topic: "floorPlans" });
+
   const SUGGESTIONS = [
     { icon: Building2, title: "Ongoing projects", desc: "Explore Gurudev & Privana", onClick: goOngoingProjects },
     { icon: Calculator, title: "EMI calculator", desc: "Estimate your monthly payment", onClick: goEmiCalculator },
@@ -1234,10 +2087,19 @@ export default function FloatingWidgetsModern() {
   ];
 
   /* ------------------------- TOPIC DETAIL -------------------------- */
-  const renderTopicDetail = (project, topic) => {
+  const renderTopicDetail = (project, topic, projectKey, init) => {
     switch (topic) {
       case "overview":
         return (<div className="space-y-3"><p className="m-0">{project.overview}</p>{project.salientFeatures && <Card><FactList items={project.salientFeatures} /></Card>}</div>);
+      case "floorPlans":
+        return (
+          <FloorPlanExplorer
+            key={`${projectKey}-${init?.blockIdx ?? ""}-${init?.planId || "all"}`}
+            projectKey={projectKey}
+            init={init}
+            onEnquire={() => openEnquireFromChat(project.name)}
+          />
+        );
       case "configuration":
         return (
           <div className="space-y-3">
@@ -1346,12 +2208,40 @@ export default function FloatingWidgetsModern() {
       case "text":
         return <AssistantRow key={idx}><div className="whitespace-pre-wrap">{parseBotReply(entry.text)}</div></AssistantRow>;
 
+      case "plans-result":
+        return (
+          <AssistantRow key={idx}>
+            <PlanResults
+              entry={entry}
+              onView={viewPlan}
+              onBrowse={browsePlans}
+              onEnquire={openEnquireFromChat}
+              onPickProject={(k) => selectTopic(k, "floorPlans")}
+            />
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
+        );
+
+      case "pick-project":
+        return (
+          <AssistantRow key={idx}>
+            <p className="m-0">Which project would you like <strong className="font-semibold text-slate-900">{PROJECT_TOPIC_META[entry.topic].label.toLowerCase()}</strong> for?</p>
+            <ChipRow>
+              {entry.options.map((k) => (
+                <Chip key={k} icon={PROJECTS[k].icon} onClick={() => selectTopic(k, entry.topic)}>{PROJECTS[k].name}</Chip>
+              ))}
+            </ChipRow>
+            <BackLink onClick={backToMenu}>Main menu</BackLink>
+          </AssistantRow>
+        );
+
       case "menu":
         return (
           <AssistantRow key={idx}>
             <p className="m-0">Sure — here&apos;s what I can help you with at <strong className="font-semibold text-slate-900">{companyName}</strong>:</p>
             <ChipRow>
               <Chip icon={Building2} onClick={goOngoingProjects}>Ongoing projects</Chip>
+              <Chip icon={LayoutGrid} onClick={goFloorPlans}>Floor plans</Chip>
               <Chip icon={CheckCircle2} onClick={goCompletedProjects}>Completed projects</Chip>
               <Chip icon={Calculator} onClick={goEmiCalculator}>EMI calculator</Chip>
               <Chip icon={Info} onClick={goAboutCompany}>About us</Chip>
@@ -1417,7 +2307,7 @@ export default function FloatingWidgetsModern() {
             <div className="mb-2.5 inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-500">
               <MetaIcon className="h-3 w-3" strokeWidth={2.25} />{project.name} · {meta.label}
             </div>
-            {renderTopicDetail(project, entry.topic)}
+            {renderTopicDetail(project, entry.topic, entry.projectKey, entry.init)}
             <ChipRow>
               <Chip onClick={() => backToTopics(entry.projectKey)}>More topics</Chip>
               <Chip primary icon={Mail} onClick={() => openEnquireFromChat(project.name)}>Enquire now</Chip>
@@ -1526,6 +2416,7 @@ export default function FloatingWidgetsModern() {
         <div className="pkr-fade-up absolute bottom-full left-0 z-10 mb-2 w-60 overflow-hidden rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_20px_50px_-20px_rgba(15,23,42,0.35)]">
           {[
             { icon: Building2, label: "Ongoing projects", onClick: goOngoingProjects },
+            { icon: LayoutGrid, label: "Floor plans", onClick: goFloorPlans },
             { icon: Calculator, label: "EMI calculator", onClick: goEmiCalculator },
             { icon: Phone, label: "Contact details", onClick: goContactUs },
             { icon: Mail, label: "Submit an enquiry", onClick: () => openEnquireFromChat("General Enquiry") },
@@ -1546,7 +2437,7 @@ export default function FloatingWidgetsModern() {
           value={chatInput}
           onChange={(e) => setChatInput(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={isEmpty ? "Ask about homes, pricing, location…" : `Reply to ${botName}…`}
+          placeholder={isEmpty ? "Try: 2 BHK floor plans in Privana…" : `Reply to ${botName}…`}
           className="block max-h-[200px] w-full resize-none border-0 bg-transparent px-2 text-[15px] leading-6 text-slate-800 outline-none placeholder:text-slate-400"
         />
         <div className="mt-2 flex items-center justify-between">
