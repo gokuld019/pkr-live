@@ -412,7 +412,7 @@ export const projects = [
           // ============================
           {
             id: "g-2bhk-101",
-            image: "/floorplans/gurudev/1bhk1t/1bhk-1T8.jpeg",
+            image: "/floorplans/gurudev/2bhk1t/1bhk-1T8.jpeg",
             title: "2 BHK + 2T · Unit 101",
             type: "2 BHK",
             area: "730 Sq.Ft.",
@@ -924,7 +924,7 @@ export const projects = [
           // Studio
           {
             id: "a-studio-105",
-            image: "/floorplans/privana/studio/A105.webp",
+            image: "/floorplans/privana/studio/A105.png",
             title: "Studio · Unit A105",
             type: "Studio",
             area: "—",
@@ -938,7 +938,7 @@ export const projects = [
           },
           {
             id: "a-studio-112",
-            image: "/floorplans/privana/studio/A112.webp",
+            image: "/floorplans/privana/studio/A112.png",
             title: "Studio · Unit A112",
             type: "Studio",
             area: "—",
@@ -952,7 +952,7 @@ export const projects = [
           },
           {
             id: "a-studio-209-509",
-            image: "/floorplans/privana/studio/A209-A509.webp",
+            image: "/floorplans/privana/studio/A209-A509.png",
             title: "Studio · Units A209–A509",
             type: "Studio",
             area: "—",
@@ -966,7 +966,7 @@ export const projects = [
           },
           {
             id: "a-studio-216-516",
-            image: "/floorplans/privana/studio/A216-A516.webp",
+            image: "/floorplans/privana/studio/A216-A516.png",
             title: "Studio · Units A216–A516",
             type: "Studio",
             area: "—",
@@ -982,7 +982,7 @@ export const projects = [
           // 1 BHK
           {
             id: "a-1bhk-106",
-            image: "/floorplans/privana/A106.webp",
+            image: "/floorplans/privana/A106.png",
             title: "1 BHK · Unit A106",
             type: "1 BHK",
             area: "—",
@@ -996,7 +996,7 @@ export const projects = [
           },
           {
             id: "a-1bhk-109",
-            image: "/floorplans/privana/A109.webp",
+            image: "/floorplans/privana/A109.png",
             title: "1 BHK · Unit A109",
             type: "1 BHK",
             area: "—",
@@ -1010,7 +1010,7 @@ export const projects = [
           },
           {
             id: "a-1bhk-207-507",
-            image: "/floorplans/privana/A207-A507.webp",
+            image: "/floorplans/privana/A207-A507.png",
             title: "1 BHK · Units A207–A507",
             type: "1 BHK",
             area: "—",
@@ -1024,7 +1024,7 @@ export const projects = [
           },
           {
             id: "a-1bhk-210-510",
-            image: "/floorplans/privana/A210-A510.webp",
+            image: "/floorplans/privana/A210-A510.png",
             title: "1 BHK · Units A210–A510",
             type: "1 BHK",
             area: "—",
@@ -1038,7 +1038,7 @@ export const projects = [
           },
           {
             id: "a-1bhk-213-513",
-            image: "/floorplans/privana/A213-A513.webp",
+            image: "/floorplans/privana/A213-A513.png",
             title: "1 BHK · Units A213–A513",
             type: "1 BHK",
             area: "—",
@@ -1053,9 +1053,9 @@ export const projects = [
 
           // 2 BHK
           {
-            id: "a-2bhk-107",
-            image: "/floorplans/privana/2bhk/A107.webp",
-            title: "2 BHK · Unit A107",
+            id: "a-2bhk-102",
+            image: "/floorplans/privana/block-b/2bhk1t/B102.png",
+            title: "2 BHK · Unit B102",
             type: "2 BHK",
             area: "—",
             href: "#",
@@ -1068,8 +1068,8 @@ export const projects = [
           },
           {
             id: "a-2bhk-108",
-            image: "/floorplans/privana/2bhk/A108.webp",
-            title: "2 BHK · Unit A108",
+            image: "/floorplans/privana/block-b/2bhk1t/B103.png",
+            title: "2 BHK · Unit B103",
             type: "2 BHK",
             area: "—",
             href: "#",
@@ -1082,8 +1082,8 @@ export const projects = [
           },
           {
             id: "a-2bhk-110",
-            image: "/floorplans/privana/2bhk/A110.webp",
-            title: "2 BHK · Unit A110",
+            image: "/floorplans/privana/block-b/2bhk1t/B107-B507.png",
+            title: "2 BHK · Unit B107-B507",
             type: "2 BHK",
             area: "—",
             href: "#",
@@ -1096,8 +1096,8 @@ export const projects = [
           },
           {
             id: "a-2bhk-206-506",
-            image: "/floorplans/privana/2bhk/A206-A506.webp",
-            title: "2 BHK · Units A206–A506",
+            image: "/floorplans/privana/block-b/2bhk1t/B202-B502.png",
+            title: "2 BHK · Units B202-B502",
             type: "2 BHK",
             area: "—",
             href: "#",
@@ -1110,8 +1110,8 @@ export const projects = [
           },
           {
             id: "a-2bhk-211-511",
-            image: "/floorplans/privana/2bhk/A211-A511.webp",
-            title: "2 BHK · Units A211–A511",
+            image: "/floorplans/privana/block-b/2bhk1t/B203-B503.png",
+            title: "2 BHK · Units B203-B503",
             type: "2 BHK",
             area: "—",
             href: "#",
@@ -1122,40 +1122,12 @@ export const projects = [
               { icon: "living", label: "Living cum Dining" },
             ],
           },
-          {
-            id: "a-2bhk-212-512",
-            image: "/floorplans/privana/2bhk/A212-A512.webp",
-            title: "2 BHK · Units A212–A512",
-            type: "2 BHK",
-            area: "—",
-            href: "#",
-            facing: "South",
-            features: [
-              { icon: "bed", label: "2 Bedrooms" },
-              { icon: "bath", label: "2 Toilets" },
-              { icon: "living", label: "Living cum Dining" },
-            ],
-          },
-          {
-            id: "a-2bhk-214-514",
-            image: "/floorplans/privana/2bhk/A214-A514.webp",
-            title: "2 BHK · Units A214–A514",
-            type: "2 BHK",
-            area: "—",
-            href: "#",
-            facing: "North",
-            features: [
-              { icon: "bed", label: "2 Bedrooms" },
-              { icon: "bath", label: "2 Toilets" },
-              { icon: "living", label: "Living cum Dining" },
-            ],
-          },
-
+          
           // 2 BHK + 2T
           {
             id: "a-2bhk2t-101-501",
-            image: "/floorplans/privana/2bhk 2t/A101-A501.webp",
-            title: "2 BHK + 2T · Units A101–A501",
+            image: "/floorplans/privana/2bhk2t/A101-A501.png",
+            title: "2 BHK + 2T · Units A101-A501",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1168,8 +1140,8 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-102-502",
-            image: "/floorplans/privana/2bhk 2t/A102-A502.webp",
-            title: "2 BHK + 2T · Units A102–A502",
+            image: "/floorplans/privana/2bhk2t/A102-A502.png",
+            title: "2 BHK + 2T · Units A102-A502",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1182,7 +1154,7 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-103",
-            image: "/floorplans/privana/2bhk 2t/A103.webp",
+            image: "/floorplans/privana/2bhk2t/A103.png",
             title: "2 BHK + 2T · Unit A103",
             type: "2 BHK + 2T",
             area: "—",
@@ -1196,8 +1168,8 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-104-504",
-            image: "/floorplans/privana/2bhk 2t/A104-A504.webp",
-            title: "2 BHK + 2T · Units A104–A504",
+            image: "/floorplans/privana/2bhk2t/A104-A504.png",
+            title: "2 BHK + 2T · Units A104-A504",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1210,7 +1182,7 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-111",
-            image: "/floorplans/privana/2bhk 2t/A111.webp",
+            image: "/floorplans/privana/2bhk2t/A111.png",
             title: "2 BHK + 2T · Unit A111",
             type: "2 BHK + 2T",
             area: "—",
@@ -1224,7 +1196,7 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-113",
-            image: "/floorplans/privana/2bhk 2t/A113.webp",
+            image: "/floorplans/privana/2bhk2t/A113.png",
             title: "2 BHK + 2T · Unit A113",
             type: "2 BHK + 2T",
             area: "—",
@@ -1238,8 +1210,8 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-203-503",
-            image: "/floorplans/privana/2bhk 2t/A203-503.webp",
-            title: "2 BHK + 2T · Units A203–A503",
+            image: "/floorplans/privana/2bhk2t/A203-A503.png",
+            title: "2 BHK + 2T · Units A203-A503",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1252,7 +1224,7 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-205",
-            image: "/floorplans/privana/2bhk 2t/A205.webp",
+            image: "/floorplans/privana/2bhk2t/A205.png",
             title: "2 BHK + 2T · Unit A205",
             type: "2 BHK + 2T",
             area: "—",
@@ -1266,8 +1238,8 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-208",
-            image: "/floorplans/privana/2bhk 2t/A208.webp",
-            title: "2 BHK + 2T · Unit A208",
+            image: "/floorplans/privana/2bhk2t/A208.png",
+            title: "2 BHK + 2T · Unit B208",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1280,8 +1252,8 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-215-515",
-            image: "/floorplans/privana/2bhk 2t/A215-A515.webp",
-            title: "2 BHK + 2T · Units A215–A515",
+            image: "/floorplans/privana/2bhk2t/A215-A515.png",
+            title: "2 BHK + 2T · Units A215-A515",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1294,8 +1266,8 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-217-517",
-            image: "/floorplans/privana/2bhk 2t/A217-A517.webp",
-            title: "2 BHK + 2T · Units A217–A517",
+            image: "/floorplans/privana/2bhk2t/A217-A517.png",
+            title: "2 BHK + 2T · Units B217-B517",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1308,8 +1280,8 @@ export const projects = [
           },
           {
             id: "a-2bhk2t-305-505",
-            image: "/floorplans/privana/2bhk 2t/A305-A505.webp",
-            title: "2 BHK + 2T · Units A305–A505",
+            image: "/floorplans/privana/2bhk2t/A305-A505.png",
+            title: "2 BHK + 2T · Units A305-A505",
             type: "2 BHK + 2T",
             area: "—",
             href: "#",
@@ -1320,20 +1292,7 @@ export const projects = [
               { icon: "living", label: "Living cum Dining" },
             ],
           },
-          {
-            id: "a-2bhk2t-308-508",
-            image: "/floorplans/privana/2bhk 2t/A308-A508.webp",
-            title: "2 BHK + 2T · Units A308–A508",
-            type: "2 BHK + 2T",
-            area: "—",
-            href: "#",
-            facing: "South",
-            features: [
-              { icon: "bed", label: "2 Bedrooms" },
-              { icon: "bath", label: "2 Toilets" },
-              { icon: "living", label: "Living cum Dining" },
-            ],
-          },
+          
         ],
       },
       {
@@ -1345,7 +1304,7 @@ export const projects = [
           // 1 BHK
           {
             id: "b-1bhk-106",
-            image: "/floorplans/privana/block-b/1bhk/B106.webp",
+            image: "/floorplans/privana/block-b/1bhk/B106-B506.png",
             title: "1 BHK · Unit B106 - B506",
             type: "1 BHK",
             area: "669 sq.ft",
@@ -1359,7 +1318,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-108",
-            image: "/floorplans/privana/block-b/1bhk/B108.webp",
+            image: "/floorplans/privana/block-b/1bhk/B108.png",
             title: "1 BHK · Unit B108",
             type: "1 BHK",
             area: "737 sq.ft",
@@ -1373,7 +1332,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-109-509",
-            image: "/floorplans/privana/block-b/1bhk/B109TO 509.webp",
+            image: "/floorplans/privana/block-b/1bhk/B109-B509.png",
             title: "1 BHK · Units B109–B509",
             type: "1 BHK",
             area: "722 sq.ft",
@@ -1387,7 +1346,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-110",
-            image: "/floorplans/privana/block-b/1bhk/B110.webp",
+            image: "/floorplans/privana/block-b/1bhk/B110.png",
             title: "1 BHK · Unit B110",
             type: "1 BHK",
             area: "726 sq.ft",
@@ -1401,7 +1360,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-111",
-            image: "/floorplans/privana/block-b/1bhk/B111.webp",
+            image: "/floorplans/privana/block-b/1bhk/B111.png",
             title: "1 BHK · Unit B111",
             type: "1 BHK",
             area: "617 sq.ft",
@@ -1415,7 +1374,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-112",
-            image: "/floorplans/privana/block-b/1bhk/B112.webp",
+            image: "/floorplans/privana/block-b/1bhk/B112.png",
             title: "1 BHK · Unit B112",
             type: "1 BHK",
             area: "668 sq.ft",
@@ -1429,7 +1388,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-114",
-            image: "/floorplans/privana/block-b/1bhk/B114 (2).webp",
+            image: "/floorplans/privana/block-b/1bhk/B114.png",
             title: "1 BHK · Unit B114",
             type: "1 BHK",
             area: "791 sq.ft",
@@ -1443,7 +1402,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-115",
-            image: "/floorplans/privana/block-b/1bhk/B115.webp",
+            image: "/floorplans/privana/block-b/1bhk/B115.png",
             title: "1 BHK · Unit B115",
             type: "1 BHK",
             area: "626 sq.ft",
@@ -1457,7 +1416,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-116",
-            image: "/floorplans/privana/block-b/1bhk/B116.webp",
+            image: "/floorplans/privana/block-b/1bhk/B116.png",
             title: "1 BHK · Unit B116",
             type: "1 BHK",
             area: "573 sq.ft",
@@ -1471,7 +1430,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-208-508",
-            image: "/floorplans/privana/block-b/1bhk/B208-B508.webp",
+            image: "/floorplans/privana/block-b/1bhk/B208-B508.png",
             title: "1 BHK · Units B208–B508",
             type: "1 BHK",
             area: "737 sq.ft",
@@ -1485,7 +1444,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-210-510",
-            image: "/floorplans/privana/block-b/1bhk/B210-510.webp",
+            image: "/floorplans/privana/block-b/1bhk/B210-B510.png",
             title: "1 BHK · Units B210–B510",
             type: "1 BHK",
             area: "726 sq.ft",
@@ -1499,7 +1458,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-211-511",
-            image: "/floorplans/privana/block-b/1bhk/b211-b511.webp",
+            image: "/floorplans/privana/block-b/1bhk/B211-B511.png",
             title: "1 BHK · Units B211–B511",
             type: "1 BHK",
             area: "617 sq.ft",
@@ -1513,7 +1472,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-212-512",
-            image: "/floorplans/privana/block-b/1bhk/B212-B512.webp",
+            image: "/floorplans/privana/block-b/1bhk/B212-B512.png",
             title: "1 BHK · Units B212–B512",
             type: "1 BHK",
             area: "668 sq.ft",
@@ -1527,7 +1486,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-214-514",
-            image: "/floorplans/privana/block-b/1bhk/B214-B514.webp",
+            image: "/floorplans/privana/block-b/1bhk/B214-B514.png",
             title: "1 BHK · Units B214–B514",
             type: "1 BHK",
             area: "791 sq.ft",
@@ -1541,7 +1500,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-215-515",
-            image: "/floorplans/privana/block-b/1bhk/B215-B515.webp",
+            image: "/floorplans/privana/block-b/1bhk/B215-A515.png",
             title: "1 BHK · Units B215–B515",
             type: "1 BHK",
             area: "626 sq.ft",
@@ -1555,7 +1514,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-216-516",
-            image: "/floorplans/privana/block-b/1bhk/B216-B516.webp",
+            image: "/floorplans/privana/block-b/1bhk/B216-B516.png",
             title: "1 BHK · Units B216–B516",
             type: "1 BHK",
             area: "618 sq.ft",
@@ -1571,7 +1530,7 @@ export const projects = [
           // 2 BHK 1T
           {
             id: "b-2bhk1t-102",
-            image: "/floorplans/privana/block-b/2bhk1t/B102.webp",
+            image: "/floorplans/privana/block-b/2bhk1t/B102.png",
             title: "2 BHK + 1T · Unit B102",
             type: "2 BHK 1T",
             area: "984 sq.ft",
@@ -1585,7 +1544,7 @@ export const projects = [
           },
           {
             id: "b-2bhk1t-103",
-            image: "/floorplans/privana/block-b/2bhk1t/B103.webp",
+            image: "/floorplans/privana/block-b/2bhk1t/B103.png",
             title: "2 BHK + 1T · Unit B103",
             type: "2 BHK 1T",
             area: "952 sq.ft",
@@ -1598,8 +1557,8 @@ export const projects = [
             ],
           },
           {
-            id: "b-2bhk1t-107",
-            image: "/floorplans/privana/block-b/2bhk1t/B107.webp",
+            id: "b-2bhk1t-107-507",
+            image: "/floorplans/privana/block-b/2bhk1t/B107-B507.png",
             title: "2 BHK + 1T · Unit B107-B507",
             type: "2 BHK 1T",
             area: "1049 sq.ft",
@@ -1613,7 +1572,7 @@ export const projects = [
           },
           {
             id: "b-2bhk1t-202-502",
-            image: "/floorplans/privana/block-b/2bhk1t/B202-B502.webp",
+            image: "/floorplans/privana/block-b/2bhk1t/B202-B502.png",
             title: "2 BHK + 1T · Units B202–B502",
             type: "2 BHK 1T",
             area: "984 sq.ft",
@@ -1627,7 +1586,7 @@ export const projects = [
           },
           {
             id: "b-2bhk1t-203-503",
-            image: "/floorplans/privana/block-b/2bhk1t/B203-B503.webp",
+            image: "/floorplans/privana/block-b/2bhk1t/B203-B503.png",
             title: "2 BHK + 1T · Units B203–B503",
             type: "2 BHK 1T",
             area: "952 sq.ft",
@@ -1643,7 +1602,7 @@ export const projects = [
           // 2 BHK 2T
           {
             id: "b-2bhk2t-101",
-            image: "/floorplans/privana/block-b/2bhk2t/B101.webp",
+            image: "/floorplans/privana/block-b/2bhk2t/B101.png",
             title: "2 BHK + 2T · Unit B101",
             type: "2 BHK 2T",
             area: "1280 sq.ft",
@@ -1656,9 +1615,9 @@ export const projects = [
             ],
           },
           {
-            id: "b-2bhk2t-105",
-            image: "/floorplans/privana/block-b/2bhk2t/B105.webp",
-            title: "2 BHK + 2T · Unit B105-B505",
+            id: "b-2bhk2t-104-504",
+            image: "/floorplans/privana/block-b/2bhk2t/B104-B504.png",
+            title: "2 BHK + 2T · Unit B104-B504",
             type: "2 BHK 2T",
             area: "932 sq.ft",
             href: "#",
@@ -1670,9 +1629,9 @@ export const projects = [
             ],
           },
           {
-            id: "b-2bhk2t-113",
-            image: "/floorplans/privana/block-b/2bhk2t/B113.webp",
-            title: "2 BHK + 2T · Unit B113",
+            id: "b-2bhk2t-105-505",
+            image: "/floorplans/privana/block-b/2bhk2t/B105-B505.png",
+            title: "2 BHK + 2T · Unit B105-B505",
             type: "2 BHK 2T",
             area: "879 sq.ft",
             href: "#",
@@ -1684,8 +1643,22 @@ export const projects = [
             ],
           },
           {
+            id: "b-2bhk2t-113",
+            image: "/floorplans/privana/block-b/2bhk2t/B113.png",
+            title: "2 BHK + 2T · Unit B113",
+            type: "2 BHK 2T",
+            area: "976 sq.ft",
+            href: "#",
+            facing: "North",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
             id: "b-2bhk2t-117",
-            image: "/floorplans/privana/block-b/2bhk2t/B117.webp",
+            image: "/floorplans/privana/block-b/2bhk2t/B117.png",
             title: "2 BHK + 2T · Unit B117",
             type: "2 BHK 2T",
             area: "976 sq.ft",
@@ -1699,22 +1672,8 @@ export const projects = [
           },
           {
             id: "b-2bhk2t-118",
-            image: "/floorplans/privana/block-b/2bhk2t/B118.webp",
+            image: "/floorplans/privana/block-b/2bhk2t/B118.png",
             title: "2 BHK + 2T · Unit B118",
-            type: "2 BHK 2T",
-            area: "976 sq.ft",
-            href: "#",
-            facing: "North",
-            features: [
-              { icon: "bed", label: "2 Bedrooms" },
-              { icon: "bath", label: "2 Toilets" },
-              { icon: "living", label: "Living cum Dining" },
-            ],
-          },
-          {
-            id: "b-2bhk2t-119",
-            image: "/floorplans/privana/block-b/2bhk2t/B119.webp",
-            title: "2 BHK + 2T · Unit B119",
             type: "2 BHK 2T",
             area: "1011 sq.ft",
             href: "#",
@@ -1726,9 +1685,9 @@ export const projects = [
             ],
           },
           {
-            id: "b-2bhk2t-201-501",
-            image: "/floorplans/privana/block-b/2bhk2t/B201-B501.webp",
-            title: "2 BHK + 2T · Units B201–B501",
+            id: "b-2bhk2t-119",
+            image: "/floorplans/privana/block-b/2bhk2t/B119.png",
+            title: "2 BHK + 2T · Units B119",
             type: "2 BHK 2T",
             area: "1280 sq.ft",
             href: "#",
@@ -1740,9 +1699,9 @@ export const projects = [
             ],
           },
           {
-            id: "b-2bhk2t-213-513",
-            image: "/floorplans/privana/block-b/2bhk2t/B213-B513.webp",
-            title: "2 BHK + 2T · Units B213–B513",
+            id: "b-2bhk2t-201-501",
+            image: "/floorplans/privana/block-b/2bhk2t/B201-B501.png",
+            title: "2 BHK + 2T · Units B201–B501",
             type: "2 BHK 2T",
             area: "879 sq.ft",
             href: "#",
@@ -1754,8 +1713,22 @@ export const projects = [
             ],
           },
           {
+            id: "b-2bhk2t-213-513",
+            image: "/floorplans/privana/block-b/2bhk2t/B213-B513.png",
+            title: "2 BHK + 2T · Units B213–B513",
+            type: "2 BHK 2T",
+            area: "976 sq.ft",
+            href: "#",
+            facing: "North",
+            features: [
+              { icon: "bed", label: "2 Bedrooms" },
+              { icon: "bath", label: "2 Toilets" },
+              { icon: "living", label: "Living cum Dining" },
+            ],
+          },
+          {
             id: "b-2bhk2t-217-517",
-            image: "/floorplans/privana/block-b/2bhk2t/B217-B517.webp",
+            image: "/floorplans/privana/block-b/2bhk2t/B217-B517.png",
             title: "2 BHK + 2T · Units B217–B517",
             type: "2 BHK 2T",
             area: "976 sq.ft",
@@ -1769,10 +1742,10 @@ export const projects = [
           },
           {
             id: "b-2bhk2t-218-518",
-            image: "/floorplans/privana/block-b/2bhk2t/B218-B518.webp",
+            image: "/floorplans/privana/block-b/2bhk2t/B218-B518.png",
             title: "2 BHK + 2T · Units B218–B518",
             type: "2 BHK 2T",
-            area: "976 sq.ft",
+            area: "1011 sq.ft",
             href: "#",
             facing: "North",
             features: [
@@ -1781,9 +1754,10 @@ export const projects = [
               { icon: "living", label: "Living cum Dining" },
             ],
           },
+
           {
             id: "b-2bhk2t-219-519",
-            image: "/floorplans/privana/block-b/2bhk2t/B219-B519.webp",
+            image: "/floorplans/privana/block-b/2bhk2t/B219-B519.png",
             title: "2 BHK + 2T · Units B219–B519",
             type: "2 BHK 2T",
             area: "1011 sq.ft",
@@ -1798,8 +1772,8 @@ export const projects = [
 
           // 3 BHK
           {
-            id: "b-3bhk-301",
-            image: "/floorplans/privana/block-b/3bhk/B104.webp",
+            id: "b-3bhk-104-504",
+            image: "/floorplans/privana/block-b/3bhk/B104-B504.png",
             title: "3 BHK · Unit B104-B504",
             type: "3 BHK",
             area: "1200 sq.ft",
