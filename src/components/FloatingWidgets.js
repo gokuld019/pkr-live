@@ -30,10 +30,10 @@ const LINE = "#E6E9EE";
 const CANVAS = "#FAFAF9";
 const SERIF = 'ui-serif, "Iowan Old Style", "Palatino Linotype", Georgia, "Times New Roman", serif';
 
-const ENQUIRY_API = "https://gurudev.pkrestates.com/api/submit-enquiry";
-const CHATBOT_INIT_API = "https://gurudev.pkrestates.com/api/chatbot/init";
-const CHATBOT_CHAT_API = "https://gurudev.pkrestates.com/api/chatbot/chat";
-const CHATBOT_HISTORY_API = "https://gurudev.pkrestates.com/api/chatbot/history";
+const ENQUIRY_API = "https://gurudev.pkrestates.com/api/backend/submit-enquiry";
+const CHATBOT_INIT_API = "https://gurudev.pkrestates.com/api/backend/chatbot/init";
+const CHATBOT_CHAT_API = "https://gurudev.pkrestates.com/api/backend/chatbot/chat";
+const CHATBOT_HISTORY_API = "https://gurudev.pkrestates.com/api/backend/chatbot/history";
 const INQUIRY_TYPES = ["General Enquiry", "Gurudev", "Privana"];
 const SESSION_STORAGE_KEY = "chatbot_session_id";
 const SESSIONS_INDEX_KEY = "chatbot_sessions_index"; 
