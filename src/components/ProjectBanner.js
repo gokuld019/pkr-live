@@ -1804,83 +1804,114 @@ export default function ProjectBanner({ project }) {
         onEnquire={() => openEnquire(project.name || '', 'Sticky menu')}
       />
 
-      {/* ================= Overview ================= */}
-      <section id="overview" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
-        <div className="relative mx-auto grid max-w-[1500px] grid-cols-1 items-stretch gap-7 sm:gap-10 lg:grid-cols-[1fr_0.95fr_1.1fr] lg:gap-8">
-          <div>
-            <FadeUp>
-              <div className="mb-3 flex items-center gap-3 sm:mb-5">
-                <SectionEyebrow>{project.eyebrow || 'More than just a home'}</SectionEyebrow>
-              </div>
-            </FadeUp>
-
-            <RevealText
-              as="h2"
-              className="mb-3 text-[26px] font-semibold leading-[1.15] tracking-tight text-[#1f2029] sm:mb-5 sm:text-[36px] sm:leading-[1.12] md:text-[46px] xl:text-[52px]"
-              text={
-                <>
-                  {project.heading?.[0] || 'Designed for a'}
-                  <br />
-                  <span style={{ color: DEEP_NAVY }}>{project.heading?.[1] || 'Better Way of Life'}</span>
-                </>
-              }
-              delay={0.1}
-            />
-
-            <FadeUp delay={0.2}>
-              <p className="mb-5 max-w-[610px] text-[13.5px] leading-[1.75] sm:mb-8 sm:text-[15px] sm:leading-[1.85] md:text-base" style={{ color: TEXT_CHARCOAL }}>
-                {project.description}
-              </p>
-            </FadeUp>
-
-            <FadeUp delay={0.3}>
-              <div className="mb-1 flex flex-wrap items-center gap-2.5 sm:gap-3 lg:mb-8">
-                {hasBrochure && (
-                  <AccentOutlineButton onClick={openBrochure} icon={Download}>
-                    Download Brochure
-                  </AccentOutlineButton>
-                )}
-                <AccentOutlineButton href="tel:+919543633333" icon={Phone}>Call Us</AccentOutlineButton>
-              </div>
-            </FadeUp>
-          </div>
-
-          <FadeUp delay={0.15} className="relative lg:h-full lg:min-h-[420px]">
-            <img
-              src={project.aboutImage}
-              alt={project.name || 'Project'}
-              className="h-auto w-full rounded-[14px] object-cover shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] sm:rounded-[16px] lg:absolute lg:inset-0 lg:h-full"
-            />
-          </FadeUp>
-
-          <FadeUp delay={0.25} amount={0.1} className="h-full">
-            <div className="relative flex h-full w-[650px] flex-col justify-center rounded-[18px] border border-[#E0E8F0] bg-white px-4 py-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.18)] sm:rounded-[22px] sm:px-6 sm:py-8 md:px-7 md:py-10">
-              <div className="pointer-events-none absolute bottom-8 left-1/2 top-8 hidden w-px -translate-x-1/2 bg-[#E8EFF7] sm:block" />
-              <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-                {quickFacts.map((fact, i) => {
-                  const FactIcon = factIconMap[fact.icon] || getFactIcon(fact.label)
-                  const isRight = i % 2 === 1
-                  const isLastRow = i >= lastRowStart
-                  return (
-                    <div
-                      key={i}
-                      className={`flex items-start gap-3 border-b border-[#E8EFF7] py-3.5 sm:gap-4 sm:py-7 ${isLastRow ? 'sm:border-b-0' : ''} ${i === factsCount - 1 ? 'border-b-0' : ''} ${isRight ? 'sm:pl-6' : 'sm:pr-4'}`}
-                    >
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl sm:h-[60px] sm:w-[60px] sm:rounded-2xl" style={{ backgroundColor: LIGHT_BLUE }}>
-                        <FactIcon className="h-[18px] w-[18px] sm:h-6 sm:w-6" strokeWidth={1.5} style={{ color: DEEP_NAVY }} />
-                      </span>
-                      <div className="flex min-h-[44px] min-w-0 flex-1 flex-col justify-center sm:min-h-[60px] sm:pt-1">
-                        <p className="m-0 mb-1 text-[10px] font-semibold uppercase leading-[1.3] tracking-[1.3px] sm:mb-1.5 sm:text-[11.5px] sm:tracking-[1.8px]" style={{ color: TEXT_CHARCOAL, opacity: 0.55 }}>{fact.label}</p>
-                        <p className="m-0 break-words text-[13.5px] font-bold leading-[1.35] sm:text-[16px]" style={{ color: DEEP_NAVY }}>{fact.value}</p>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          </FadeUp>
+     {/* ================= Overview ================= */}
+<section
+  id="overview"
+  className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-12 lg:py-20 xl:px-16 xl:py-24"
+  style={{ fontFamily: FONT }}
+>
+  <div className="relative mx-auto grid max-w-[1500px] grid-cols-1 items-stretch gap-7 sm:gap-10 lg:grid-cols-2 lg:gap-8 xl:grid-cols-[1fr_0.9fr_1.15fr]">
+    {/* ---------- Text column ---------- */}
+    <div className="min-w-0">
+      <FadeUp>
+        <div className="mb-3 flex items-center gap-3 sm:mb-5">
+          <SectionEyebrow>{project.eyebrow || 'More than just a home'}</SectionEyebrow>
         </div>
-      </section>
+      </FadeUp>
+
+      <RevealText
+        as="h2"
+        className="mb-3 text-[26px] font-semibold leading-[1.15] tracking-tight text-[#1f2029] sm:mb-5 sm:text-[36px] sm:leading-[1.12] md:text-[44px] lg:text-[42px] xl:text-[46px] 2xl:text-[52px]"
+        text={
+          <>
+            {project.heading?.[0] || 'Designed for a'}
+            <br />
+            <span style={{ color: DEEP_NAVY }}>{project.heading?.[1] || 'Better Way of Life'}</span>
+          </>
+        }
+        delay={0.1}
+      />
+
+      <FadeUp delay={0.2}>
+        <p
+          className="mb-5 max-w-[610px] text-[13.5px] leading-[1.75] sm:mb-8 sm:text-[15px] sm:leading-[1.85] md:text-base"
+          style={{ color: TEXT_CHARCOAL }}
+        >
+          {project.description}
+        </p>
+      </FadeUp>
+
+      <FadeUp delay={0.3}>
+        <div className="mb-1 flex flex-wrap items-center gap-2.5 sm:gap-3 lg:mb-0 xl:mb-8">
+          {hasBrochure && (
+            <AccentOutlineButton onClick={openBrochure} icon={Download}>
+              Download Brochure
+            </AccentOutlineButton>
+          )}
+          <AccentOutlineButton href="tel:+919543633333" icon={Phone}>
+            Call Us
+          </AccentOutlineButton>
+        </div>
+      </FadeUp>
+    </div>
+
+    {/* ---------- Image column ---------- */}
+    <FadeUp
+      delay={0.15}
+      className="relative min-w-0 lg:min-h-[480px] xl:min-h-[420px] xl:h-full"
+    >
+      <img
+        src={project.aboutImage}
+        alt={project.name || 'Project'}
+        className="h-auto w-full rounded-[14px] object-cover shadow-[0_24px_60px_-28px_rgba(0,0,0,0.35)] sm:rounded-[16px] lg:absolute lg:inset-0 lg:h-full"
+      />
+    </FadeUp>
+
+    {/* ---------- Quick facts card ---------- */}
+    <FadeUp delay={0.25} amount={0.1} className="min-w-0 lg:col-span-2 xl:col-span-1 xl:h-full">
+      <div className="relative flex h-full w-full flex-col justify-center rounded-[18px] border border-[#E0E8F0] bg-white px-4 py-2 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.18)] sm:rounded-[22px] sm:px-6 sm:py-6 md:px-7 md:py-8 xl:px-6 xl:py-10 2xl:px-7">
+        <div className="pointer-events-none absolute bottom-8 left-1/2 top-8 hidden w-px -translate-x-1/2 bg-[#E8EFF7] sm:block" />
+        <div className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+          {quickFacts.map((fact, i) => {
+            const FactIcon = factIconMap[fact.icon] || getFactIcon(fact.label)
+            const isRight = i % 2 === 1
+            const isLastRow = i >= lastRowStart
+            return (
+              <div
+                key={i}
+                className={`flex min-w-0 items-start gap-3 border-b border-[#E8EFF7] py-3.5 sm:gap-4 sm:py-6 xl:py-7 ${
+                  isLastRow ? 'sm:border-b-0' : ''
+                } ${i === factsCount - 1 ? 'border-b-0' : ''} ${isRight ? 'sm:pl-6' : 'sm:pr-4'}`}
+              >
+                <span
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl sm:h-[56px] sm:w-[56px] sm:rounded-2xl xl:h-[52px] xl:w-[52px] 2xl:h-[60px] 2xl:w-[60px]"
+                  style={{ backgroundColor: LIGHT_BLUE }}
+                >
+                  <FactIcon
+                    className="h-[18px] w-[18px] sm:h-6 sm:w-6"
+                    strokeWidth={1.5}
+                    style={{ color: DEEP_NAVY }}
+                  />
+                </span>
+                <div className="flex min-h-[44px] min-w-0 flex-1 flex-col justify-center sm:min-h-[56px] sm:pt-1">
+                  <p
+                    className="m-0 mb-1 text-[10px] font-semibold uppercase leading-[1.3] tracking-[1.3px] sm:mb-1.5 sm:text-[11px] sm:tracking-[1.6px] 2xl:text-[11.5px] 2xl:tracking-[1.8px]"
+                    style={{ color: TEXT_CHARCOAL, opacity: 0.55 }}
+                  >
+                    {fact.label}
+                  </p>
+                  <p className="m-0 break-words text-[13.5px] font-bold leading-[1.35] sm:text-[15px] 2xl:text-[16px]" style={{ color: DEEP_NAVY }}>
+                    {fact.value}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </FadeUp>
+  </div>
+</section>
 
       {/* ================= Amenities ================= */}
       {amenityTabs.length > 0 && (

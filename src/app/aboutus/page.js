@@ -34,6 +34,13 @@ const DEEP_NAVY_HOVER = "#0A2B50";
 const TEXT_CHARCOAL = "#2D3A46";
 const LIGHT_BLUE = "#E8F0F9";
 
+// Hero banner ratios, set these to your real image sizes
+const MOBILE_BANNER_W = 380;
+const MOBILE_BANNER_H = 700;   // matches /aa.jpeg
+const DESKTOP_BANNER_W = 1920;
+const DESKTOP_BANNER_H = 800;  // set to your /about3.jpeg height
+const DESKTOP_BANNER_MAX_H = 900; // stops it getting huge on ultrawide screens
+
 /* ------------------------------------------------------------------ */
 /*  GSAP TEXT HELPERS (no visual change — only wrap text for animation) */
 /* ------------------------------------------------------------------ */
@@ -164,23 +171,36 @@ export default function AboutUsPage() {
       {/*
         ===================== HERO SECTION =====================
       */}
-      <section className="relative w-full bg-white">
-        {/* Mobile-only banner */}
-        <div
-          className="block sm:hidden relative w-full bg-[#333] bg-cover bg-center"
-          style={{ backgroundImage: `url(/aa.jpeg)`, aspectRatio: "380 / 700" }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
-        </div>
+     {/* ===================== HERO SECTION ===================== */}
+<section className="relative w-full bg-white">
+  {/* Mobile-only banner (below sm) */}
+  <div
+    role="img"
+    aria-label="PKR Estates banner"
+    className="relative mx-auto block w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat sm:hidden"
+    style={{
+      backgroundImage: `url(/aa.jpeg)`,
+      aspectRatio: `${MOBILE_BANNER_W} / ${MOBILE_BANNER_H}`,
+      maxHeight: `${MOBILE_BANNER_H}px`,
+    }}
+  >
+    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
+  </div>
 
-        {/* Tablet & up banner */}
-        <div
-          className="hidden sm:flex relative w-full h-[420px] md:h-[560px] lg:h-[680px] xl:h-[750px] 2xl:h-[860px] bg-[#333] bg-cover bg-center overflow-hidden"
-          style={{ backgroundImage: `url(/about3.jpeg)` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent" />
-        </div>
-      </section>
+  {/* Tablet & up banner (sm and above) */}
+  <div
+    role="img"
+    aria-label="PKR Estates banner"
+    className="relative mx-auto hidden w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat sm:block"
+    style={{
+      backgroundImage: `url(/about3.jpeg)`,
+      aspectRatio: `${DESKTOP_BANNER_W} / ${DESKTOP_BANNER_H}`,
+      maxHeight: `${DESKTOP_BANNER_MAX_H}px`,
+    }}
+  >
+    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent" />
+  </div>
+</section>
 
       {/* ===================== ENGINEERING YOUR DREAM HOME ===================== */}
       <section className="w-full px-4 py-10 sm:px-6 sm:py-16 md:px-8 md:py-20 lg:px-16 xl:px-20 2xl:px-28 2xl:py-10 overflow-hidden">
