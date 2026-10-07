@@ -283,7 +283,7 @@ export const projects = [
           },
           {
             id: "g-1bhk-114",
-            image: "/floor-plans/gurudev/1bhk1t/114.jpeg",
+            image: "/floorplans/gurudev/1bhk1t/114.jpeg",
             
             title: "1 BHK + 1T · Unit 114",
             type: "1 BHK",
@@ -365,7 +365,7 @@ export const projects = [
           },
           {
             id: "g-1bhk-204",
-            image: "/floor-plans/gurudev/1bhk1t/204.jpeg",                       
+            image: "/floorplans/gurudev/1bhk1t/204.jpeg",                       
              
             title: "1 BHK + 1T · Unit 204",
             type: "1 BHK",
@@ -412,7 +412,7 @@ export const projects = [
           // ============================
           {
             id: "g-2bhk-101",
-            image: "/floorplans/gurudev/2bhk1t/1bhk-1T8.jpeg",
+            image: "/floorplans/gurudev/2bhk2t/2bhk-2T.jpeg",
             title: "2 BHK + 2T · Unit 101",
             type: "2 BHK",
             area: "730 Sq.Ft.",
@@ -1486,7 +1486,7 @@ export const projects = [
           },
           {
             id: "b-1bhk-214-514",
-            image: "/floorplans/privana/block-b/1bhk/B214-B514.png",
+            image: "/floorplans/privana/block-b/1bhk/B214-b514.png",
             title: "1 BHK · Units B214–B514",
             type: "1 BHK",
             area: "791 sq.ft",

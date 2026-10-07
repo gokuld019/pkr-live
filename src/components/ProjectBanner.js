@@ -56,6 +56,11 @@ function buildWhatsAppUrl({ name, phone, inquiryType, message, projectName }) {
 const MOBILE_BANNER_W = 380
 const MOBILE_BANNER_H = 700
 
+// Desktop banner ratio — set these to your real hero image size (e.g. privvv.jpeg)
+const DESKTOP_BANNER_W = 2463
+const DESKTOP_BANNER_H = 1000
+const DESKTOP_BANNER_MAX_H = 1000 // stops the banner getting huge on ultrawide screens
+
 const landmarkIconMap = {
   Schools: School, Hospitals: Hospital, 'Railway Station': TrainFront,
   'Bus Stand': Bus, Airport: Plane,
@@ -129,7 +134,10 @@ const FLOOR_PLAN_HIGHLIGHTS = [
 
 function getRoomIcon(label = '') {
   const l = label.toLowerCase()
-  if (l.includes('bed')) return BedDouble
+  if (l.includes('facing')) return Compass
+  if (l.includes('sq.ft') || l.includes('sq ft') || l.includes('sqft')) return Ruler
+  if (l.startsWith('floor')) return Layers
+  if (l.includes('bed') || l.includes('studio')) return BedDouble
   if (l.includes('toilet')) return Toilet
   if (l.includes('bath')) return Bath
   if (l.includes('living') || l.includes('hall')) return Sofa
@@ -222,6 +230,100 @@ function getPlanRooms(plan) {
   if (plan.rooms?.length) return plan.rooms
   if (plan.features?.length) return plan.features.map((f) => f.label)
   return []
+}
+
+/* ---------------- Unit-specific plan content ---------------- */
+
+const ordinal = (n) => {
+  const s = ['th', 'st', 'nd', 'rd']
+  const v = n % 100
+  return `${n}${s[(v - 20) % 10] || s[v] || s[0]}`
+}
+
+// Reads floors from the unit numbers in the title (103 -> 1, B106 - B506 -> 1..5)
+function getPlanFloors(plan) {
+  const unitPart = String(plan?.title || '').split('·').slice(1).join(' ')
+  const codes = unitPart.match(/[A-Za-z]?\d{3}/g) || []
+  const floors = codes
+    .map((c) => parseInt(c.replace(/\D/g, '')[0], 10))
+    .filter((n) => Number.isFinite(n))
+  if (!floors.length) return null
+  return { min: Math.min(...floors), max: Math.max(...floors) }
+}
+
+const FACING_DESCRIPTION = {
+  East: 'East-facing, so it gets soft morning light',
+  West: 'West-facing, so it fills with warm evening light',
+  North: 'North-facing, giving calm, even daylight through the day',
+  South: 'South-facing, keeping the home bright and well ventilated',
+  'North-East': 'North-east facing, with gentle morning light and good airflow',
+  'North-West': 'North-west facing, with even daylight and cross ventilation',
+  'South-East': 'South-east facing, with bright mornings and good ventilation',
+  'South-West': 'South-west facing, with warm afternoon and evening light',
+}
+
+function getPlanDescription(plan, facing) {
+  if (!plan) return ''
+  if (plan.description) return plan.description
+
+  const name = splitPlanTitle(plan).facing || plan.title || 'This layout'
+  const type = String(plan.type || plan.title || '')
+  const features = plan.features || []
+  const findLabel = (icon) => (features.find((f) => f.icon === icon) || {}).label || ''
+  const beds = findLabel('bed')
+  const baths = findLabel('bath')
+  const living = findLabel('living')
+  const area = formatArea(plan.area)
+
+  const isStudio = /studio/i.test(type)
+  const bedCount = parseInt(beds, 10) || (/^3/.test(type) ? 3 : /^2/.test(type) ? 2 : 1)
+
+  let intro
+  if (isStudio) {
+    intro = 'A compact studio that brings sleeping, living and a kitchenette into one efficient space'
+  } else if (beds && baths) {
+    intro = `Planned with ${beds.toLowerCase()}, ${baths.toLowerCase()}${living ? ` and a ${living.toLowerCase()} zone` : ''}`
+  } else {
+    intro = `A thoughtfully planned ${type} home`
+  }
+  if (area) intro += `, with ${area.replace(/\s*sq\.?\s*ft\.?/i, '').trim()} sq.ft of planned space`
+
+  const parts = [`${name} — ${intro}.`]
+
+  if (facing && FACING_DESCRIPTION[facing]) parts.push(`${FACING_DESCRIPTION[facing]}.`)
+
+  const floors = getPlanFloors(plan)
+  if (floors) {
+    parts.push(
+      floors.min === floors.max
+        ? `Located on the ${ordinal(floors.min)} floor.`
+        : `Available from the ${ordinal(floors.min)} to the ${ordinal(floors.max)} floor.`
+    )
+  }
+
+  if (isStudio) parts.push('Ideal for singles, students and first-time buyers.')
+  else if (bedCount >= 3) parts.push('Suits larger families who want room to grow.')
+  else if (bedCount === 2) parts.push('Suits growing families.')
+  else parts.push('Suits couples, small families and investors.')
+
+  return parts.join(' ')
+}
+
+function getPlanDetails(plan, facing) {
+  const rooms = getPlanRooms(plan)
+  const details = [...rooms]
+  if (facing) details.push(`${facing} Facing`)
+  const area = formatArea(plan?.area)
+  if (area) details.push(area)
+  const floors = getPlanFloors(plan)
+  if (floors) {
+    details.push(
+      floors.min === floors.max
+        ? `Floor ${floors.min}`
+        : `Floors ${floors.min} – ${floors.max}`
+    )
+  }
+  return details
 }
 
 const DEFAULT_TYPE_INFO = [
@@ -1482,7 +1584,7 @@ export default function ProjectBanner({ project }) {
   const [facingFilter, setFacingFilter] = useState('all')
 
   useEffect(() => { setFacingFilter('all') }, [activeBlock])
-  // ✅ NEW: clear picked plan whenever facing filter changes so a valid plan is always selected
+  // clear picked plan whenever facing filter changes so a valid plan is always selected
   useEffect(() => { setPicked(null) }, [facingFilter])
 
   const isFacingFiltered = hasFacingFilter && facingFilter !== 'all'
@@ -1665,24 +1767,34 @@ export default function ProjectBanner({ project }) {
   return (
     <div className={`${figtree.className} w-full overflow-x-clip`} style={{ fontFamily: FONT }}>
       {/* ================= Banner ================= */}
-      <section ref={bannerRef} className="relative w-full" style={{ fontFamily: FONT }}>
-        <div
-          className="relative hidden w-full items-center justify-center overflow-hidden bg-[#333] bg-cover bg-center md:flex md:min-h-[750px]"
-          style={{ backgroundImage: `url(${project.heroImage})` }}
-        />
-        <div className="relative w-full bg-[#333] md:hidden">
-          <div
-            role="img"
-            aria-label={project.name ? `${project.name} banner` : 'Project banner'}
-            className="relative mx-auto w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${project.heroImageMobile || project.heroImage})`,
-              aspectRatio: `${MOBILE_BANNER_W} / ${MOBILE_BANNER_H}`,
-              maxHeight: `${MOBILE_BANNER_H}px`,
-            }}
-          />
-        </div>
-      </section>
+      {/* ================= Banner ================= */}
+<section ref={bannerRef} className="relative w-full" style={{ fontFamily: FONT }}>
+  {/* Desktop / tablet (md and up) — scales with width using aspect-ratio */}
+  <div
+    role="img"
+    aria-label={project.name ? `${project.name} banner` : 'Project banner'}
+    className="relative mx-auto hidden w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat md:block"
+    style={{
+      backgroundImage: `url(${project.heroImage})`,
+      aspectRatio: `${project.heroAspectW || DESKTOP_BANNER_W} / ${project.heroAspectH || DESKTOP_BANNER_H}`,
+      maxHeight: `${DESKTOP_BANNER_MAX_H}px`,
+    }}
+  />
+
+  {/* Mobile (below md) */}
+  <div className="relative w-full bg-[#333] md:hidden">
+    <div
+      role="img"
+      aria-label={project.name ? `${project.name} banner` : 'Project banner'}
+      className="relative mx-auto w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: `url(${project.heroImageMobile || project.heroImage})`,
+        aspectRatio: `${MOBILE_BANNER_W} / ${MOBILE_BANNER_H}`,
+        maxHeight: `${MOBILE_BANNER_H}px`,
+      }}
+    />
+  </div>
+</section>
 
       {/* ================= Sticky Sub-Menu ================= */}
       <ProjectSubMenu
@@ -1973,7 +2085,6 @@ export default function ProjectBanner({ project }) {
                   <Maximize2 className="h-4 w-4" />
                 </IconCircleButton>
 
-                {/* ✅ NEW: prev / next arrows on the image */}
                 {galleryItems.length > 1 && (
                   <>
                     <IconCircleButton
@@ -2568,11 +2679,11 @@ export default function ProjectBanner({ project }) {
                               </div>
 
                               <p className="m-0 mt-2 border-b border-[#EDF2F8] pb-4 text-[12.5px] leading-[1.65] sm:mt-3 sm:pb-5 sm:text-[13.5px] sm:leading-[1.7]" style={{ color: TEXT_CHARCOAL }}>
-                                {getPlanGroupInfo(selectedGroupLabel, project, currentFloorBlock)}
+                                {getPlanDescription(selectedPlan, selectedPlanFacing(selectedPlan)) || getPlanGroupInfo(selectedGroupLabel, project, currentFloorBlock)}
                               </p>
 
                               <ul className="m-0 grid list-none grid-cols-2 gap-x-4 gap-y-2.5 px-0 py-4 sm:gap-x-6 sm:gap-y-3.5 sm:py-6 xl:flex xl:flex-col xl:gap-4">
-                                {getPlanRooms(selectedPlan).map((room, i) => {
+                                {getPlanDetails(selectedPlan, selectedPlanFacing(selectedPlan)).map((room, i) => {
                                   const RoomIcon = getRoomIcon(room)
                                   return (
                                     <li key={i} className="flex items-center gap-2.5 sm:gap-4">
