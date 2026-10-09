@@ -25,8 +25,8 @@ export const completedProjects = [
     location: "T Nagar, Chennai",
     tagline: "A landmark address in the heart of T Nagar, fully handed over",
     completedYear: "TODO: add year of completion",
-    heroImage: "/completed/pk.png",
-    heroImageMobile: "/completed/cp1.png",
+    heroImage: "/completed/pkss.png",
+    heroImageMobile: "/completed/pksmob.png",
     gallery: [
       "/completed/pks-paradise/gallery-1.jpg",
       "/completed/pks-paradise/gallery-2.jpg",
