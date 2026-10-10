@@ -1786,11 +1786,10 @@ export default function ProjectBanner({ project }) {
     <div
       role="img"
       aria-label={project.name ? `${project.name} banner` : 'Project banner'}
-      className="relative mx-auto w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat"
+      className="relative mx-auto w-full overflow-hidden bg-[#333] bg-cover bg-top bg-no-repeat"
       style={{
         backgroundImage: `url(${project.heroImageMobile || project.heroImage})`,
         aspectRatio: `${MOBILE_BANNER_W} / ${MOBILE_BANNER_H}`,
-        maxHeight: `${MOBILE_BANNER_H}px`,
       }}
     />
   </div>

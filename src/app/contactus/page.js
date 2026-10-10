@@ -157,7 +157,7 @@ export default function ContactPage() {
         <div className="block sm:hidden w-full flex justify-center bg-white">
           <div
             className="relative bg-[#333] bg-cover bg-center"
-            style={{ backgroundImage: `url(/mobcus.jpeg)`, width: "380px", height: "700px", maxWidth: "100%" }}
+            style={{ backgroundImage: `url(/mobcus.jpeg)`, width: "100%", height: "700px", maxWidth: "100%" }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
           </div>

@@ -190,8 +190,8 @@ export default function EmiCalculatorPage() {
         {/* Mobile-only banner — fixed 380 x 700px, centered, across all mobile screens */}
         <div className="block sm:hidden w-full flex justify-center bg-white">
           <div
-            className="relative bg-[#333] bg-cover bg-center"
-            style={{ backgroundImage: `url(/emimob.jpeg)`, width: "380px", height: "700px", maxWidth: "100%" }}
+            className="relative bg-[#333] bg-cover bg-top"
+            style={{ backgroundImage: `url(/emimob.jpeg)`, width: "100%", height: "700px", maxWidth: "100%" }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
           </div>

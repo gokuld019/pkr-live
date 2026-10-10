@@ -64,7 +64,7 @@ export default function CompletedProjectView({ project, otherProjects }) {
   return (
     <main ref={root} className={`${geist.className} w-full bg-white`} style={{ color: CHARCOAL }}>
       {/* ================= HERO — full-bleed, editorial ================= */}
-      <section className="relative h-[100vh] min-h-[520px] w-full overflow-hidden sm:h-[86vh] sm:min-h-[560px]">
+      <section className="relative h-auto min-h-[520px] w-full overflow-hidden sm:h-[86vh] sm:min-h-[560px]">
         {/* Desktop hero */}
         <Image
           src={project.heroImage}
@@ -76,14 +76,15 @@ export default function CompletedProjectView({ project, otherProjects }) {
         />
 
         {/* Mobile hero */}
-        <Image
-          src={mobileHero}
-          alt={project.name}
-          fill
-          priority
-          sizes="(max-width: 639px) 100vw, 0vw"
-          className="block object-cover sm:hidden"
-        />
+     <Image
+  src={mobileHero}
+  alt={project.name}
+  priority
+  sizes="100vw"
+  width={380}
+  height={670}
+  className="block w-full h-auto object-cover sm:hidden"
+/>
 
        
 
@@ -110,7 +111,7 @@ export default function CompletedProjectView({ project, otherProjects }) {
       </section> */}
 
       {/* ================= STORY + HIGHLIGHTS ================= */}
-      <section className="cp-reveal mx-auto max-w-[1500px] px-5 py-16 sm:px-10 sm:py-24 lg:px-14">
+      <section className="cp-reveal mx-auto max-w-[1500px] px-5 py-10 sm:px-10 sm:py-24 lg:px-14">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <div>
             <h2 className="text-[24px] font-bold leading-tight tracking-tight sm:text-[34px]" style={{ color: DEEP_NAVY }}>

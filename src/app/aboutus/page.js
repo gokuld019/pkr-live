@@ -181,7 +181,6 @@ export default function AboutUsPage() {
     style={{
       backgroundImage: `url(/aa.jpeg)`,
       aspectRatio: `${MOBILE_BANNER_W} / ${MOBILE_BANNER_H}`,
-      maxHeight: `${MOBILE_BANNER_H}px`,
     }}
   >
     <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
