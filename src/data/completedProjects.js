@@ -26,7 +26,7 @@ export const completedProjects = [
     tagline: "A landmark address in the heart of T Nagar, fully handed over",
     completedYear: "TODO: add year of completion",
     heroImage: "/completed/pksss.webp",
-    heroImageMobile: "/completed/cp1.png",
+    heroImageMobile: "/completed/pksmob1.png",
     gallery: [
       "/completed/pks-paradise/gallery-1.jpg",
       "/completed/pks-paradise/gallery-2.jpg",
@@ -54,7 +54,7 @@ export const completedProjects = [
     tagline: "A settled, green community south of the city",
     completedYear: "TODO: add year of completion",
     heroImage: "/completed/Premvathy.jpeg",
-    heroImageMobile: "/completed/cp2.png",
+    heroImageMobile: "/completed/upprem.webp",
     gallery: [
       "/completed/premavathy-nagar/gallery-1.jpg",
       "/completed/premavathy-nagar/gallery-2.jpg",
@@ -82,7 +82,7 @@ export const completedProjects = [
     tagline: "Compact, efficient homes for first-time buyers",
     completedYear: "TODO: add year of completion",
     heroImage: "/completed/Lit.jpeg",
-    heroImageMobile: "/completed/cp3.png",
+    heroImageMobile: "/completed/uplit.webp",
     gallery: [
       "/completed/little-india/gallery-1.jpg",
       "/completed/little-india/gallery-2.jpg",
@@ -110,7 +110,7 @@ export const completedProjects = [
     tagline: "Garden-facing homes on the SP Koil corridor",
     completedYear: "TODO: add year of completion",
     heroImage: "/completed/ags.jpeg",
-    heroImageMobile: "/completed/cp5.png",
+    heroImageMobile: "/completed/agsp.png",
     gallery: [
       "/completed/aditi-gardenz-sp-koil/gallery-1.jpg",
       "/completed/aditi-gardenz-sp-koil/gallery-2.jpg",
@@ -138,7 +138,7 @@ export const completedProjects = [
     tagline: "The Aditi Gardenz address, this time in Veppampattu",
     completedYear: "TODO: add year of completion",
     heroImage: "/completed/cp6.jpeg",
-    heroImageMobile: "/completed/cp4.png",
+    heroImageMobile: "/completed/agvmob.png",
     gallery: [
       "/completed/aditi-gardenz-veppampattu/gallery-1.jpg",
       "/completed/aditi-gardenz-veppampattu/gallery-2.jpg",
