@@ -64,7 +64,7 @@ export default function CompletedProjectView({ project, otherProjects }) {
   return (
     <main ref={root} className={`${geist.className} w-full bg-white`} style={{ color: CHARCOAL }}>
       {/* ================= HERO — full-bleed, editorial ================= */}
-      <section className="relative h-[78vh] min-h-[520px] w-full overflow-hidden sm:h-[86vh] sm:min-h-[560px]">
+      <section className="relative h-[100vh] min-h-[520px] w-full overflow-hidden sm:h-[86vh] sm:min-h-[560px]">
         {/* Desktop hero */}
         <Image
           src={project.heroImage}
