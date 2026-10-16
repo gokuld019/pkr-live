@@ -1,0 +1,15 @@
+
+# Deployment archives
+out.zip
+*.zip
+
+# Dependencies
+node_modules/
+
+# Next.js generated files
+.next/
+
+# Environment variables
+.env
+.env.*
+!.env.example
