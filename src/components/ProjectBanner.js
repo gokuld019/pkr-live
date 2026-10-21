@@ -418,97 +418,65 @@ function getPricingType(project) {
 
 const pad = (n) => String(n).padStart(2, '0')
 
-// write a scaleX straight to the DOM (no React state, no spring loop)
-function setScaleX(el, value) {
-  if (!el) return
-  const v = Math.round(Math.min(1, Math.max(0, value)) * 1000) / 1000
-  if (el.dataset.sx === String(v)) return
-  el.dataset.sx = String(v)
-  el.style.transform = `scaleX(${v})`
-}
-
 /* ==================================================================
    NAVBAR OFFSET
-   No React state is touched on scroll: the offset lives in a ref and is
-   written straight to the sticky bar's `top`. `stableOffset` (state) only
-   changes on resize / orientation, so it is safe to feed to the
-   IntersectionObserver without recreating it mid-scroll.
+   Measured ONLY when the navbar is resized / the viewport width changes.
+   There is no scroll listener: reading layout or writing styles while the
+   page is scrolling is what makes iOS Safari flicker a sticky bar.
 ================================================================== */
-function useNavbarOffset(selector, fallback = 0, barRef) {
-  const offsetRef = useRef(fallback)
-  const [stableOffset, setStableOffset] = useState(fallback)
+function useNavbarOffset(selector, fallback = 0) {
+  const [offset, setOffset] = useState(fallback)
 
   useEffect(() => {
     const el = selector ? document.querySelector(selector) : null
+    if (!el) { setOffset(fallback); return }
 
-    const apply = (v) => {
-      offsetRef.current = v
-      if (barRef.current) barRef.current.style.top = `${v}px`
-    }
-
-    if (!el) {
-      apply(fallback)
-      setStableOffset(fallback)
-      return
-    }
-
-    let raf = 0
-
-    const read = () => {
-      const root = document.documentElement
-      const y = window.scrollY
-      const maxY = Math.max(0, root.scrollHeight - root.clientHeight)
-      if (y < 0 || y > maxY + 1) return null // iOS rubber-band: ignore
+    let lastWidth = window.innerWidth
+    const measure = () => {
       const pos = getComputedStyle(el).position
       const pinned = pos === 'fixed' || pos === 'sticky'
-      return pinned ? Math.max(0, Math.round(el.getBoundingClientRect().bottom)) : 0
+      const next = pinned ? Math.round(el.getBoundingClientRect().height + (parseFloat(getComputedStyle(el).top) || 0)) : 0
+      setOffset((prev) => (prev === next ? prev : next))
     }
 
-    const measure = (commitStable) => {
-      raf = 0
-      const next = read()
-      if (next === null) return
-      const prev = offsetRef.current
-      // ignore 1px jitter, but always accept a move to/from 0
-      if (!(prev !== 0 && next !== 0 && Math.abs(prev - next) < 2) && prev !== next) apply(next)
-      if (commitStable) setStableOffset((p) => (p === offsetRef.current ? p : offsetRef.current))
-    }
-
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => measure(false)) }
-    const onResize = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => measure(true)) }
-
-    measure(true)
-    const ro = new ResizeObserver(onResize)
+    measure()
+    const ro = new ResizeObserver(measure)
     ro.observe(el)
-    window.addEventListener('scroll', onScroll, { passive: true })
+
+    // iOS fires `resize` whenever the toolbar collapses mid-scroll: only react to width changes
+    const onResize = () => {
+      if (window.innerWidth === lastWidth) return
+      lastWidth = window.innerWidth
+      measure()
+    }
     window.addEventListener('resize', onResize)
     window.addEventListener('orientationchange', onResize)
-    el.addEventListener('transitionend', onScroll)
+    window.addEventListener('load', measure)
 
     return () => {
-      cancelAnimationFrame(raf)
       ro.disconnect()
-      window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
       window.removeEventListener('orientationchange', onResize)
-      el.removeEventListener('transitionend', onScroll)
+      window.removeEventListener('load', measure)
     }
-  }, [selector, fallback, barRef])
+  }, [selector, fallback])
 
-  return { offsetRef, stableOffset }
+  return offset
 }
+
+// Promote the bar to its own compositor layer (the usual iOS sticky-flicker fix).
+// If it ever looks worse on a specific device, set this to false.
+const PROMOTE_STICKY_LAYER = true
 
 /* ================================================================== */
 /*  PROJECT SUB-MENU                                                   */
 /*                                                                     */
-/*  iPhone flicker (confirmed from screen recording): the old sliding  */
-/*  "pill" was a separate absolutely-positioned element animated to    */
-/*  each tab's measured left/width/height. During a fast scroll the    */
-/*  active tab changes 3-4 times in a few frames, so the pill was seen */
-/*  mid-flight: half over the wrong label, wrong size, labels cut off. */
-/*  Now each tab paints its own highlight, so there is nothing to      */
-/*  measure, chase or animate. On touch screens the change is instant; */
-/*  on larger screens it gets a short colour fade.                     */
+/*  Scroll-inert design:                                               */
+/*   - no scroll / resize listeners doing layout reads                 */
+/*   - active section comes from IntersectionObserver                  */
+/*   - no progress bars, no pill, no style writes while scrolling      */
+/*   - on phones the bar looks identical whether "stuck" or not, so    */
+/*     nothing repaints when it pins                                   */
 /* ================================================================== */
 function ProjectSubMenu({
   items = [],
@@ -526,11 +494,7 @@ function ProjectSubMenu({
   const lockTimer = useRef(null)
   const centerTimer = useRef(null)
 
-  const { offsetRef, stableOffset } = useNavbarOffset(navbarSelector, fallbackOffset, barRef)
-
-  // progress bars are written directly to the DOM (see setScaleX)
-  const sectionBarRef = useRef(null)
-  const pageBarRef = useRef(null)
+  const navOffset = useNavbarOffset(navbarSelector, fallbackOffset)
 
   const itemsRef = useRef(items)
   itemsRef.current = items
@@ -556,15 +520,13 @@ function ProjectSubMenu({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [orderedIds, itemsKey]
   )
+  const orderedKey = ordered.map((i) => i.id).join('|')
 
   const [activeId, setActiveId] = useState(items[0]?.id || '')
   const [stuck, setStuck] = useState(false)
   const [edges, setEdges] = useState({ left: false, right: false })
 
-  /*
-    "Stuck" detection via IntersectionObserver. Uses stableOffset so the
-    observer is never torn down and recreated while the user is scrolling.
-  */
+  /* ---------- "stuck" (desktop-only visuals) via IntersectionObserver ---------- */
   useEffect(() => {
     const sentinel = sentinelRef.current
     if (!sentinel || typeof IntersectionObserver === 'undefined') return
@@ -574,84 +536,92 @@ function ProjectSubMenu({
         const next = !entry.isIntersecting && entry.boundingClientRect.top < rootTop
         setStuck((prev) => (prev === next ? prev : next))
       },
-      { rootMargin: `-${stableOffset}px 0px 0px 0px`, threshold: [0, 1] }
+      { rootMargin: `-${navOffset}px 0px 0px 0px`, threshold: [0, 1] }
     )
     io.observe(sentinel)
     return () => io.disconnect()
-  }, [stableOffset, ordered.length])
+  }, [navOffset])
 
+  /* ---------- active section via IntersectionObserver ----------
+     A band from just under the sticky bar down to 40% of the viewport is the
+     "reading line". The last section (in page order) touching that band is
+     active — same rule as before, but computed by the browser, off the
+     main thread, with zero layout reads from us. */
   useEffect(() => {
-    if (!ordered.length) return
-    let raf = 0
+    if (!ordered.length || typeof IntersectionObserver === 'undefined') return
 
-    const update = () => {
-      raf = 0
+    const barH = barRef.current?.offsetHeight || 56
+    const top = navOffset + barH
+    const touching = new Set()
+    let atEnd = false
 
-      const root = document.documentElement
-      const viewportH = root.clientHeight || window.innerHeight
-      const maxScroll = Math.max(0, root.scrollHeight - viewportH)
-
-      // iOS rubber-band: skip overscroll frames entirely
-      if (window.scrollY < 0 || window.scrollY > maxScroll + 1) return
-      const scrollY = window.scrollY
-
-      const top = offsetRef.current
-      const barH = barRef.current?.offsetHeight || 56
-
-      const probe = top + barH + Math.min(viewportH * 0.3, 180)
-      const els = ordered.map((i) => document.getElementById(i.id))
-
-      let idx = 0
-      els.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= probe) idx = i })
-
-      const atBottom = scrollY >= maxScroll - 4
-      if (atBottom && !lockRef.current) idx = els.length - 1
-
-      const activeEl = els[idx]
-      if (activeEl) {
-        const r = activeEl.getBoundingClientRect()
-        const p = atBottom ? 1 : (probe - r.top) / Math.max(1, r.height)
-        setScaleX(sectionBarRef.current, p)
+    const commit = () => {
+      if (lockRef.current) return
+      let next = ordered[0]?.id
+      if (atEnd) {
+        next = ordered[ordered.length - 1].id
+      } else {
+        for (let i = 0; i < ordered.length; i++) if (touching.has(ordered[i].id)) next = ordered[i].id
       }
-
-      const first = els.find(Boolean)
-      const last = [...els].reverse().find(Boolean)
-      if (first && last) {
-        const start = first.getBoundingClientRect().top + scrollY - probe
-        const end = last.getBoundingClientRect().bottom + scrollY - viewportH
-        setScaleX(pageBarRef.current, (scrollY - start) / Math.max(1, end - start))
-      }
-
-      const next = lockRef.current || ordered[idx]?.id
       setActiveId((prev) => (prev === next ? prev : next))
     }
 
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update) }
-    update()
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) touching.add(e.target.id)
+          else touching.delete(e.target.id)
+        })
+        commit()
+      },
+      { rootMargin: `-${top}px 0px -60% 0px`, threshold: 0 }
+    )
+
+    ordered.forEach((item) => {
+      const el = document.getElementById(item.id)
+      if (el) io.observe(el)
+    })
+
+    // "reached the very bottom of the page" -> last tab. Only touches
+    // scrollTop/scrollHeight (no layout), and only sets state on change.
+    let raf = 0
+    const checkEnd = () => {
+      raf = 0
+      const root = document.documentElement
+      const y = window.scrollY
+      const max = root.scrollHeight - root.clientHeight
+      if (y < 0 || y > max + 1) return // iOS rubber-band
+      const next = max > 0 && y >= max - 4
+      if (next !== atEnd) { atEnd = next; commit() }
+    }
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(checkEnd) }
     window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll)
+    checkEnd()
+
     return () => {
+      io.disconnect()
       cancelAnimationFrame(raf)
       window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
     }
-  }, [ordered, offsetRef])
+  }, [orderedKey, navOffset])
 
+  /* ---------- CSS var for other components ---------- */
   useEffect(() => {
     const h = barRef.current?.offsetHeight || 0
-    document.documentElement.style.setProperty('--project-subnav-offset', `${stableOffset + h}px`)
-  }, [stableOffset])
+    document.documentElement.style.setProperty('--project-subnav-offset', `${navOffset + h}px`)
+  }, [navOffset])
 
   useEffect(() => () => {
     document.documentElement.style.removeProperty('--project-subnav-offset')
   }, [])
 
+  /* ---------- tap a tab ---------- */
   const scrollToSection = useCallback((id) => {
     const el = document.getElementById(id)
     if (!el) return
 
     const barH = barRef.current?.offsetHeight || 0
-    const y = el.getBoundingClientRect().top + window.scrollY - offsetRef.current - barH + 1
+    const y = el.getBoundingClientRect().top + window.scrollY - navOffset - barH + 1
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
     lockRef.current = id
@@ -667,9 +637,8 @@ function ProjectSubMenu({
 
     window.scrollTo({ top: Math.max(0, y), behavior: reduce ? 'auto' : 'smooth' })
 
-    // iOS Safari throws if replaceState is called too often
     try { window.history.replaceState(null, '', `#${id}`) } catch { /* ignore */ }
-  }, [offsetRef])
+  }, [navOffset])
 
   useEffect(() => {
     const hash = decodeURIComponent(window.location.hash.slice(1))
@@ -681,6 +650,7 @@ function ProjectSubMenu({
 
   useEffect(() => () => { clearTimeout(lockTimer.current); clearTimeout(centerTimer.current) }, [])
 
+  /* ---------- fade edges on the tab strip ---------- */
   const updateEdges = useCallback(() => {
     const s = scrollerRef.current
     if (!s) return
@@ -697,11 +667,9 @@ function ProjectSubMenu({
     const ro = new ResizeObserver(updateEdges)
     ro.observe(s)
     return () => { s.removeEventListener('scroll', updateEdges); ro.disconnect() }
-  }, [updateEdges, ordered.length])
+  }, [updateEdges, orderedKey])
 
-  // Keep the active tab visible. Debounced so it only runs once the active tab
-  // has settled (not on every intermediate tab during a fast scroll), and it
-  // never runs while the page itself is still scrolling toward a tapped tab.
+  /* ---------- keep active tab visible (debounced, never mid-scroll) ---------- */
   useEffect(() => {
     clearTimeout(centerTimer.current)
     centerTimer.current = setTimeout(() => {
@@ -716,7 +684,7 @@ function ProjectSubMenu({
       const target = Math.max(0, tabLeft - s.clientWidth / 2 + t.offsetWidth / 2)
       if (lockRef.current) s.scrollTo({ left: target, behavior: 'smooth' })
       else s.scrollLeft = target
-    }, lockRef.current ? 0 : 160)
+    }, lockRef.current ? 0 : 220)
     return () => clearTimeout(centerTimer.current)
   }, [activeId])
 
@@ -730,21 +698,26 @@ function ProjectSubMenu({
   const activeIndex = Math.max(0, ordered.findIndex((i) => i.id === activeId))
   const activeLabel = ordered[activeIndex]?.label
 
+  const layerStyle = PROMOTE_STICKY_LAYER
+    ? { transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }
+    : null
+
   return (
     <>
       <div ref={sentinelRef} aria-hidden="true" className="-mb-px h-px w-full" />
 
-      {/* `top` is written directly to the DOM by useNavbarOffset */}
       <div
         ref={barRef}
         className="sticky z-40 w-full"
-        style={{ top: fallbackOffset, fontFamily }}
+        style={{ top: navOffset, fontFamily, ...layerStyle }}
       >
+        {/* Phones: one constant look (no class flip when it pins).
+            sm and up: the nicer "stuck" glass + shadow. */}
         <div
-          className={`relative w-full border-b sm:transition-[background-color,box-shadow,border-color] sm:duration-500 ${
+          className={`relative w-full border-b bg-white shadow-[0_10px_22px_-18px_rgba(15,58,107,0.4)] sm:transition-[background-color,box-shadow,border-color] sm:duration-500 ${
             stuck
-              ? 'border-[#0F3A6B]/10 bg-white shadow-[0_12px_32px_-20px_rgba(15,58,107,0.45)] sm:bg-white/85 sm:backdrop-blur-xl sm:backdrop-saturate-150'
-              : 'border-[#E4ECF4] bg-white'
+              ? 'border-[#0F3A6B]/10 sm:bg-white/85 sm:shadow-[0_12px_32px_-20px_rgba(15,58,107,0.45)] sm:backdrop-blur-xl sm:backdrop-saturate-150'
+              : 'border-[#E4ECF4] sm:shadow-none'
           }`}
         >
           <div className="mx-auto flex max-w-[1560px] items-center gap-3 px-2 sm:px-6 lg:px-10">
@@ -843,16 +816,6 @@ function ProjectSubMenu({
                           />
                         )}
                         <span className="relative z-[1] whitespace-nowrap">{item.label}</span>
-
-                        {isActive && (
-                          <span className="pointer-events-none absolute bottom-[4px] left-4 right-4 h-[2px] overflow-hidden rounded-full bg-white/20">
-                            <span
-                              ref={sectionBarRef}
-                              className="absolute inset-0 origin-left rounded-full bg-white/85"
-                              style={{ transform: 'scaleX(0)' }}
-                            />
-                          </span>
-                        )}
                       </a>
                     )
                   })}
@@ -880,13 +843,6 @@ function ProjectSubMenu({
               </AnimatePresence>
             )}
           </div>
-
-          <div
-            ref={pageBarRef}
-            aria-hidden="true"
-            className="absolute inset-x-0 -bottom-px h-[2px] origin-left"
-            style={{ transform: 'scaleX(0)', background: `linear-gradient(90deg, ${DEEP_NAVY} 0%, #3B7BC4 100%)` }}
-          />
         </div>
       </div>
     </>
