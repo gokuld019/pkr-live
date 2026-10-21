@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
-import { motion, useInView, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
+import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Figtree } from 'next/font/google'
 import * as THREE from 'three'
 import {
@@ -416,72 +416,99 @@ function getPricingType(project) {
   return 'plots'
 }
 
-/* ==================================================================
-   STICKY SUB-MENU
-================================================================== */
 const pad = (n) => String(n).padStart(2, '0')
 
-/*
-  FIX (bar jumps up/down a few px on mobile) — part 1:
+// write a scaleX straight to the DOM (no React state, no spring loop)
+function setScaleX(el, value) {
+  if (!el) return
+  const v = Math.round(Math.min(1, Math.max(0, value)) * 1000) / 1000
+  if (el.dataset.sx === String(v)) return
+  el.dataset.sx = String(v)
+  el.style.transform = `scaleX(${v})`
+}
 
-  The old version measured the site navbar only AFTER a 100ms debounce.
-  On mobile the navbar (and the browser URL bar) change size/position while
-  you scroll, so the sticky bar kept using a STALE `top` value, then snapped
-  to the new one a moment later -> the whole bar visibly hopped a few pixels.
-
-  Now:
-   - the measurement runs once per animation frame while scrolling, so the
-     bar's `top` follows the navbar in the same frame (no lag, no snap)
-   - sub-pixel / 1px noise (mobile URL-bar collapse, rounding) is ignored
-     with a 2px dead-zone so the bar never wobbles for tiny changes
-*/
-function useNavbarOffset(selector, fallback = 0) {
-  const [offset, setOffset] = useState(fallback)
+/* ==================================================================
+   NAVBAR OFFSET
+   No React state is touched on scroll: the offset lives in a ref and is
+   written straight to the sticky bar's `top`. `stableOffset` (state) only
+   changes on resize / orientation, so it is safe to feed to the
+   IntersectionObserver without recreating it mid-scroll.
+================================================================== */
+function useNavbarOffset(selector, fallback = 0, barRef) {
+  const offsetRef = useRef(fallback)
+  const [stableOffset, setStableOffset] = useState(fallback)
 
   useEffect(() => {
     const el = selector ? document.querySelector(selector) : null
-    if (!el) { setOffset(fallback); return }
+
+    const apply = (v) => {
+      offsetRef.current = v
+      if (barRef.current) barRef.current.style.top = `${v}px`
+    }
+
+    if (!el) {
+      apply(fallback)
+      setStableOffset(fallback)
+      return
+    }
 
     let raf = 0
 
-    const measureNow = () => {
-      raf = 0
+    const read = () => {
+      const root = document.documentElement
+      const y = window.scrollY
+      const maxY = Math.max(0, root.scrollHeight - root.clientHeight)
+      if (y < 0 || y > maxY + 1) return null // iOS rubber-band: ignore
       const pos = getComputedStyle(el).position
       const pinned = pos === 'fixed' || pos === 'sticky'
-      const next = pinned ? Math.max(0, Math.round(el.getBoundingClientRect().bottom)) : 0
-      setOffset((prev) => {
-        if (prev === next) return prev
-        // ignore 1px jitter, but always accept a move to/from 0 (navbar hidden / shown)
-        if (prev !== 0 && next !== 0 && Math.abs(prev - next) < 2) return prev
-        return next
-      })
+      return pinned ? Math.max(0, Math.round(el.getBoundingClientRect().bottom)) : 0
     }
 
-    const measureSoon = () => {
-      if (!raf) raf = requestAnimationFrame(measureNow)
+    const measure = (commitStable) => {
+      raf = 0
+      const next = read()
+      if (next === null) return
+      const prev = offsetRef.current
+      // ignore 1px jitter, but always accept a move to/from 0
+      if (!(prev !== 0 && next !== 0 && Math.abs(prev - next) < 2) && prev !== next) apply(next)
+      if (commitStable) setStableOffset((p) => (p === offsetRef.current ? p : offsetRef.current))
     }
 
-    measureNow()
-    const ro = new ResizeObserver(measureSoon)
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => measure(false)) }
+    const onResize = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => measure(true)) }
+
+    measure(true)
+    const ro = new ResizeObserver(onResize)
     ro.observe(el)
-    window.addEventListener('scroll', measureSoon, { passive: true })
-    window.addEventListener('resize', measureSoon)
-    el.addEventListener('transitionend', measureSoon)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onResize)
+    window.addEventListener('orientationchange', onResize)
+    el.addEventListener('transitionend', onScroll)
 
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
-      window.removeEventListener('scroll', measureSoon)
-      window.removeEventListener('resize', measureSoon)
-      el.removeEventListener('transitionend', measureSoon)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      window.removeEventListener('orientationchange', onResize)
+      el.removeEventListener('transitionend', onScroll)
     }
-  }, [selector, fallback])
+  }, [selector, fallback, barRef])
 
-  return offset
+  return { offsetRef, stableOffset }
 }
 
 /* ================================================================== */
 /*  PROJECT SUB-MENU                                                   */
+/*                                                                     */
+/*  iPhone flicker (confirmed from screen recording): the old sliding  */
+/*  "pill" was a separate absolutely-positioned element animated to    */
+/*  each tab's measured left/width/height. During a fast scroll the    */
+/*  active tab changes 3-4 times in a few frames, so the pill was seen */
+/*  mid-flight: half over the wrong label, wrong size, labels cut off. */
+/*  Now each tab paints its own highlight, so there is nothing to      */
+/*  measure, chase or animate. On touch screens the change is instant; */
+/*  on larger screens it gets a short colour fade.                     */
 /* ================================================================== */
 function ProjectSubMenu({
   items = [],
@@ -491,18 +518,20 @@ function ProjectSubMenu({
   fallbackOffset = 0,
   fontFamily,
 }) {
-  const navOffset = useNavbarOffset(navbarSelector, fallbackOffset)
-
   const sentinelRef = useRef(null)
   const barRef = useRef(null)
   const scrollerRef = useRef(null)
   const tabRefs = useRef({})
   const lockRef = useRef(null)
   const lockTimer = useRef(null)
-  const offsetRef = useRef(navOffset)
-  offsetRef.current = navOffset
+  const centerTimer = useRef(null)
 
-  // keep latest items in a ref so `ordered` doesn't change identity every render
+  const { offsetRef, stableOffset } = useNavbarOffset(navbarSelector, fallbackOffset, barRef)
+
+  // progress bars are written directly to the DOM (see setScaleX)
+  const sectionBarRef = useRef(null)
+  const pageBarRef = useRef(null)
+
   const itemsRef = useRef(items)
   itemsRef.current = items
 
@@ -522,9 +551,6 @@ function ProjectSubMenu({
     )
   }, [itemsKey])
 
-  // FIX: depends only on itemsKey (stable string), not on the `items` array
-  // (new array every parent render, e.g. gallery autoplay every 5s) — this
-  // was re-attaching the scroll listeners and forcing extra updates.
   const ordered = useMemo(
     () => orderedIds.map((id) => itemsRef.current.find((i) => i.id === id)).filter(Boolean),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -536,46 +562,23 @@ function ProjectSubMenu({
   const [edges, setEdges] = useState({ left: false, right: false })
 
   /*
-    FIX (earlier): the active pill used framer-motion `layoutId`
-    inside a position:sticky bar. Framer measures layout in page coordinates,
-    so while scrolling (bar stays fixed on screen, page moves) the pill
-    animated from a wrong position and flickered. The pill is now positioned
-    from the active tab's own offset inside the track and moved with a plain
-    CSS transform transition — no framer layout measurement involved.
+    "Stuck" detection via IntersectionObserver. Uses stableOffset so the
+    observer is never torn down and recreated while the user is scrolling.
   */
-  const trackRef = useRef(null)
-  const [pill, setPill] = useState({ left: 0, top: 0, width: 0, height: 0, ready: false })
-
-  const measurePill = useCallback(() => {
-    const t = tabRefs.current[activeId]
-    if (!t) return
-    const next = { left: t.offsetLeft, top: t.offsetTop, width: t.offsetWidth, height: t.offsetHeight, ready: true }
-    setPill((prev) =>
-      prev.ready &&
-      prev.left === next.left &&
-      prev.top === next.top &&
-      prev.width === next.width &&
-      prev.height === next.height
-        ? prev
-        : next
-    )
-  }, [activeId])
-
-  useEffect(() => { measurePill() }, [measurePill, ordered])
-
   useEffect(() => {
-    const track = trackRef.current
-    if (!track) return
-    const ro = new ResizeObserver(measurePill)
-    ro.observe(track)
-    window.addEventListener('resize', measurePill)
-    return () => { ro.disconnect(); window.removeEventListener('resize', measurePill) }
-  }, [measurePill, ordered.length])
-
-  const sectionProgress = useMotionValue(0)
-  const pageProgress = useMotionValue(0)
-  const smoothSection = useSpring(sectionProgress, { stiffness: 260, damping: 40, restDelta: 0.001 })
-  const smoothPage = useSpring(pageProgress, { stiffness: 200, damping: 40, restDelta: 0.001 })
+    const sentinel = sentinelRef.current
+    if (!sentinel || typeof IntersectionObserver === 'undefined') return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const rootTop = entry.rootBounds ? entry.rootBounds.top : 0
+        const next = !entry.isIntersecting && entry.boundingClientRect.top < rootTop
+        setStuck((prev) => (prev === next ? prev : next))
+      },
+      { rootMargin: `-${stableOffset}px 0px 0px 0px`, threshold: [0, 1] }
+    )
+    io.observe(sentinel)
+    return () => io.disconnect()
+  }, [stableOffset, ordered.length])
 
   useEffect(() => {
     if (!ordered.length) return
@@ -583,47 +586,40 @@ function ProjectSubMenu({
 
     const update = () => {
       raf = 0
+
+      const root = document.documentElement
+      const viewportH = root.clientHeight || window.innerHeight
+      const maxScroll = Math.max(0, root.scrollHeight - viewportH)
+
+      // iOS rubber-band: skip overscroll frames entirely
+      if (window.scrollY < 0 || window.scrollY > maxScroll + 1) return
+      const scrollY = window.scrollY
+
       const top = offsetRef.current
       const barH = barRef.current?.offsetHeight || 56
 
-      const sentinel = sentinelRef.current
-      if (sentinel) {
-        const rectTop = sentinel.getBoundingClientRect().top
-        setStuck((prev) => {
-          // iOS rubber-band: scrollY goes <= 0 while bouncing; never "stuck" there
-          if (window.scrollY <= 0) return false
-          // hysteresis so tiny iOS scroll jitter can't toggle it back and forth
-          const next = prev ? rectTop <= top + 4 : rectTop <= top + 0.5
-          return prev === next ? prev : next
-        })
-      }
-
-      // FIX: clientHeight is stable while the mobile URL bar collapses;
-      // innerHeight changes and made the active tab flip near boundaries.
-      const viewportH = document.documentElement.clientHeight || window.innerHeight
       const probe = top + barH + Math.min(viewportH * 0.3, 180)
       const els = ordered.map((i) => document.getElementById(i.id))
 
       let idx = 0
       els.forEach((el, i) => { if (el && el.getBoundingClientRect().top <= probe) idx = i })
 
-      const atBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4
+      const atBottom = scrollY >= maxScroll - 4
       if (atBottom && !lockRef.current) idx = els.length - 1
 
       const activeEl = els[idx]
       if (activeEl) {
         const r = activeEl.getBoundingClientRect()
         const p = atBottom ? 1 : (probe - r.top) / Math.max(1, r.height)
-        sectionProgress.set(Math.min(1, Math.max(0, p)))
+        setScaleX(sectionBarRef.current, p)
       }
 
       const first = els.find(Boolean)
       const last = [...els].reverse().find(Boolean)
       if (first && last) {
-        const start = first.getBoundingClientRect().top + window.scrollY - probe
-        const end = last.getBoundingClientRect().bottom + window.scrollY - window.innerHeight
-        pageProgress.set(Math.min(1, Math.max(0, (window.scrollY - start) / Math.max(1, end - start))))
+        const start = first.getBoundingClientRect().top + scrollY - probe
+        const end = last.getBoundingClientRect().bottom + scrollY - viewportH
+        setScaleX(pageBarRef.current, (scrollY - start) / Math.max(1, end - start))
       }
 
       const next = lockRef.current || ordered[idx]?.id
@@ -639,15 +635,12 @@ function ProjectSubMenu({
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
-  }, [ordered, navOffset, sectionProgress, pageProgress])
+  }, [ordered, offsetRef])
 
-  // FIX: only update the value here; remove on unmount (separate effect).
-  // Previously the cleanup removed + re-set the CSS variable on every
-  // `stuck` change, causing a one-frame reset.
   useEffect(() => {
     const h = barRef.current?.offsetHeight || 0
-    document.documentElement.style.setProperty('--project-subnav-offset', `${navOffset + h}px`)
-  }, [navOffset, stuck])
+    document.documentElement.style.setProperty('--project-subnav-offset', `${stableOffset + h}px`)
+  }, [stableOffset])
 
   useEffect(() => () => {
     document.documentElement.style.removeProperty('--project-subnav-offset')
@@ -673,8 +666,10 @@ function ProjectSubMenu({
     lockTimer.current = setTimeout(release, 1200)
 
     window.scrollTo({ top: Math.max(0, y), behavior: reduce ? 'auto' : 'smooth' })
-    window.history.replaceState(null, '', `#${id}`)
-  }, [])
+
+    // iOS Safari throws if replaceState is called too often
+    try { window.history.replaceState(null, '', `#${id}`) } catch { /* ignore */ }
+  }, [offsetRef])
 
   useEffect(() => {
     const hash = decodeURIComponent(window.location.hash.slice(1))
@@ -684,7 +679,7 @@ function ProjectSubMenu({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemsKey])
 
-  useEffect(() => () => clearTimeout(lockTimer.current), [])
+  useEffect(() => () => { clearTimeout(lockTimer.current); clearTimeout(centerTimer.current) }, [])
 
   const updateEdges = useCallback(() => {
     const s = scrollerRef.current
@@ -704,20 +699,25 @@ function ProjectSubMenu({
     return () => { s.removeEventListener('scroll', updateEdges); ro.disconnect() }
   }, [updateEdges, ordered.length])
 
+  // Keep the active tab visible. Debounced so it only runs once the active tab
+  // has settled (not on every intermediate tab during a fast scroll), and it
+  // never runs while the page itself is still scrolling toward a tapped tab.
   useEffect(() => {
-    const s = scrollerRef.current
-    const t = tabRefs.current[activeId]
-    if (!s || !t) return
-    const sRect = s.getBoundingClientRect()
-    const tRect = t.getBoundingClientRect()
-    const tabLeft = tRect.left - sRect.left + s.scrollLeft
-    const tabRight = tabLeft + t.offsetWidth
-    const viewLeft = s.scrollLeft
-    const viewRight = viewLeft + s.clientWidth
-    const fullyVisible = tabLeft >= viewLeft && tabRight <= viewRight
-    if (fullyVisible) return
-    const target = tabLeft - s.clientWidth / 2 + t.offsetWidth / 2
-    s.scrollTo({ left: Math.max(0, target), behavior: 'smooth' })
+    clearTimeout(centerTimer.current)
+    centerTimer.current = setTimeout(() => {
+      const s = scrollerRef.current
+      const t = tabRefs.current[activeId]
+      if (!s || !t) return
+      const tabLeft = t.offsetLeft
+      const tabRight = tabLeft + t.offsetWidth
+      const viewLeft = s.scrollLeft
+      const viewRight = viewLeft + s.clientWidth
+      if (tabLeft >= viewLeft + 8 && tabRight <= viewRight - 8) return
+      const target = Math.max(0, tabLeft - s.clientWidth / 2 + t.offsetWidth / 2)
+      if (lockRef.current) s.scrollTo({ left: target, behavior: 'smooth' })
+      else s.scrollLeft = target
+    }, lockRef.current ? 0 : 160)
+    return () => clearTimeout(centerTimer.current)
   }, [activeId])
 
   const nudge = (dir) => {
@@ -732,27 +732,13 @@ function ProjectSubMenu({
 
   return (
     <>
-      <div ref={sentinelRef} aria-hidden="true" className="h-0 w-full" />
+      <div ref={sentinelRef} aria-hidden="true" className="-mb-px h-px w-full" />
 
-      {/*
-        FIX (bar jumps up/down a few px on mobile) — part 2:
-
-        The sticky element itself used to carry `transform`, `will-change`
-        and `backface-visibility`. A transform on the element that the browser
-        is also trying to pin with `position: sticky` makes mobile browsers
-        (iOS Safari / Chrome Android) re-composite it on the main thread, so
-        while the page scrolls the bar lags a few px behind and then snaps
-        back. The sticky wrapper is now a plain element (only `top` is set),
-        and the GPU-layer hints moved to the inner visual bar, which is not
-        what the browser pins.
-      */}
+      {/* `top` is written directly to the DOM by useNavbarOffset */}
       <div
         ref={barRef}
         className="sticky z-40 w-full"
-        style={{
-          top: navOffset,
-          fontFamily,
-        }}
+        style={{ top: fallbackOffset, fontFamily }}
       >
         <div
           className={`relative w-full border-b sm:transition-[background-color,box-shadow,border-color] sm:duration-500 ${
@@ -760,13 +746,6 @@ function ProjectSubMenu({
               ? 'border-[#0F3A6B]/10 bg-white shadow-[0_12px_32px_-20px_rgba(15,58,107,0.45)] sm:bg-white/85 sm:backdrop-blur-xl sm:backdrop-saturate-150'
               : 'border-[#E4ECF4] bg-white'
           }`}
-          style={{
-            // own GPU layer for the visual bar only (prevents repaint flicker on iOS)
-            transform: 'translateZ(0)',
-            WebkitTransform: 'translateZ(0)',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden',
-          }}
         >
           <div className="mx-auto flex max-w-[1560px] items-center gap-3 px-2 sm:px-6 lg:px-10">
             <AnimatePresence initial={false}>
@@ -841,29 +820,7 @@ function ProjectSubMenu({
                 className="relative overflow-x-auto py-2 [scrollbar-width:none] sm:py-2.5 [&::-webkit-scrollbar]:hidden"
                 style={{ WebkitOverflowScrolling: 'touch' }}
               >
-                <div ref={trackRef} className="relative mx-auto flex w-max items-center gap-1 px-1 sm:gap-1.5">
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute left-0 top-0 rounded-full shadow-[0_10px_22px_-10px_rgba(15,58,107,0.8)]"
-                    style={{
-                      width: pill.width,
-                      height: pill.height,
-                      transform: `translate3d(${pill.left}px, ${pill.top}px, 0)`,
-                      opacity: pill.ready ? 1 : 0,
-                      transition: pill.ready
-                        ? 'transform 0.35s cubic-bezier(0.22,1,0.36,1), width 0.35s cubic-bezier(0.22,1,0.36,1), height 0.2s ease'
-                        : 'none',
-                      background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)`,
-                      willChange: 'transform, width',
-                    }}
-                  >
-                    <span className="absolute bottom-[4px] left-4 right-4 h-[2px] overflow-hidden rounded-full bg-white/20">
-                      <motion.span
-                        className="absolute inset-0 origin-left rounded-full bg-white/85"
-                        style={{ scaleX: smoothSection }}
-                      />
-                    </span>
-                  </span>
+                <div className="relative mx-auto flex w-max items-center gap-1 px-1 sm:gap-1.5">
                   {ordered.map((item) => {
                     const isActive = item.id === activeId
                     const Icon = item.icon
@@ -874,9 +831,10 @@ function ProjectSubMenu({
                         href={`#${item.id}`}
                         onClick={(e) => { e.preventDefault(); scrollToSection(item.id) }}
                         aria-current={isActive ? 'location' : undefined}
-                        className={`relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[12.5px] font-semibold outline-none transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-[#0F3A6B]/40 focus-visible:ring-offset-2 sm:px-4 sm:py-2.5 sm:text-[13.5px] ${
-                          isActive ? 'text-white' : 'text-[#5A6B7B] hover:bg-[#F0F6FC] hover:text-[#0F3A6B]'
+                        className={`relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[12.5px] font-semibold outline-none transition-none focus-visible:ring-2 focus-visible:ring-[#0F3A6B]/40 focus-visible:ring-offset-2 sm:px-4 sm:py-2.5 sm:text-[13.5px] sm:transition-colors sm:duration-300 ${
+                          isActive ? 'text-white sm:shadow-[0_10px_22px_-10px_rgba(15,58,107,0.8)]' : 'text-[#5A6B7B] sm:hover:bg-[#F0F6FC] sm:hover:text-[#0F3A6B]'
                         }`}
+                        style={isActive ? { background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` } : undefined}
                       >
                         {Icon && (
                           <Icon
@@ -885,6 +843,16 @@ function ProjectSubMenu({
                           />
                         )}
                         <span className="relative z-[1] whitespace-nowrap">{item.label}</span>
+
+                        {isActive && (
+                          <span className="pointer-events-none absolute bottom-[4px] left-4 right-4 h-[2px] overflow-hidden rounded-full bg-white/20">
+                            <span
+                              ref={sectionBarRef}
+                              className="absolute inset-0 origin-left rounded-full bg-white/85"
+                              style={{ transform: 'scaleX(0)' }}
+                            />
+                          </span>
+                        )}
                       </a>
                     )
                   })}
@@ -913,10 +881,11 @@ function ProjectSubMenu({
             )}
           </div>
 
-          <motion.div
+          <div
+            ref={pageBarRef}
             aria-hidden="true"
             className="absolute inset-x-0 -bottom-px h-[2px] origin-left"
-            style={{ scaleX: smoothPage, background: `linear-gradient(90deg, ${DEEP_NAVY} 0%, #3B7BC4 100%)` }}
+            style={{ transform: 'scaleX(0)', background: `linear-gradient(90deg, ${DEEP_NAVY} 0%, #3B7BC4 100%)` }}
           />
         </div>
       </div>

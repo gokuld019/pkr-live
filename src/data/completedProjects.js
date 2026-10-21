@@ -34,7 +34,7 @@ export const completedProjects = [
     ],
     banner: "/completed/pks-paradise-t-nagar/banner.jpg",
     description:
-      "In the heart of T. Nagar, PK’s Paradise brings together the convenience of a well-connected neighbourhood and the comfort of a place to call home. Planned around everyday living, the project is now fully handed over, with every home occupied.",
+      "PK’s Paradise is a private home designed around comfort, privacy and everyday living. Created as a personal residence, it reflects a thoughtful approach to a place that is truly meant to be called home.",
     stats: [
       { label: "Units", value: "TODO: add unit count" },
       { label: "Unit Types", value: "TODO: e.g. 2 & 3 BHK" },
@@ -42,9 +42,9 @@ export const completedProjects = [
       { label: "Handed Over", value: "TODO: add year" },
     ],
     highlights: [
-      "Walking distance to T Nagar's retail and transit hub",
-      "100% occupancy since handover",
-      "Vaastu-compliant layouts across all units",
+      "A private residential home",
+      "A private residence, not for sale",
+      "A space built around comfort and privacy",                      
     ],
   },
   {
