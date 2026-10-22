@@ -1,7 +1,7 @@
 // src/components/ProjectBanner.js
 'use client'
 
-import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import { useState, useRef, useEffect, useCallback, useMemo, memo } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
 import { Figtree } from 'next/font/google'
 import * as THREE from 'three'
@@ -18,7 +18,7 @@ import {
 
 const figtree = Figtree({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800'],
+  weight: ['400', '500', '600', '700'],
   display: 'swap',
 })
 
@@ -464,21 +464,25 @@ function useNavbarOffset(selector, fallback = 0) {
   return offset
 }
 
-// Promote the bar to its own compositor layer (the usual iOS sticky-flicker fix).
-// If it ever looks worse on a specific device, set this to false.
-const PROMOTE_STICKY_LAYER = true
-
 /* ================================================================== */
-/*  PROJECT SUB-MENU                                                   */
+/*  PROJECT SUB-MENU  (iOS-safe)                                       */
 /*                                                                     */
-/*  Scroll-inert design:                                               */
-/*   - no scroll / resize listeners doing layout reads                 */
-/*   - active section comes from IntersectionObserver                  */
-/*   - no progress bars, no pill, no style writes while scrolling      */
-/*   - on phones the bar looks identical whether "stuck" or not, so    */
-/*     nothing repaints when it pins                                   */
+/*  What changed vs. the flickering version:                           */
+/*   - NO transform / translateZ layer on the sticky bar (that is a    */
+/*     known cause of iOS Safari sticky flicker)                       */
+/*   - NO backdrop-filter anywhere on the bar: solid white, every      */
+/*     screen size (iPads and landscape iPhones are >= sm too)        */
+/*   - bar tucks 1px under the navbar so a sub-pixel gap can never     */
+/*     show page content between the two                              */
+/*   - the tab strip is only auto-centred when the page has stopped    */
+/*     scrolling (setting scrollLeft mid-momentum-scroll made the      */
+/*     active pill jump / ghost on iPhone)                             */
+/*   - fade-edge gradients have no transition on phones                */
+/*   - component is memoised: the 5s gallery autoplay no longer        */
+/*     re-renders the bar                                              */
+/*   - active section from IntersectionObserver, no layout reads       */
 /* ================================================================== */
-function ProjectSubMenu({
+function ProjectSubMenuBase({
   items = [],
   projectName = '',
   onEnquire,
@@ -493,8 +497,11 @@ function ProjectSubMenu({
   const lockRef = useRef(null)
   const lockTimer = useRef(null)
   const centerTimer = useRef(null)
+  const lastScrollRef = useRef(0)
 
   const navOffset = useNavbarOffset(navbarSelector, fallbackOffset)
+  // sit 1px UNDER the navbar: no hairline gap where content can flash through
+  const stickyTop = navOffset > 0 ? navOffset - 1 : 0
 
   const itemsRef = useRef(items)
   itemsRef.current = items
@@ -542,11 +549,7 @@ function ProjectSubMenu({
     return () => io.disconnect()
   }, [navOffset])
 
-  /* ---------- active section via IntersectionObserver ----------
-     A band from just under the sticky bar down to 40% of the viewport is the
-     "reading line". The last section (in page order) touching that band is
-     active — same rule as before, but computed by the browser, off the
-     main thread, with zero layout reads from us. */
+  /* ---------- active section via IntersectionObserver ---------- */
   useEffect(() => {
     if (!ordered.length || typeof IntersectionObserver === 'undefined') return
 
@@ -582,8 +585,8 @@ function ProjectSubMenu({
       if (el) io.observe(el)
     })
 
-    // "reached the very bottom of the page" -> last tab. Only touches
-    // scrollTop/scrollHeight (no layout), and only sets state on change.
+    // "reached the very bottom of the page" -> last tab. Only reads scroll
+    // metrics (no layout), and only sets state on change.
     let raf = 0
     const checkEnd = () => {
       raf = 0
@@ -594,7 +597,10 @@ function ProjectSubMenu({
       const next = max > 0 && y >= max - 4
       if (next !== atEnd) { atEnd = next; commit() }
     }
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(checkEnd) }
+    const onScroll = () => {
+      lastScrollRef.current = performance.now() // used to wait for scroll-idle before centring tabs
+      if (!raf) raf = requestAnimationFrame(checkEnd)
+    }
     window.addEventListener('scroll', onScroll, { passive: true })
     checkEnd()
 
@@ -669,13 +675,23 @@ function ProjectSubMenu({
     return () => { s.removeEventListener('scroll', updateEdges); ro.disconnect() }
   }, [updateEdges, orderedKey])
 
-  /* ---------- keep active tab visible (debounced, never mid-scroll) ---------- */
+  /* ---------- keep active tab visible ----------
+     Never touches the strip while the PAGE is still scrolling: it waits until
+     the page has been idle for ~180ms (iOS momentum scroll included). */
   useEffect(() => {
-    clearTimeout(centerTimer.current)
-    centerTimer.current = setTimeout(() => {
+    let tries = 0
+
+    const run = () => {
       const s = scrollerRef.current
       const t = tabRefs.current[activeId]
       if (!s || !t) return
+
+      const pageIdle = performance.now() - lastScrollRef.current >= 180
+      if (!lockRef.current && !pageIdle && tries++ < 30) {
+        centerTimer.current = setTimeout(run, 120)
+        return
+      }
+
       const tabLeft = t.offsetLeft
       const tabRight = tabLeft + t.offsetWidth
       const viewLeft = s.scrollLeft
@@ -684,7 +700,10 @@ function ProjectSubMenu({
       const target = Math.max(0, tabLeft - s.clientWidth / 2 + t.offsetWidth / 2)
       if (lockRef.current) s.scrollTo({ left: target, behavior: 'smooth' })
       else s.scrollLeft = target
-    }, lockRef.current ? 0 : 220)
+    }
+
+    clearTimeout(centerTimer.current)
+    centerTimer.current = setTimeout(run, lockRef.current ? 0 : 200)
     return () => clearTimeout(centerTimer.current)
   }, [activeId])
 
@@ -698,10 +717,6 @@ function ProjectSubMenu({
   const activeIndex = Math.max(0, ordered.findIndex((i) => i.id === activeId))
   const activeLabel = ordered[activeIndex]?.label
 
-  const layerStyle = PROMOTE_STICKY_LAYER
-    ? { transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }
-    : null
-
   return (
     <>
       <div ref={sentinelRef} aria-hidden="true" className="-mb-px h-px w-full" />
@@ -709,15 +724,12 @@ function ProjectSubMenu({
       <div
         ref={barRef}
         className="sticky z-40 w-full"
-        style={{ top: navOffset, fontFamily, ...layerStyle }}
+        style={{ top: stickyTop, fontFamily }}
       >
-        {/* Phones: one constant look (no class flip when it pins).
-            sm and up: the nicer "stuck" glass + shadow. */}
+        {/* Solid white on every screen size. Only the shadow/border strength changes when pinned (sm and up). */}
         <div
-          className={`relative w-full border-b bg-white shadow-[0_10px_22px_-18px_rgba(15,58,107,0.4)] sm:transition-[background-color,box-shadow,border-color] sm:duration-500 ${
-            stuck
-              ? 'border-[#0F3A6B]/10 sm:bg-white/85 sm:shadow-[0_12px_32px_-20px_rgba(15,58,107,0.45)] sm:backdrop-blur-xl sm:backdrop-saturate-150'
-              : 'border-[#E4ECF4] sm:shadow-none'
+          className={`relative w-full border-b border-[#E4ECF4] bg-white shadow-[0_10px_22px_-18px_rgba(15,58,107,0.4)] ${
+            stuck ? 'sm:border-[#0F3A6B]/10 sm:shadow-[0_12px_32px_-20px_rgba(15,58,107,0.45)]' : 'sm:shadow-none'
           }`}
         >
           <div className="mx-auto flex max-w-[1560px] items-center gap-3 px-2 sm:px-6 lg:px-10">
@@ -763,8 +775,8 @@ function ProjectSubMenu({
             </AnimatePresence>
 
             <div className="relative min-w-0 flex-1">
-              <div className={`pointer-events-none absolute inset-y-0 left-0 z-[2] w-14 bg-gradient-to-r from-white via-white/80 to-transparent transition-opacity duration-300 ${edges.left ? 'opacity-100' : 'opacity-0'}`} />
-              <div className={`pointer-events-none absolute inset-y-0 right-0 z-[2] w-14 bg-gradient-to-l from-white via-white/80 to-transparent transition-opacity duration-300 ${edges.right ? 'opacity-100' : 'opacity-0'}`} />
+              <div className={`pointer-events-none absolute inset-y-0 left-0 z-[2] w-14 bg-gradient-to-r from-white via-white/80 to-transparent sm:transition-opacity sm:duration-300 ${edges.left ? 'opacity-100' : 'opacity-0'}`} />
+              <div className={`pointer-events-none absolute inset-y-0 right-0 z-[2] w-14 bg-gradient-to-l from-white via-white/80 to-transparent sm:transition-opacity sm:duration-300 ${edges.right ? 'opacity-100' : 'opacity-0'}`} />
 
               {edges.left && (
                 <button
@@ -804,7 +816,7 @@ function ProjectSubMenu({
                         href={`#${item.id}`}
                         onClick={(e) => { e.preventDefault(); scrollToSection(item.id) }}
                         aria-current={isActive ? 'location' : undefined}
-                        className={`relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[12.5px] font-semibold outline-none transition-none focus-visible:ring-2 focus-visible:ring-[#0F3A6B]/40 focus-visible:ring-offset-2 sm:px-4 sm:py-2.5 sm:text-[13.5px] sm:transition-colors sm:duration-300 ${
+                        className={`relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-[12.5px] font-semibold outline-none transition-none [-webkit-tap-highlight-color:transparent] focus-visible:ring-2 focus-visible:ring-[#0F3A6B]/40 focus-visible:ring-offset-2 sm:px-4 sm:py-2.5 sm:text-[13.5px] sm:transition-colors sm:duration-300 ${
                           isActive ? 'text-white sm:shadow-[0_10px_22px_-10px_rgba(15,58,107,0.8)]' : 'text-[#5A6B7B] sm:hover:bg-[#F0F6FC] sm:hover:text-[#0F3A6B]'
                         }`}
                         style={isActive ? { background: `linear-gradient(135deg, ${DEEP_NAVY} 0%, ${DEEP_NAVY_DARK} 100%)` } : undefined}
@@ -848,6 +860,19 @@ function ProjectSubMenu({
     </>
   )
 }
+
+// Memoised: re-renders only if the section list / name / navbar settings change,
+// NOT when the parent re-renders for the gallery autoplay, useInView, etc.
+const ProjectSubMenu = memo(ProjectSubMenuBase, (a, b) => {
+  const key = (list) => (list || []).map((i) => `${i.id}:${i.label}`).join('|')
+  return (
+    a.projectName === b.projectName &&
+    a.fontFamily === b.fontFamily &&
+    a.navbarSelector === b.navbarSelector &&
+    a.fallbackOffset === b.fallbackOffset &&
+    key(a.items) === key(b.items)
+  )
+})
 
 /* ==================================================================
    UNIT ROW
@@ -1556,16 +1581,18 @@ export default function ProjectBanner({ project }) {
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const [paused, setPaused] = useState(false)
   const galleryRef = useRef(null)
+  // autoplay only while the gallery is actually on screen (no off-screen animation work while scrolling elsewhere)
+  const galleryInView = useInView(galleryRef, { amount: 0.2 })
 
   const galleryPrev = useCallback(() => { setDirection(-1); setGalleryIndex((i) => (i === 0 ? galleryItems.length - 1 : i - 1)) }, [galleryItems.length])
   const galleryNext = useCallback(() => { setDirection(1); setGalleryIndex((i) => (i === galleryItems.length - 1 ? 0 : i + 1)) }, [galleryItems.length])
   const goToGallery = (i) => { setDirection(i > galleryIndex ? 1 : -1); setGalleryIndex(i) }
 
   useEffect(() => {
-    if (galleryItems.length < 2 || paused || lightboxOpen) return
+    if (galleryItems.length < 2 || paused || lightboxOpen || !galleryInView) return
     const id = setInterval(galleryNext, 5000)
     return () => clearInterval(id)
-  }, [galleryItems.length, paused, lightboxOpen, galleryNext])
+  }, [galleryItems.length, paused, lightboxOpen, galleryInView, galleryNext])
 
   useEffect(() => {
     if (!lightboxOpen) return
@@ -1954,7 +1981,11 @@ export default function ProjectBanner({ project }) {
       {/* ================= Amenities ================= */}
       {amenityTabs.length > 0 && (
         <section ref={amenitiesRef} id="amenities" className="relative w-full overflow-hidden bg-white px-4 py-10 sm:px-8 sm:py-20 md:px-10 lg:px-16 lg:py-24" style={{ fontFamily: FONT }}>
-          <div className="pointer-events-none absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
+          {/* decorative glow: radial-gradient instead of a blur() filter (large CSS blurs make iOS Safari flicker sticky bars) */}
+          <div
+            className="pointer-events-none absolute -bottom-40 -left-40 h-[420px] w-[420px] rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(15,58,107,0.07) 0%, rgba(15,58,107,0) 70%)' }}
+          />
           <div className="relative mx-auto max-w-[1500px]">
             <div className="mb-7 grid grid-cols-1 gap-6 sm:mb-12 sm:gap-8 lg:grid-cols-[0.85fr_1.9fr_0.2fr] lg:items-start lg:gap-6">
               <div>
@@ -2587,8 +2618,8 @@ export default function ProjectBanner({ project }) {
                       {floorPlanGroups.map((group) => (
                         <div key={group.label || 'all'} ref={(el) => { railGroupRefs.current[group.label] = el }}>
                           <div
-                            className="sticky top-0 z-[2] flex items-center justify-between gap-2 border-b border-[#E3ECF5] px-5 py-2.5 backdrop-blur-sm"
-                            style={{ backgroundColor: 'rgba(237,244,251,0.94)' }}
+                            className="sticky top-0 z-[2] flex items-center justify-between gap-2 border-b border-[#E3ECF5] px-5 py-2.5"
+                            style={{ backgroundColor: '#EDF4FB' }}
                           >
                             <span className="text-[11.5px] font-bold uppercase tracking-[2px]" style={{ color: DEEP_NAVY }}>
                               {group.label || 'All Layouts'}
@@ -2839,7 +2870,11 @@ export default function ProjectBanner({ project }) {
       {/* ================= Pricing & Availability ================= */}
       {plotRows.length > 0 && (
         <section ref={plotPricingRef} id="price-list" className="relative w-full overflow-hidden bg-gradient-to-b from-[#F7FAFD] via-white to-[#F7FAFD] px-4 py-10 sm:px-8 sm:py-16 md:px-10 lg:px-14 lg:py-24" style={{ fontFamily: FONT }}>
-          <div className="pointer-events-none absolute -top-20 left-1/3 h-[380px] w-[380px] rounded-full bg-[#0F3A6B]/[0.05] blur-[120px]" />
+          {/* decorative glow: radial-gradient instead of a blur() filter */}
+          <div
+            className="pointer-events-none absolute -top-20 left-1/3 h-[380px] w-[380px] rounded-full"
+            style={{ background: 'radial-gradient(circle, rgba(15,58,107,0.07) 0%, rgba(15,58,107,0) 70%)' }}
+          />
           <div className="relative mx-auto max-w-[1560px]">
             <div className="grid grid-cols-1 gap-7 sm:gap-10 lg:grid-cols-[1fr_1.35fr] xl:grid-cols-[0.95fr_1.3fr] xl:gap-8">
               <div className="flex flex-col">
@@ -2943,7 +2978,7 @@ export default function ProjectBanner({ project }) {
                     <>
                       <div className="overflow-hidden rounded-xl border border-[#E8EFF7] sm:rounded-2xl">
                         <div className="max-h-[460px] overflow-y-auto overscroll-contain [scrollbar-color:#C9D8E8_transparent] [scrollbar-width:thin] sm:max-h-[520px]">
-                          <div className={`sticky top-0 z-[2] hidden items-center gap-4 border-b border-[#E3ECF5] px-4 py-3 backdrop-blur-sm sm:grid ${UNIT_GRID_COLS}`} style={{ backgroundColor: 'rgba(232,240,249,0.95)' }}>
+                          <div className={`sticky top-0 z-[2] hidden items-center gap-4 border-b border-[#E3ECF5] px-4 py-3 sm:grid ${UNIT_GRID_COLS}`} style={{ backgroundColor: '#E8F0F9' }}>
                             {UNIT_TABLE_HEADERS.map((header, i) => (
                               <span key={i} className={`text-[12px] font-semibold ${i === UNIT_TABLE_HEADERS.length - 1 ? 'text-right' : ''}`} style={{ color: DEEP_NAVY }}>
                                 {header}

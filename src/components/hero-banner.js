@@ -16,7 +16,7 @@ const SLIDES = [
   },
   {
     desktop: "/banners/gurudev.webp",
-    mobile: "/banners/3.webp",
+    mobile: "/banners/mob1.webp",
     alt: "Gurudev project banner",
   },
  
