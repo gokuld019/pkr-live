@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useMemo, useRef } from "react";
+import Image from "next/image";
 import { Figtree } from "next/font/google";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -16,9 +17,17 @@ gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
 const figtree = Figtree({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-figtree",
+  display: "swap",
 });
+
+// Hero image intrinsic sizes — SET THESE to the real pixel size of your files.
+// They reserve the space before the image loads (prevents the footer jumping up first).
+const EMI_MOB_W = 750;
+const EMI_MOB_H = 900;     // /emimob.jpeg
+const EMI_DESK_W = 1920;
+const EMI_DESK_H = 700;    // /emi.webp
 
 const CREAM = "#FFFFFF";
 const DEEP_NAVY = "#0F3A6B";
@@ -56,6 +65,8 @@ function calcEmiAtRate(principal, rate, years) {
   const factor = Math.pow(1 + monthlyRate, months);
   return (principal * monthlyRate * factor) / (factor - 1);
 }
+
+const isHeading = (el) => /^H[1-6]$/.test(el.tagName);
 
 export default function EmiCalculatorPage() {
   const root = useRef(null);
@@ -114,8 +125,9 @@ export default function EmiCalculatorPage() {
   const maxCompareEmi = Math.max(...compareData.map((d) => d.emi));
 
   // ---------- GSAP: text animations ----------
-  //  [data-text]   static text  -> split into lines, each line rises out of a mask
-  //  [data-fade]   blocks that contain live numbers -> simple soft fade + lift
+  //  [data-text]   headings  -> SplitText line mask reveal
+  //                other text -> one batched soft fade (much lighter than splitting ~30 nodes)
+  //  [data-fade]   blocks that contain live numbers -> soft fade + lift
   //  [data-chip]   small pills -> staggered fade
   //  <AnimatedNumber /> handles every value that changes with the sliders
   useGSAP(
@@ -123,15 +135,24 @@ export default function EmiCalculatorPage() {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // 1) Static text: line-by-line masked reveal (re-splits itself on resize / font load)
-        gsap.utils.toArray("[data-text]").forEach((el) => {
+        const all = gsap.utils.toArray("[data-text]");
+        const headings = all.filter(isHeading);
+        const small = all.filter((el) => !isHeading(el));
+
+        // Failsafe: never leave text hidden if something is slow or fails
+        const failsafe = setTimeout(() => {
+          gsap.set(all, { visibility: "visible" });
+        }, 3000);
+
+        // 1) Headings only: line-by-line masked reveal
+        headings.forEach((el) => {
           SplitText.create(el, {
             type: "lines",
             mask: "lines",
             autoSplit: true,
             linesClass: "split-line",
             onSplit(self) {
-              gsap.set(el, { visibility: "visible" }); // un-hide (see <style> below)
+              gsap.set(el, { visibility: "visible" });
               return gsap.from(self.lines, {
                 yPercent: 115,
                 duration: 1.1,
@@ -143,7 +164,23 @@ export default function EmiCalculatorPage() {
           });
         });
 
-        // 2) Blocks with live numbers: gentle fade + lift
+        // 2) Everything else: one batched fade, no splitting
+        gsap.set(small, { opacity: 0, visibility: "visible" });
+        ScrollTrigger.batch(small, {
+          start: "top 95%",
+          once: true,
+          onEnter: (batch) =>
+            gsap.to(batch, {
+              opacity: 1,
+              y: 0,
+              duration: 0.7,
+              ease: "power3.out",
+              stagger: 0.05,
+              overwrite: true,
+            }),
+        });
+
+        // 3) Blocks with live numbers: gentle fade + lift
         gsap.utils.toArray("[data-fade]").forEach((el) => {
           gsap.from(el, {
             y: 16,
@@ -154,7 +191,7 @@ export default function EmiCalculatorPage() {
           });
         });
 
-        // 3) Pills: staggered fade
+        // 4) Pills: staggered fade
         gsap.from("[data-chip]", {
           y: 10,
           opacity: 0,
@@ -163,9 +200,22 @@ export default function EmiCalculatorPage() {
           stagger: 0.07,
           scrollTrigger: { trigger: "[data-chip]", start: "top 95%", once: true },
         });
+
+        return () => clearTimeout(failsafe);
       });
 
-      return () => mm.revert();
+      // Images finish loading after hydration and change page height — re-measure triggers
+      const refresh = () => ScrollTrigger.refresh();
+      if (document.readyState === "complete") {
+        refresh();
+      } else {
+        window.addEventListener("load", refresh);
+      }
+
+      return () => {
+        window.removeEventListener("load", refresh);
+        mm.revert();
+      };
     },
     { scope: root }
   );
@@ -176,8 +226,8 @@ export default function EmiCalculatorPage() {
       className={`${figtree.className} min-h-screen relative overflow-x-hidden`}
       style={{ backgroundColor: CREAM, fontFamily: "var(--font-figtree), sans-serif" }}
     >
-      {/* Hide split-able text until GSAP has prepared it (prevents a flash on load).
-          Not applied when the visitor prefers reduced motion. */}
+      {/* Hide text until GSAP has prepared it (prevents a flash on load).
+          Not applied when the visitor prefers reduced motion. A JS failsafe reveals it after 3s. */}
       <style>{`
         @media (prefers-reduced-motion: no-preference) {
           [data-text] { visibility: hidden; }
@@ -186,16 +236,23 @@ export default function EmiCalculatorPage() {
       `}</style>
 
       {/* Hero Section
-          Uses a native <picture> with a plain media query (no Tailwind breakpoint needed).
-          Mobile (<= 639px) shows /emimob.jpeg, tablet & desktop (>= 640px) shows /emi.jpeg.
-          Each image keeps its own native aspect ratio (width 100%, height auto). */}
+          Native <picture> with a media query. Width/height attributes on both <source> and <img>
+          let the browser reserve the exact space before the image loads. */}
       <section className="relative w-full bg-white">
         <picture>
-          <source media="(max-width: 639px)" srcSet="/emimob.jpeg" />
+          <source
+            media="(max-width: 639px)"
+            srcSet="/emimob.jpeg"
+            width={EMI_MOB_W}
+            height={EMI_MOB_H}
+          />
           <img
-            src="/emi.jpeg"
+            src="/emi.webp"
             alt="Home loan EMI calculator banner"
+            width={EMI_DESK_W}
+            height={EMI_DESK_H}
             fetchPriority="high"
+            decoding="async"
             style={{ display: "block", width: "100%", height: "auto" }}
           />
         </picture>
@@ -475,11 +532,17 @@ export default function EmiCalculatorPage() {
             </div>
 
             {/* Right: image with quote
-                Mobile: unchanged (min-h-[200px]).
-                Tablet (640–1023px): fixed 16/9 aspect ratio, so the quote is no longer cropped.
-                Desktop (1024px+): ratio reset, image fills the side-by-side column as before. */}
+                Mobile: min-h-[200px]. Tablet: fixed 16/9. Desktop: fills the side-by-side column.
+                Now served through next/image (resized, WebP/AVIF, lazy). */}
             <div className="relative min-h-[200px] sm:min-h-0 sm:aspect-[16/9] lg:aspect-auto lg:min-h-0">
-              <img src="/emi2.png" alt="Modern living room" className="absolute inset-0 w-full h-full object-cover" />
+              <Image
+                src="/emi2.png"
+                alt="Modern living room"
+                fill
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                quality={80}
+                className="object-cover"
+              />
             </div>
           </div>
 

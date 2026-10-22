@@ -166,7 +166,7 @@ export default function ContactPage() {
 
         {/* Tablet & up banner */}
         <img
-          src="/upcus.jpeg"
+          src="/upcus.webp"
           alt="Contact PKR Estates banner"
           className="hidden sm:block w-full h-auto"
           fetchPriority="high"

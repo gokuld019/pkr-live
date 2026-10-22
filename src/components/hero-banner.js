@@ -10,7 +10,7 @@ const SLIDES = [
     alt: "Project amenities banner",
   },
   {
-    desktop: "/banners/privana.webp",
+    desktop: "/banners/privana11.webp",
     mobile: "/banners/2.webp",
     alt: "Privana project banner",
   },

@@ -2,6 +2,7 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Figtree } from "next/font/google";
@@ -26,7 +27,8 @@ const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : use
 
 const figtree = Figtree({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "600", "700"],
+  display: "swap",
 });
 
 const DEEP_NAVY = "#0F3A6B";
@@ -34,12 +36,18 @@ const DEEP_NAVY_HOVER = "#0A2B50";
 const TEXT_CHARCOAL = "#2D3A46";
 const LIGHT_BLUE = "#E8F0F9";
 
-// Hero banner ratios, set these to your real image sizes
+// Hero banner intrinsic sizes (used for width/height attributes so space is reserved)
+// NOTE: the wrapper aspect ratio classes below must match these: 380/700 and 1920/800
 const MOBILE_BANNER_W = 380;
-const MOBILE_BANNER_H = 700;   // matches /aa.jpeg
+const MOBILE_BANNER_H = 700;   // /aa.jpeg
 const DESKTOP_BANNER_W = 1920;
-const DESKTOP_BANNER_H = 800;  // set to your /about3.jpeg height
-const DESKTOP_BANNER_MAX_H = 900; // stops it getting huge on ultrawide screens
+const DESKTOP_BANNER_H = 800;  // /about3.webp
+
+// SET THESE to the real pixel size of your images (prevents layout shift)
+const A22_W = 800;
+const A22_H = 900;       // /a22.png
+const ABOUT3_W = 1200;
+const ABOUT3_H = 900;    // /about3.png
 
 /* ------------------------------------------------------------------ */
 /*  GSAP TEXT HELPERS (no visual change — only wrap text for animation) */
@@ -81,6 +89,28 @@ const MISSION_TEXT =
 
 export default function AboutUsPage() {
   const rootRef = useRef(null);
+  const videoRef = useRef(null);
+
+  /* ---------------------------------------------------------------- */
+  /*  Video: only load/play when it scrolls into view                   */
+  /* ---------------------------------------------------------------- */
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || typeof IntersectionObserver === "undefined") return;
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(video);
+    return () => io.disconnect();
+  }, []);
 
   /* ---------------------------------------------------------------- */
   /*  GSAP text animation — scoped to this page, cleaned up on unmount */
@@ -163,48 +193,51 @@ export default function AboutUsPage() {
         .from("[data-why] [data-feature]", { autoAlpha: 0, y: 14, duration: 0.9, stagger: 0.08, ease: "power3.out" }, "-=0.7");
     }, rootRef);
 
-    return () => ctx.revert();
+    // Images load after hydration and change page height — re-measure trigger positions
+    const refresh = () => ScrollTrigger.refresh();
+    if (document.readyState === "complete") {
+      refresh();
+    } else {
+      window.addEventListener("load", refresh);
+    }
+
+    return () => {
+      window.removeEventListener("load", refresh);
+      ctx.revert();
+    };
   }, []);
 
   return (
     <main ref={rootRef} className={`${figtree.className} min-h-screen relative overflow-x-hidden`}>
-      {/*
-        ===================== HERO SECTION =====================
-      */}
-     {/* ===================== HERO SECTION ===================== */}
-<section className="relative w-full bg-white">
-  {/* Mobile-only banner (below sm) */}
-  <div
-    role="img"
-    aria-label="PKR Estates banner"
-    className="relative mx-auto block w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat sm:hidden"
-    style={{
-      backgroundImage: `url(/aa.jpeg)`,
-      aspectRatio: `${MOBILE_BANNER_W} / ${MOBILE_BANNER_H}`,
-    }}
-  >
-    <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10" />
-  </div>
-
-  {/* Tablet & up banner (sm and above) */}
-  <div
-    role="img"
-    aria-label="PKR Estates banner"
-    className="relative mx-auto hidden w-full overflow-hidden bg-[#333] bg-cover bg-center bg-no-repeat sm:block"
-    style={{
-      backgroundImage: `url(/about3.jpeg)`,
-      aspectRatio: `${DESKTOP_BANNER_W} / ${DESKTOP_BANNER_H}`,
-      maxHeight: `${DESKTOP_BANNER_MAX_H}px`,
-    }}
-  >
-    <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/0 to-transparent" />
-  </div>
-</section>
+      {/* ===================== HERO SECTION ===================== */}
+      <section className="relative w-full bg-white">
+        {/* One wrapper with a reserved ratio per breakpoint (no layout jump) */}
+        <div className="relative mx-auto w-full overflow-hidden bg-[#333] aspect-[380/700] sm:aspect-[1920/800] sm:max-h-[900px]">
+          <picture>
+            <source
+              media="(min-width: 640px)"
+              srcSet="/aboutt.jpeg"
+              width={DESKTOP_BANNER_W}
+              height={DESKTOP_BANNER_H}
+            />
+            <img
+              src="/aa.jpeg"
+              alt="PKR Estates banner"
+              width={MOBILE_BANNER_W}
+              height={MOBILE_BANNER_H}
+              fetchPriority="high"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          </picture>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/10 sm:from-black/20 sm:to-transparent" />
+        </div>
+      </section>
 
       {/* ===================== ENGINEERING YOUR DREAM HOME ===================== */}
       <section className="w-full px-4 py-10 sm:px-6 sm:py-16 md:px-8 md:py-20 lg:px-16 xl:px-20 2xl:px-28 2xl:py-10 overflow-hidden">
         <div className="max-w-[1680px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1fr_1.15fr_0.85fr] gap-7 sm:gap-12 md:gap-10 lg:gap-8 xl:gap-12 items-center">
-          
+
           {/* Copy block */}
           <div data-intro className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-3 sm:mb-5">
@@ -313,11 +346,15 @@ export default function AboutUsPage() {
             })}
           </div>
 
-          {/* Image — FIXED to show full image */}
+          {/* Image — optimized, full image shown, space reserved */}
           <div className="relative w-full h-auto overflow-hidden rounded-2xl md:col-span-2 lg:col-span-1">
-            <img
+            <Image
               src="/a22.png"
               alt="PKR Estates residence"
+              width={A22_W}
+              height={A22_H}
+              sizes="(min-width: 1024px) 30vw, (min-width: 768px) 90vw, 100vw"
+              quality={80}
               className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent pointer-events-none" />
@@ -351,19 +388,19 @@ export default function AboutUsPage() {
             {/* Center video */}
             <div className="order-2 lg:order-2 justify-self-center relative">
               <div
-                className="relative w-full max-w-[180px] sm:max-w-[240px] md:max-w-[260px] xl:max-w-[300px] 2xl:max-w-[340px] mx-auto aspect-[9/16] rounded-[24px] sm:rounded-[28px] overflow-hidden"
+                className="relative w-full max-w-[180px] sm:max-w-[240px] md:max-w-[260px] xl:max-w-[300px] 2xl:max-w-[340px] mx-auto aspect-[9/16] rounded-[24px] sm:rounded-[28px] overflow-hidden bg-[#E8F0F9]"
                 style={{
                   boxShadow: "0 30px 60px -20px rgba(15,58,107,0.35), 0 0 0 1px rgba(15,58,107,0.06)",
                 }}
               >
                 <video
+                  ref={videoRef}
                   src="/locker.mp4"
                   className="w-full h-full object-cover"
-                  autoPlay
                   muted
                   loop
                   playsInline
-                  preload="metadata"
+                  preload="none"
                 />
                 <div
                   className="pointer-events-none absolute inset-0 rounded-[24px] sm:rounded-[28px]"
@@ -408,7 +445,7 @@ export default function AboutUsPage() {
       {/* ===================== WHY CHOOSE PKR ESTATES ===================== */}
       <section data-why className="relative w-full overflow-hidden mb-20" style={{ backgroundColor: "#fff" }}>
         <div className="relative max-w-[1760px] mx-auto flex flex-col lg:flex-row items-stretch rounded-2xl sm:rounded-3xl overflow-hidden">
-          
+
           {/* Left: text + features */}
           <div className="flex-1 px-4 py-10 sm:px-6 sm:py-16 md:px-8 md:py-18 lg:px-16 lg:py-20 xl:px-20 xl:py-24 flex flex-col justify-center">
             <div className="mb-6 sm:mb-10">
@@ -466,15 +503,19 @@ export default function AboutUsPage() {
             </div>
           </div>
 
-          {/* Right: building image — FIXED to show full image */}
+          {/* Right: building image — optimized, full image shown, space reserved */}
           <div className="flex-1 relative min-h-[220px] sm:min-h-[320px] md:min-h-[380px] lg:min-h-0 overflow-hidden bg-gray-50 flex items-center justify-center">
-            <img
+            <Image
               src="/about3.png"
               alt="PKR Estates building"
+              width={ABOUT3_W}
+              height={ABOUT3_H}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              quality={80}
               className="w-full h-auto object-contain transition-transform duration-700 hover:scale-105"
             />
           </div>
-          
+
         </div>
       </section>
 

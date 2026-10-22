@@ -808,7 +808,7 @@ export const projects = [
     name: "Privana",
     tagline: "Modern living, thoughtfully designed for the way you live today",
     location: "Chennai, Tamil Nadu",
-    heroImage: "/privv.jpeg",
+    heroImage: "/privv.webp",
     heroImageMobile: "/privmob.webp",
     aboutImage: "/2nd.png",
 
